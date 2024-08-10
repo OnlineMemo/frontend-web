@@ -5,6 +5,7 @@ import axios from 'axios'
 import '../../App.css';
 import HelloWrapper from "../../components/Styled/HelloWrapper";
 import ConfirmModal from "../../components/Modal/ConfirmModal";
+import Apis from "../../apis/Api";
 
 const DivWrapper = styled.div`
     font-size: 1.5rem;
@@ -42,6 +43,7 @@ function LoginPage(props) {
     const navigate = useNavigate();
 
     const [loginFailModalOn, setLoginFailModalOn] = useState(false);
+    const [noticeModalOn, setNoticeModalOn] = useState(false);
 
     const [loginIdValue, setLoginIdValue] = useState("");
     const [pwValue, setPwValue] = useState("");
@@ -65,21 +67,16 @@ function LoginPage(props) {
         }
     };
 
-    const handleLoginClick = async (loginIdValue, pwValue, e) => {  // 화살표함수로 선언하여 이벤트 사용시 바인딩되도록 함.
-        // e.preventDefault();  // 리프레쉬 방지 (spa로서)
-
-        await axios
-            .post(process.env.REACT_APP_DB_HOST + '/login', {
+    const handleLoginClick = async (loginIdValue, pwValue, e) => {
+        await Apis
+            .post('/login', {
                 loginId: loginIdValue,
                 firstPw: pwValue
             })
             .then((response) => {
-                axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.data.accessToken}`;
-                localStorage.setItem('token', response.data.data.accessToken);
-                localStorage.setItem('expirationTime', String(response.data.data.tokenExpiresIn));
-
-                checkLogin();
-
+                localStorage.setItem('accessToken', response.data.data.accessToken);
+                localStorage.setItem('expirationTime', String(response.data.data.accessTokenExpiresIn));
+                localStorage.setItem('refreshToken', response.data.data.refreshToken);
                 //console.log(response);
             })
             .catch((error) => {
@@ -119,6 +116,9 @@ function LoginPage(props) {
             if (tokenUserId) {
                 navigate(`/users/${tokenUserId}/memos`);
             }
+        }
+        else {
+            setNoticeModalOn(true);
         }
     }, [tokenUserId]);
 
@@ -161,6 +161,16 @@ function LoginPage(props) {
                         다시 입력해주세요.
                     </h2>
                     <button className="cancelButton" onClick={() => setLoginFailModalOn(false)}>확인</button>
+                </ConfirmModal>
+            )}
+            {noticeModalOn && (
+                <ConfirmModal closeModal={() => setNoticeModalOn(!noticeModalOn)}>
+                    <i className="fa fa-thumbs-o-up" aria-hidden="true"></i>
+                    <h2 className="successSignupModalTitle">
+                        서버 대규모 패치 완료.<br></br>
+                        빨라진 속도를 체감해보세요.
+                    </h2>
+                    <button className="cancelButton" onClick={() => setNoticeModalOn(false)}>확인</button>
                 </ConfirmModal>
             )}
         </HelloWrapper>

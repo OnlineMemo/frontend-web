@@ -1,10 +1,7 @@
-//import { useNavigate } from "react-router-dom";
 import axios from 'axios'
 
 function CheckToken() {
-    //const navigateLogin = useNavigate();
-    
-    const storedToken = localStorage.getItem('token');
+    const storedToken = localStorage.getItem("accessToken");
     const storedExpirationDate = localStorage.getItem('expirationTime') || '0';
 
     if (storedToken) {
@@ -12,7 +9,7 @@ function CheckToken() {
 
         const remainingTime = storedExpirationDate - String(new Date().getTime());
         if (remainingTime <= '1000') {
-            localStorage.removeItem('token');
+            localStorage.removeItem('accessToken');
             localStorage.removeItem('expirationTime');
 
             window.location.href = '/login';
