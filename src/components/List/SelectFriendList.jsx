@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from 'axios'
 import Checkbox from "../UI/Checkbox";
-import { CheckToken } from "../../utils/CheckToken";
 
 const FriendsWrapper = styled.div`
     display: flex;
@@ -60,9 +59,8 @@ const NameIdWrapper = styled.div`
 `;
 
 function SelectFriendList(props) {
-    const { userId, checkedList ,setCheckedList } = props;
+    const { checkedList, setCheckedList, friends } = props;
 
-    const [friends, setFriends] = useState();
     const [isChecked, setIsChecked] = useState(false);
 
     const checkedItemHandler = (value, isChecked) => {  // 체크한것 핸들러
@@ -87,34 +85,17 @@ function SelectFriendList(props) {
         clickElement.click();
     }
 
-    async function getFriends() {  // 해당 사용자의 모든 친구 리스트 조회
-        await axios
-            .get(`${process.env.REACT_APP_DB_HOST}/users/${userId}/friends`)
-            .then((response) => {
-                setFriends(response.data.data);
-                //console.log(response);
-            })
-            .catch((error) => {
-                //console.log(error);
-            })
-    }
-
-    useEffect(() => {
-        CheckToken();
-
-        getFriends();
-    }, []);
 
     return (
         <FriendsWrapper>
             {friends && friends.map((friend) => {
                 return (
-                    <FriendItemsWrapper key={friend.id} onClick={() => handleClick(friend.id)}>
-                        <Checkbox friend={friend} friendId={friend.id} checked={isChecked} onChange={(e) => checkHandler(friend, e)} checkedList={checkedList} checkHandler={checkHandler}></Checkbox>
+                    <FriendItemsWrapper key={friend.userId} onClick={() => handleClick(friend.userId)}>
+                        <Checkbox friend={friend} friendId={friend.userId} checked={isChecked} onChange={(e) => checkHandler(friend, e)} checkedList={checkedList} checkHandler={checkHandler}></Checkbox>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <NameIdWrapper style={{ flexGrow: "8" }}>
-                            <div className="nameDiv">이름:&nbsp;{friend && friend.username}</div>
-                            <div className="idDiv">id:&nbsp;{friend && friend.loginId}</div>
+                            <div className="nameDiv">이름:&nbsp;{friend && friend.nickname}</div>
+                            <div className="idDiv">id:&nbsp;{friend && friend.email}</div>
                         </NameIdWrapper>
                     </FriendItemsWrapper>
                 );

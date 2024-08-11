@@ -6,6 +6,7 @@ import NavWrapper from "../Styled/NavWrapper";
 import axios from 'axios'
 import ConfirmModal from "../Modal/ConfirmModal";
 import { CheckToken } from "../../utils/CheckToken";
+import Apis from "../../apis/Api";
 
 const Wrapper = styled(NavWrapper)`
 
@@ -197,23 +198,20 @@ function ReadAndEditMemoNav(props) {
         props.propPurposeFunction("edit");  // 하위 컴포넌트 함수
     }
 
-    const handleUpdateSaveClick = async (titleValue, contentValue, e) => {  // 화살표함수로 선언하여 이벤트 사용시 바인딩되도록 함.
-        // e.preventDefault();  // 리프레쉬 방지 (spa로서)
-
+    const handleUpdateSaveClick = async (titleValue, contentValue, e) => {
         if (titleValue.length < 1) {
             var element = document.querySelector(".memoTitleInput");
             element.style.border = "3.3px solid #dd2b2b";
             element.style.borderRadius = "5px";
         }
         else {
-            await axios
-                .put(`${process.env.REACT_APP_DB_HOST}/memos/${props.memoId}`, {
+            await Apis
+                .put(`/memos/${props.memoId}`, {
                     title: titleValue,
-                    content: contentValue
+                    content: contentValue,
+                    isStar: null
                 })
                 .then((response) => {
-                    //console.log(response);
-
                     props.propPurposeFunction("read");  // 하위 컴포넌트 함수
                 })
                 .catch((error) => {
@@ -222,28 +220,20 @@ function ReadAndEditMemoNav(props) {
         }
     }
 
-    const handleDeleteClick = async (e) => {  // 화살표함수로 선언하여 이벤트 사용시 바인딩되도록 함.
-        // e.preventDefault();  // 리프레쉬 방지 (spa로서)
-
-        await axios
-            .delete(`${process.env.REACT_APP_DB_HOST}/users/${props.userId}/memos/${props.memoId}`)
+    const handleDeleteClick = async (e) => {
+        await Apis
+            .delete(`/memos/${props.memoId}`)
             .then((response) => {
-                //console.log(response);
-
-                navigate(`/users/${props.userId}/memos`);
+                navigate(`/memos`);
             })
             .catch((error) => {
                 //console.log(error);
             })
     }
 
-    useEffect(() => {
-        CheckToken();
-    }, []);
-
     const readPrivateNavItems = [  // 개인메모 보기 용도
         <span className="flex-left">
-            &nbsp;<i className="fa fa-arrow-left" aria-hidden="true" onClick={() => { navigate(`/users/${props.userId}/memos`) }}></i>
+            &nbsp;<i className="fa fa-arrow-left" aria-hidden="true" onClick={() => { navigate(`/memos`) }}></i>
             &nbsp;&nbsp;
             <span className="flex-copy" onClick={handleClickCopy}>
                 <i className={copyClassName} aria-hidden="true"></i>
@@ -289,7 +279,7 @@ function ReadAndEditMemoNav(props) {
         navItems = editNavItems;
     }
 
-    
+
     return (
         <Wrapper>
             <ul>

@@ -40,6 +40,7 @@ const Wrapper = styled(NavWrapper)`
 function NoLoginNav(props) {
     const navigate = useNavigate();
 
+    
     return (
         <Wrapper>
             <ul>

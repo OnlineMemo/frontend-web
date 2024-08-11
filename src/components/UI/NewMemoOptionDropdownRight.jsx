@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import '../../App.css';
 import useDetectDropdown from "../../hooks/useDetectDropdown";
 import FriendGroupModal from "../Modal/FriendGroupModal";
 import SelectFriendList from "../List/SelectFriendList";
+import Apis from "../../apis/Api";
 
 const DropdownContainer = styled.div`
     position: relative;
@@ -91,14 +92,32 @@ const FriendsWrapper = styled.div`
 function NewMemoOptionDropdownRight(props) {
     const navigate = useNavigate();
 
+    const { dropMain, dropItems } = props;
+
     const [ddIsOpen, ddRef, ddHandler] = useDetectDropdown(false);  // props를 받아오는게 아닌 훅 종류를 사용하였으므로, {}가 아닌, []로 받아야한다.
     // useDetectDropdown(initialValue)의 initialValue를 false로 넣어주었다. 그러므로, IsOpen이 false가 되어 ddIsOpen도 false가 된다.
-    // 참고로 dd는 dropdown을 줄여서 적어본것이다.
-
-    const { dropMain, dropItems, userId } = props;
+    // 참고로 dd는 dropdown을 줄여서 적어본것임.
 
     const [modalOn, setModalOn] = useState(false);
     const [checkedList, setCheckedList] = useState([]);
+
+    const [friends, setFriends] = useState();
+
+    async function getFriends() {  // 해당 사용자의 모든 친구 리스트 조회
+        await Apis
+            .get(`/friends?isFriend=1`)
+            .then((response) => {
+                setFriends(response.data.data);
+            })
+            .catch((error) => {
+                //console.log(error);
+            })
+    }
+
+    useEffect(() => {
+        getFriends();
+    }, []);
+
 
     return (
         <DropdownContainer>
@@ -126,9 +145,9 @@ function NewMemoOptionDropdownRight(props) {
                 <FriendGroupModal closeModal={() => setModalOn(!modalOn)}>
                     <h2 style={{ fontSize: "2rem", color: "#463f3a", marginTop: "1.5px", marginBottom: "15px" }}>-&nbsp;공동 작성할 친구들 선택&nbsp;-</h2>
                     <FriendsWrapper>
-                        <SelectFriendList userId={userId} checkedList={checkedList} setCheckedList={setCheckedList} />
+                        <SelectFriendList checkedList={checkedList} setCheckedList={setCheckedList} friends={friends} />
                     </FriendsWrapper>
-                    <button style={{ float: "right", fontSize: "1.5rem", marginTop: "10px" }} onClick={() => navigate(`/users/${userId}/memo`, { state: { isGroup: 1, friendList: checkedList }})}>선택 완료</button>
+                    <button style={{ float: "right", fontSize: "1.5rem", marginTop: "10px" }} onClick={() => navigate(`/memos/new-memo`, { state: { isGroup: 1, friendList: checkedList }})}>선택 완료</button>
                 </FriendGroupModal>
             )}
         </DropdownContainer>
