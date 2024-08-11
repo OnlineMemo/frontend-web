@@ -28,13 +28,18 @@ function MemoListPage(props) {
     const [filter, setFilter] = useState(null);
     const [search, setSearch] = useState(null);
     const [memos, setMemos] = useState([]);
+    const [allFriends, setAllFriends] = useState([]);
 
     const setParams = (filter, search) => {
         setFilter(filter);
         setSearch(search);
     }
 
-    const getMemos = async (queryParams) => {  // 해당 사용자의 모든 메모 리스트 조회 (초기 메인 화면)
+    const getMemos = async (e) => {  // 해당 사용자의 모든 메모 리스트 조회 (초기 메인 화면)
+        let queryParams = '';
+        if (filter != null && search == null) queryParams = `?filter=${filter}`;
+        else if (filter == null && search != null) queryParams = `?search=${search}`;
+        
         await Apis
             .get(`/memos` + queryParams)
             .then((response) => {
@@ -51,15 +56,21 @@ function MemoListPage(props) {
             })
     }
 
+    async function getFriends() {  // 해당 사용자의 모든 친구 리스트 조회
+        await Apis
+            .get(`/friends?isFriend=1`)
+            .then((response) => {
+                setAllFriends(response.data.data);
+            })
+            .catch((error) => {
+                //console.log(error);
+            })
+    }
+
     useEffect(() => {
         CheckToken();
-
-        if (filter != null && search == null)
-            getMemos(`?filter=${filter}`);
-        else if (filter == null && search != null)
-            getMemos(`?search=${search}`);
-        else
-            getMemos('');
+        getMemos();
+        getFriends();
     }, [filter, search]);
 
 
@@ -69,7 +80,7 @@ function MemoListPage(props) {
                 <SortMemo className="flex-item" setParams={setParams} />
                 <SearchMemo className="flex-item" setParams={setParams} />
             </DivWrapper>
-            <MemoList memos={memos} search={search} />
+            <MemoList memos={memos} search={search} allFriends={allFriends} getMemos={getMemos} />
         </BasicWrapper>
     );
 }

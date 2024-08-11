@@ -5,6 +5,7 @@ import '../../App.css';
 import NavWrapper from "../Styled/NavWrapper";
 import axios from 'axios'
 import { CheckToken } from "../../utils/CheckToken";
+import Apis from "../../apis/Api";
 
 const Wrapper = styled(NavWrapper)`
 
@@ -138,48 +139,27 @@ const Wrapper = styled(NavWrapper)`
 function NewMemoNav(props) {
     const navigate = useNavigate();
 
-    const handleInviteGroupMemo = async (memoId, e) => {  // 화살표함수로 선언하여 이벤트 사용시 바인딩되도록 함.
-        // e.preventDefault();  // 리프레쉬 방지 (spa로서)
-
-        await axios
-            .post(`${process.env.REACT_APP_DB_HOST}/memos/${memoId}`, {
-                userRequestDtos: props.friendList
-            })
-            .then((response) => {
-                //console.log(response);
-
-                navigate(`/users/${props.userId}/memos`);
-            })
-            .catch((error) => {
-                //console.log(error);
-            })
-    }
-
-    const handleNewSaveClick = async (titleValue, contentValue, e) => {  // 화살표함수로 선언하여 이벤트 사용시 바인딩되도록 함.
-        // e.preventDefault();  // 리프레쉬 방지 (spa로서)
-
+    const handleNewSaveClick = async (titleValue, contentValue, e) => {
         if (titleValue.length < 1) {
             var element = document.querySelector(".memoTitleInput");
             element.style.border = "3.3px solid #dd2b2b";
             element.style.borderRadius = "5px";
         }
         else {
-            await axios
-                .post(`${process.env.REACT_APP_DB_HOST}/users/${props.userId}/memos`, {
+            let friendIdList = null;
+            if (props.isGroup == 1) {  // 새 공동메모 생성시라면
+                friendIdList = props.friendList.map((user) => user.userId); // 친구의 userId만 추출한 리스트 생성.
+            }
+
+            await Apis
+                .post(`/memos`, {
                     title: titleValue,
-                    content: contentValue
+                    content: contentValue,
+                    userIdList: friendIdList
                 })
                 .then((response) => {
-                    //console.log(response);
-
                     var memoId = response.data.data.memoId
-
-                    if (props.isGroup == 1) {  // 새 공동메모 생성시라면
-                        handleInviteGroupMemo(memoId, e);
-                    }
-                    else {  // 새 개인메모 생성시라면
-                        navigate(`/memos/${memoId}`, { state: { userId: props.userId } });
-                    }
+                    navigate(`/memos/${memoId}`);
                 })
                 .catch((error) => {
                     //console.log(error);
@@ -197,6 +177,7 @@ function NewMemoNav(props) {
     ];
 
     let navItems = newNavItems;
+
 
     return (
         <Wrapper>

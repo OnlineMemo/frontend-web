@@ -289,6 +289,7 @@ function ReadAndEditMemoNav(props) {
         navItems = editNavItems;
     }
 
+    
     return (
         <Wrapper>
             <ul>

@@ -87,7 +87,7 @@ const NoneSearch = styled.div`
 `;
 
 function MemoList(props) {
-    const { search, memos } = props;
+    const { search, memos, allFriends, getMemos } = props;
 
 
     return (
@@ -108,7 +108,7 @@ function MemoList(props) {
                             <MemoListItem title={memo.title} modifiedTime={memo.modifiedTime} userResponseDtoList={memo.userResponseDtoList} memoHasUsersCount={memo.memoHasUsersCount} /> 
                         </Link>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <MemoOptionButton style={{ flexGrow: "4" }} memoId={memo.memoId} memoHasUsersCount={memo.memoHasUsersCount} />
+                        <MemoOptionButton style={{ flexGrow: "4" }} memoId={memo.memoId} userResponseDtoList={memo.userResponseDtoList} memoHasUsersCount={memo.memoHasUsersCount} allFriends={allFriends} getMemos={getMemos} />
                     </MemoItemsWrapper>
                 );
             })}

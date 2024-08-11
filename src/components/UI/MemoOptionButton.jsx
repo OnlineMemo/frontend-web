@@ -30,7 +30,7 @@ const MemoOptionWrapper = styled.div`
 `;
 
 function MemoOptionButton(props) {
-    const { memoId, memoHasUsersCount } = props;
+    const { memoId, userResponseDtoList, memoHasUsersCount, allFriends, getMemos } = props;
 
     const dropItemsGroupOption = [
         {
@@ -65,6 +65,9 @@ function MemoOptionButton(props) {
                 dropMain={<i className="fa fa-ellipsis-v" aria-hidden="true"></i>}
                 dropItems={dropItemsOption}
                 memoId={memoId}
+                userResponseDtoList={userResponseDtoList}
+                allFriends={allFriends}
+                getMemos={getMemos}
             />
         </MemoOptionWrapper>
     );

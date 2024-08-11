@@ -80,7 +80,6 @@ function NewMemoPage(props) {
 
     useEffect(() => {
         CheckToken();
-
         startNewMemo();  // 출생시점에 startNewMemo 한번 실행.
     }, []);
 
