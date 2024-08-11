@@ -139,8 +139,6 @@ function UserProfilePage(props) {
     }
 
     const handleUpdateSaveClick = async (nameValue, e) => {  // 화살표함수로 선언하여 이벤트 사용시 바인딩되도록 함.
-        // e.preventDefault();  // 리프레쉬 방지 (spa로서)
-
         if (nameValue.length < 2) {
             setIsWrongName(true);
         }

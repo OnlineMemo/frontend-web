@@ -6,16 +6,11 @@ const Apis = axios.create({
 
 // API 요청시 헤더에 AccessToken 달아줌.
 Apis.interceptors.request.use(function (config) {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-        config.headers['accessToken'] = null;
-        return config;
+    const storedAccessToken = localStorage.getItem("accessToken");
+    if (storedAccessToken) {
+        config.headers["Authorization"] = `Bearer ${storedAccessToken}`;
     }
-    if (config.headers && token) {
-        const accessToken = token;
-        config.headers['Authorization'] = `Bearer ${accessToken}`;
-        return config;
-    }
+    return config; // 항상 config를 반환
 });
 
 // AccessToken 만료됐을때 처리
@@ -37,8 +32,9 @@ Apis.interceptors.response.use(
             err.response.data.message === "ERROR - JWT 토큰 만료 에러") {
                 try {
                     const response = await axios.post(
-                    `${process.env.REACT_APP_DB_HOST}/reissue`,
-                    reissueRequestDto);
+                        `${process.env.REACT_APP_DB_HOST}/reissue`,
+                        reissueRequestDto
+                    );
 
                     if (response) {
                         // 새 토큰을 로컬 스토리지에 저장

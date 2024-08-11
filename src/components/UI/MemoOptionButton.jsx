@@ -30,7 +30,7 @@ const MemoOptionWrapper = styled.div`
 `;
 
 function MemoOptionButton(props) {
-    const { memoHasUsersCount, userId, memoId, rerendering, forceUpdate, handleForceUpdate } = props;
+    const { memoId, memoHasUsersCount } = props;
 
     const dropItemsGroupOption = [
         {
@@ -58,14 +58,13 @@ function MemoOptionButton(props) {
         dropItemsOption = dropItemsPrivateOption;
     }
 
+
     return (
         <MemoOptionWrapper>
             <MemoOptionDropdownRight
                 dropMain={<i className="fa fa-ellipsis-v" aria-hidden="true"></i>}
                 dropItems={dropItemsOption}
-                userId={userId}
                 memoId={memoId}
-                rerendering={rerendering}
             />
         </MemoOptionWrapper>
     );

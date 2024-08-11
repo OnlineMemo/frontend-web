@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import '../../App.css';
 
@@ -23,9 +22,7 @@ const Button = styled.button`
 `;
 
 function SearchMemo(props) {
-    const navigate = useNavigate();
-
-    const { userId } = props;
+    const { setParams } = props;
 
     const [value, setValue] = useState('');
 
@@ -34,8 +31,11 @@ function SearchMemo(props) {
     }
 
     const handleSearchClick = (event) => {
-        navigate(`/users/${userId}/memos?search=${value}`);
+        const filter = null;
+        const search = (value == "") ? null : value;
+        setParams(filter, search);
     }
+
 
     return (
         <div>

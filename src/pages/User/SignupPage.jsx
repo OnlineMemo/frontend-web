@@ -5,6 +5,7 @@ import '../../App.css';
 import { useNavigate } from "react-router-dom";
 import HelloWrapper from "../../components/Styled/HelloWrapper"
 import ConfirmModal from "../../components/Modal/ConfirmModal";
+import Apis from "../../apis/Api";
 
 const MoreWrapper = styled(HelloWrapper)`
     .flex-container {
@@ -47,7 +48,7 @@ function SignupPage(props) {
     const [confirmErrorModalOn, setConfirmErrorModalOn] = useState(false);
 
     const [nameValue, setNameValue] = useState("");
-    const [loginIdValue, setLoginIdValue] = useState("");
+    const [emailValue, setEmailValue] = useState("");
     const [pwValue, setPwValue] = useState("");
     const [confirmValue, setConfirmValue] = useState("");
 
@@ -58,16 +59,14 @@ function SignupPage(props) {
 
     const [isWrongResult, setIsWrongResult] = useState(false);
 
-    const [tokenUserId, setTokenUserId] = useState();
-
     const handleChangeName = (event) => {
         event.target.value = event.target.value.replace(/[^a-z0-9ㄱ-ㅎ가-힣]/gi, '');
         setNameValue(event.target.value);
     }
 
-    const handleChangeLoginId = (event) => {
+    const handleChangeEmail = (event) => {
         event.target.value = event.target.value.replace(/[^a-z0-9]/gi, '');
-        setLoginIdValue(event.target.value);
+        setEmailValue(event.target.value);
     }
 
     const handleChangePw = (event) => {
@@ -80,13 +79,13 @@ function SignupPage(props) {
         setConfirmValue(event.target.value);
     }
 
-    const checkInput = (nameValue, loginIdValue, pwValue, confirmValue) => {
+    const checkInput = (nameValue, emailValue, pwValue, confirmValue) => {
         if (nameValue.length < 2)
             setIsWrongName(true);
         else
             setIsWrongName(false);
 
-        if (loginIdValue.length < 4 || 16 < loginIdValue.length)
+        if (emailValue.length < 4 || 16 < emailValue.length)
             setIsWrongId(true);
         else
             setIsWrongId(false);
@@ -102,30 +101,26 @@ function SignupPage(props) {
             setIsWrongConfirm(false);
     }
 
-    const handleSignupClick = async (nameValue, loginIdValue, pwValue, confirmValue, e) => {  // 화살표함수로 선언하여 이벤트 사용시 바인딩되도록 함.
-        // e.preventDefault();  // 리프레쉬 방지 (spa로서)
-
-        checkInput(nameValue, loginIdValue, pwValue, confirmValue);
+    const handleSignupClick = async (nameValue, emailValue, pwValue, confirmValue, e) => {
+        checkInput(nameValue, emailValue, pwValue, confirmValue);
 
         if (!(nameValue.length < 2 ||
-            (loginIdValue.length < 4 || 16 < loginIdValue.length) ||
+            (emailValue.length < 4 || 16 < emailValue.length) ||
             pwValue.length < 8 ||
             pwValue !== confirmValue)) {
 
-            await axios
-                .post(process.env.REACT_APP_DB_HOST + '/signup', {
-                    loginId: loginIdValue,
-                    firstPw: pwValue,
-                    username: nameValue
+            await Apis
+                .post('/signup', {
+                    email: emailValue,
+                    password: pwValue,
+                    nickname: nameValue
                 })
                 .then((response) => {
                     setSuccessModalOn(true);
                     setIsWrongResult(false);
-                    //console.log(response);
                 })
                 .catch((error) => {
                     setDuplicateErrorModalOn(true);
-                    //console.log(error);
                 })
         }
         else if (pwValue !== confirmValue) {
@@ -137,39 +132,15 @@ function SignupPage(props) {
         }
     }
 
-    async function checkLogin() {  // 로그인 상태 여부 확인하고 해당 사용자의 userId 반환
-        await axios
-            .get(process.env.REACT_APP_DB_HOST + '/auth')
-            .then((response) => {
-                setTokenUserId(response.data.data.id);
-                //console.log(response);
-            })
-            .catch((error) => {
-                //console.log(error);
-            })
-    }
-
     useEffect(() => {
-        const storedToken = localStorage.getItem('token');
-        const storedExpirationDate = localStorage.getItem('expirationTime') || '0';
+        const storedAccessToken = localStorage.getItem("accessToken");
+        const storedRefreshToken = localStorage.getItem("accessToken");
 
-        if (storedToken) {
-            axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
-
-            const remainingTime = storedExpirationDate - String(new Date().getTime());
-            if (remainingTime <= '1000') {  // 토큰 잔여만료시간이 1초 이하라면
-                localStorage.removeItem('token');
-                localStorage.removeItem('expirationTime');
-
-                navigate('/login');
-            }
-
-            checkLogin();
-            if (tokenUserId) {
-                navigate(`/users/${tokenUserId}/memos`);
-            }
+        if (storedAccessToken && storedRefreshToken) {
+            navigate(`/memos`);
         }
-    }, [tokenUserId]);
+    }, []);
+
 
     return (
         <MoreWrapper>
@@ -185,7 +156,7 @@ function SignupPage(props) {
                     &nbsp;&nbsp;이름:&nbsp;&nbsp;<input type="text" className={isWrongName ? 'wrongName inputInform' : 'inputInform'} style={{ width: "114px" }} placeholder=" 한글,영문,숫자 (2자 이상)" size="17" onChange={handleChangeName} />
                 </div>
                 <div className="flex-container">
-                    &nbsp;&nbsp;id:&nbsp;&nbsp;<input type="text" className={isWrongId ? 'wrongId inputInform' : 'inputInform'} style={{ width: "132px" }} placeholder=" 영문,숫자 (4~16자)" maxLength="16" onChange={handleChangeLoginId} />
+                    &nbsp;&nbsp;id:&nbsp;&nbsp;<input type="text" className={isWrongId ? 'wrongId inputInform' : 'inputInform'} style={{ width: "132px" }} placeholder=" 영문,숫자 (4~16자)" maxLength="16" onChange={handleChangeEmail} />
                 </div>
                 <div className="flex-container">
                     pw:&nbsp;&nbsp;<input type="password" className={isWrongPw ? 'wrongPw inputInform' : 'inputInform'} style={{ width: "133px" }} placeholder=" 영문,숫자,특수문자 (8자 이상)" onChange={handleChangePw} />
@@ -195,7 +166,7 @@ function SignupPage(props) {
                 </div>
                 <div style={{ lineHeight: "40%" }}><br></br></div>
                 <div className="flex-container">
-                    <button style={{ padding: "1px 6px 1px 6px", borderTop: "2px solid #767676", borderLeft: "2px solid #767676", borderBottom: "2px solid #212121", borderRight: "2px solid #212121" }} onClick={(event) => handleSignupClick(nameValue, loginIdValue, pwValue, confirmValue)}>가입 완료</button>
+                    <button style={{ padding: "1px 6px 1px 6px", borderTop: "2px solid #767676", borderLeft: "2px solid #767676", borderBottom: "2px solid #212121", borderRight: "2px solid #212121" }} onClick={(event) => handleSignupClick(nameValue, emailValue, pwValue, confirmValue)}>가입 완료</button>
                 </div>
                 {isWrongResult &&
                     <span style={{ fontSize: "1.35rem", color: "#dd2b2b" }}>!!! 입력 양식을 재확인해주세요 !!!</span>
