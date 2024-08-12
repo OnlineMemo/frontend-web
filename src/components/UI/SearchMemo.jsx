@@ -36,11 +36,19 @@ function SearchMemo(props) {
         setParams(filter, search);
     }
 
+    const doClickEnter = (event) => {
+        if (event.key === 'Enter') {
+            handleSearchClick();
+        }
+    };
+
 
     return (
         <div>
             <input 
-                type="text" value={value} placeholder="검색" onChange={handleChange}
+                type="text" value={value} placeholder="검색"
+                onChange={handleChange}
+                onKeyDown={(event) => doClickEnter(event)}
                 style={{ border:"solid 2px #645b56", borderRadius:"3px",
                     width: "91px", height: "19px", fontSize: "1.5rem", fontFamily: "jua", color:"#463f3a", paddingTop: "0px", paddingBottom: "0px" }}
             />
