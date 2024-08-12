@@ -85,7 +85,7 @@ function App(props) {
           <Route path="download" element={<NoLoginNav />} />
 
           <Route path="/memos" element={<YesLoginNav />} />  {/* "/users/:userId/memos" */}
-          <Route path="/users/:userId" element={<YesLoginNav />} />
+          <Route path="/users" element={<YesLoginNav />} />  {/* "/users/:userId" */}
           <Route path="/friends" element={<YesLoginNav />} />  {/* "/users/:userId/friends" */}
           <Route path="/senders" element={<YesLoginNav />} />  {/* "/users/:userId/senders" */}
         </Routes>
@@ -99,7 +99,7 @@ function App(props) {
           <Route path="download" element={<DownloadPage />} />
 
           <Route path="/memos" element={<MemoListPage />} />  {/* "/users/:userId/memos" */}
-          <Route path="/users/:userId" element={<UserProfilePage />} />
+          <Route path="/users" element={<UserProfilePage />} />  {/* "/users/:userId" */}
           <Route path="/friends" element={<FriendListPage />} />  {/* "/users/:userId/friends" */}
           <Route path="/senders" element={<SenderListPage />} />  {/* "/users/:userId/senders" */}
 

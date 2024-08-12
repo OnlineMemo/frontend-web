@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import '../../App.css';
 import axios from 'axios'
 import HelloWrapper from "../../components/Styled/HelloWrapper"
 import ConfirmModal from "../../components/Modal/ConfirmModal";
 import { CheckToken } from "../../utils/CheckToken";
+import Apis from "../../apis/Api";
 
 const MoreWrapper = styled(HelloWrapper)`
     .flex-container {
@@ -107,8 +108,6 @@ const MoreWrapper = styled(HelloWrapper)`
 function UserProfilePage(props) {
     const navigate = useNavigate();
 
-    const { userId } = useParams();
-
     const [copyClassName, setCopyClassName] = useState('fa fa-clone');
 
     const [user, setUser] = useState();
@@ -125,8 +124,8 @@ function UserProfilePage(props) {
     }
 
     const handleClickCopy = (event) => {
-        window.navigator.clipboard.writeText(user.loginId);
-        window.ReactNativeWebView && window.ReactNativeWebView.postMessage(user.loginId);  // 리액트 네이티브에 복사한 텍스트 전송 (모바일 웹뷰앱을 위한 코드)
+        window.navigator.clipboard.writeText(user.email);
+        window.ReactNativeWebView && window.ReactNativeWebView.postMessage(user.email);  // 리액트 네이티브에 복사한 텍스트 전송 (모바일 웹뷰앱을 위한 코드)
 
         setCopyClassName('fa fa-check');
         setTimeout(() => {
@@ -138,52 +137,43 @@ function UserProfilePage(props) {
         setPurpose("edit");
     }
 
-    const handleUpdateSaveClick = async (nameValue, e) => {  // 화살표함수로 선언하여 이벤트 사용시 바인딩되도록 함.
-        if (nameValue.length < 2) {
-            setIsWrongName(true);
-        }
-        else {
-            await axios
-                .put(`${process.env.REACT_APP_DB_HOST}/users/${userId}`, {
-                    username: nameValue,
-                })
-                .then((response) => {
-                    //console.log(response);
-
-                    setIsWrongName(false);
-                    setPurpose("read");
-                })
-                .catch((error) => {
-                    setIsWrongName(false);
-                    //console.log(error);
-                })
-        }
-    }
-
-    const handleDeleteClick = async (e) => {  // 화살표함수로 선언하여 이벤트 사용시 바인딩되도록 함.
-        // e.preventDefault();  // 리프레쉬 방지 (spa로서)
-
-        await axios
-            .delete(`${process.env.REACT_APP_DB_HOST}/users/${userId}`)
+    async function getUser() {  // 사용자 회원정보 조회
+        await Apis
+            .get(`/users`)
             .then((response) => {
-                //console.log(response);
-
-                localStorage.removeItem('token');
-                localStorage.removeItem('expirationTime');
-                navigate('/login');
+                setUser(response.data.data);
+                setNameValue(response.data.data.nickname)
             })
             .catch((error) => {
                 //console.log(error);
             })
     }
 
-    async function getUser() {  // 사용자 회원정보 조회
-        await axios
-            .get(`${process.env.REACT_APP_DB_HOST}/users/${userId}`)
+    const handleUpdateSaveClick = async (nameValue, e) => {
+        if (nameValue.length < 2) {
+            setIsWrongName(true);
+        }
+        else {
+            await Apis
+                .put(`/users`, {
+                    nickname: nameValue,
+                })
+                .then((response) => {
+                    setIsWrongName(false);
+                    setPurpose("read");
+                })
+                .catch((error) => {
+                    setIsWrongName(false);
+                })
+        }
+    }
+
+    const handleDeleteClick = async (e) => {
+        await Apis
+            .delete(`/users`)
             .then((response) => {
-                setUser(response.data.data);
-                setNameValue(response.data.data.username)
-                //console.log(response);
+                localStorage.clear();  // 이때는 모두 비워주도록함.
+                navigate('/login');
             })
             .catch((error) => {
                 //console.log(error);
@@ -192,7 +182,6 @@ function UserProfilePage(props) {
 
     useEffect(() => {
         CheckToken();
-
         getUser();
     }, [purpose]);
 
@@ -210,10 +199,11 @@ function UserProfilePage(props) {
     else {  // (purpose == "read") 일때
         purposeText = "read";
 
-        nameComponent = <span>{user && user.username}</span>
+        nameComponent = <span>{user && user.nickname}</span>
 
         saveComponent = <button onClick={handleEditClick}>수정&nbsp;<i className="fa fa-pencil" aria-hidden="true"></i></button>
     }
+
 
     return (
         <MoreWrapper>
@@ -233,7 +223,7 @@ function UserProfilePage(props) {
                     </div>
                     <hr className="divideHr"></hr>
                     <div className="flex-container">
-                        <span>초대 id:&nbsp;&nbsp;<span>{user && user.loginId}</span></span>
+                        <span>초대 id:&nbsp;&nbsp;<span>{user && user.email}</span></span>
                         <button className="copyButton" onClick={handleClickCopy}>복사&nbsp;<i className={copyClassName} aria-hidden="true"></i></button>
                     </div>
                     <hr className="divideHr"></hr>
