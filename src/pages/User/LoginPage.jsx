@@ -96,6 +96,19 @@ function LoginPage(props) {
         }
     }, []);
 
+    useEffect(() => {
+        const handleEnterKeyDown = (event) => {  // 엔터키로 공지 모달 닫기.
+            if (event.key === "Enter" && noticeModalOn == true) {
+                setNoticeModalOn(false);
+            }
+        };
+        if (noticeModalOn) window.addEventListener("keydown", handleEnterKeyDown);
+
+        return () => {
+            window.removeEventListener("keydown", handleEnterKeyDown);
+        };
+    }, [noticeModalOn]);
+
 
     return (
         <HelloWrapper>
