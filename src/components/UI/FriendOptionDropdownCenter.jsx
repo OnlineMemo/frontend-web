@@ -110,6 +110,12 @@ function FriendOptionDropdownRight(props) {
         setEmailValue(event.target.value);
     }
 
+    const doClickEnter = (event) => {
+        if (event.key === 'Enter') {
+            handleSendClick();
+        }
+    };
+
     const handleSendClick = async (e) => {
         await Apis
             .post(`/friends`, {
@@ -155,7 +161,7 @@ function FriendOptionDropdownRight(props) {
                 <SendFriendshipModal closeModal={() => { setModalOn(!modalOn); setIsNone(false); }}>
                     <h2>-&nbsp;친구 요청&nbsp;<i className="fa fa-paper-plane-o" aria-hidden="true"></i>&nbsp;-</h2>
                     <div style={{ marginBottom: "4px" }}>
-                        초대 id:&nbsp;&nbsp;<input type="text" onChange={handleChangeEmail} placeholder="친구의 id를 입력해주세요." maxLength="16"
+                        초대 id:&nbsp;&nbsp;<input type="text" onChange={handleChangeEmail} onKeyDown={(event) => doClickEnter(event)} placeholder="친구의 id를 입력해주세요." maxLength="16"
                             style={{ width: "138px", textAlign: "center", paddingTop: "4px", paddingBottom: "4px", border: "1px solid #463f3a", borderRadius: "5px", backgroundColor: "#f4f3ee" }} />
                     </div>
                     <span style={isNone ? { display: "", fontSize: "1.26rem", color: "#dd2b2b" } : { display: "none" }}>!!! 이미 초대했거나 없는 사용자입니다 !!!</span>
