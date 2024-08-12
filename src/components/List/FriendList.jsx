@@ -71,7 +71,7 @@ function FriendList(props) {
     }
 
     const handleDeleteClick = async (friendId) => {
-        await axios
+        await Apis
             .delete(`/friends/${friendId}`)
             .then((response) => {
                 setModalOn((modalOn) => !modalOn);

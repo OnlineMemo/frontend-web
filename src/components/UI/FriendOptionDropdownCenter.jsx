@@ -130,10 +130,6 @@ function FriendOptionDropdownRight(props) {
             })
     }
 
-    useEffect(() => {
-        CheckToken();
-    }, []);
-
 
     return (
         <DropdownContainer>
