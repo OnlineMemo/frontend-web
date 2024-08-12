@@ -6,6 +6,7 @@ import useDetectDropdown from "../../hooks/useDetectDropdown";
 import SendFriendshipModal from "../Modal/SendFriendshipModal";
 import axios from 'axios'
 import { CheckToken } from "../../utils/CheckToken";
+import Apis from "../../apis/Api";
 
 const DropdownContainer = styled.span`
     position: relative;
@@ -94,43 +95,39 @@ const DropMenu = styled.div`
 `;
 
 function FriendOptionDropdownRight(props) {
+    const { dropMain, dropItems } = props;
+
     const [ddIsOpen, ddRef, ddHandler] = useDetectDropdown(false);  // props를 받아오는게 아닌 훅 종류를 사용하였으므로, {}가 아닌, []로 받아야한다.
     // useDetectDropdown(initialValue)의 initialValue를 false로 넣어주었다. 그러므로, IsOpen이 false가 되어 ddIsOpen도 false가 된다.
-    // 참고로 dd는 dropdown을 줄여서 적어본것이다.
-
-    const { dropMain, dropItems, userId } = props;
+    // 참고로 dd는 dropdown을 줄여서 적어본것임.
 
     const [modalOn, setModalOn] = useState(false);
-    const [idValue, setIdValue] = useState("");
+    const [emailValue, setEmailValue] = useState("");
 
     const [isNone, setIsNone] = useState(false);
 
-    const handleChangeId = (event) => {
-        setIdValue(event.target.value);
+    const handleChangeEmail = (event) => {
+        setEmailValue(event.target.value);
     }
 
-    const handleSendClick = async (e) => {  // 화살표함수로 선언하여 이벤트 사용시 바인딩되도록 함.
-        // e.preventDefault();  // 리프레쉬 방지 (spa로서)
-
-        await axios
-            .post(`${process.env.REACT_APP_DB_HOST}/users/${userId}/friends`, {
-                loginId: idValue
+    const handleSendClick = async (e) => {
+        await Apis
+            .post(`/friends`, {
+                email: emailValue
             })
             .then((response) => {
-                //console.log(response);
-
                 setIsNone(false);
                 setModalOn(false);
             })
             .catch((error) => {
                 setIsNone(true);
-                //console.log(error);
             })
     }
 
     useEffect(() => {
         CheckToken();
     }, []);
+
 
     return (
         <DropdownContainer>
@@ -158,7 +155,7 @@ function FriendOptionDropdownRight(props) {
                 <SendFriendshipModal closeModal={() => { setModalOn(!modalOn); setIsNone(false); }}>
                     <h2>-&nbsp;친구 요청&nbsp;<i className="fa fa-paper-plane-o" aria-hidden="true"></i>&nbsp;-</h2>
                     <div style={{ marginBottom: "4px" }}>
-                        초대 id:&nbsp;&nbsp;<input type="text" onChange={handleChangeId} placeholder="친구의 id를 입력해주세요." maxLength="16"
+                        초대 id:&nbsp;&nbsp;<input type="text" onChange={handleChangeEmail} placeholder="친구의 id를 입력해주세요." maxLength="16"
                             style={{ width: "138px", textAlign: "center", paddingTop: "4px", paddingBottom: "4px", border: "1px solid #463f3a", borderRadius: "5px", backgroundColor: "#f4f3ee" }} />
                     </div>
                     <span style={isNone ? { display: "", fontSize: "1.26rem", color: "#dd2b2b" } : { display: "none" }}>!!! 이미 초대했거나 없는 사용자입니다 !!!</span>

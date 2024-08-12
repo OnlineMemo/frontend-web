@@ -87,7 +87,7 @@ function App(props) {
           <Route path="/memos" element={<YesLoginNav />} />  {/* "/users/:userId/memos" */}
           <Route path="/users/:userId" element={<YesLoginNav />} />
           <Route path="/friends" element={<YesLoginNav />} />  {/* "/users/:userId/friends" */}
-          <Route path="/users/:userId/senders" element={<YesLoginNav />} />
+          <Route path="/senders" element={<YesLoginNav />} />  {/* "/users/:userId/senders" */}
         </Routes>
         <Routes>
           <Route index element={<LoginPage />} />
@@ -101,7 +101,7 @@ function App(props) {
           <Route path="/memos" element={<MemoListPage />} />  {/* "/users/:userId/memos" */}
           <Route path="/users/:userId" element={<UserProfilePage />} />
           <Route path="/friends" element={<FriendListPage />} />  {/* "/users/:userId/friends" */}
-          <Route path="/users/:userId/senders" element={<SenderListPage />} />
+          <Route path="/senders" element={<SenderListPage />} />  {/* "/users/:userId/senders" */}
 
           <Route path="/memos/:memoId" element={<ReadAndEditMemoPage />} />
           <Route path="/memos/new-memo" element={<NewMemoPage />} />  {/* "/users/:userId/memo" */}

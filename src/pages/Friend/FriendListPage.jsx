@@ -1,11 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import '../../App.css';
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BasicWrapper from "../../components/Styled/BasicWrapper";
 import FriendList from "../../components/List/FriendList";
 import FriendOptionDropdownCenter from "../../components/UI/FriendOptionDropdownCenter";
 import { CheckToken } from "../../utils/CheckToken";
+import Apis from "../../apis/Api";
 
 const MoreWrapper = styled(BasicWrapper)`
     .fa-arrow-left {
@@ -71,21 +72,34 @@ const MoreWrapper = styled(BasicWrapper)`
 function FriendListPage(props) {
     const navigate = useNavigate();
 
-    const { userId } = useParams();
+    const [friends, setFriends] = useState();
 
     const dropItemsFriends = [
         {
             name: "> 수신 목록",
-            link: `/users/${userId}/senders`,
+            link: `/senders`,
         },
         {
             name: "+ 친구 요청",
         },
     ]
 
+    async function getFriends() {  // 해당 사용자의 모든 친구 리스트 조회
+        await Apis
+            .get(`/friends?isFriend=1`)
+            .then((response) => {
+                setFriends(response.data.data);
+            })
+            .catch((error) => {
+                //console.log(error);
+            })
+    }
+
     useEffect(() => {
         CheckToken();
+        getFriends();
     }, []);
+
 
     return (
         <MoreWrapper>
@@ -97,10 +111,9 @@ function FriendListPage(props) {
                 <FriendOptionDropdownCenter
                     dropMain={<span><button><i className="fa fa-users" aria-hidden="true"></i>&nbsp;<i className="fa fa-caret-down" aria-hidden="true"></i></button></span>}
                     dropItems={dropItemsFriends}
-                    userId = {userId}
                 />
             </h2>
-            <FriendList userId={userId} />
+            <FriendList friends={friends} getFriends={getFriends} />
         </MoreWrapper>
     );
 }
