@@ -1,11 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import '../../App.css';
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BasicWrapper from "../../components/Styled/BasicWrapper";
 import FriendOptionDropdownCenter from "../../components/UI/FriendOptionDropdownCenter";
 import SenderList from "../../components/List/SenderList";
 import { CheckToken } from "../../utils/CheckToken";
+import Apis from "../../apis/Api";
 
 const MoreWrapper = styled(BasicWrapper)`
     .fa-arrow-left {
@@ -85,21 +86,34 @@ const MoreWrapper = styled(BasicWrapper)`
 function SenderListPage(props) {
     const navigate = useNavigate();
 
-    const { userId } = useParams();
+    const [senders, setSenders] = useState([]);
 
     const dropItemsFriends = [
         {
             name: "> 친구 목록",
-            link: `/users/${userId}/friends`,
+            link: `/friends`,
         },
         {
             name: "+ 친구 요청",
         },
     ]
 
+    async function getSenders() {  // 해당 사용자의 수신된 친구요청 리스트 조회
+        await Apis
+            .get(`/friends?isFriend=0`)
+            .then((response) => {
+                setSenders(response.data.data);
+            })
+            .catch((error) => {
+                //console.log(error);
+            })
+    }
+
     useEffect(() => {
         CheckToken();
+        getSenders();
     }, []);
+
 
     return (
         <MoreWrapper>
@@ -113,7 +127,7 @@ function SenderListPage(props) {
                     dropItems={dropItemsFriends}
                 />
             </h2>
-            <SenderList userId={userId} />
+            <SenderList senders={senders} getSenders={getSenders} />
         </MoreWrapper>
     );
 }

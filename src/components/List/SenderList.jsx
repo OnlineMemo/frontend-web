@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from 'axios'
 import { CheckToken } from "../../utils/CheckToken";
+import Apis from "../../apis/Api";
 
 const SendersWrapper = styled.div`
     display: flex;
@@ -58,21 +59,14 @@ const NameIdWrapper = styled.div`
 `;
 
 function SenderList(props) {
-    const { userId } = props;
+    const { senders, getSenders } = props;
 
-    const [senders, setSenders] = useState();
-
-    const handleAcceptClick = async (senderId, event) => {  // 화살표함수로 선언하여 이벤트 사용시 바인딩되도록 함.
-        // e.preventDefault();  // 리프레쉬 방지 (spa로서)
-
-        await axios
-            .put(`${process.env.REACT_APP_DB_HOST}/users/${userId}/senders/${senderId}`, {
-                isFriend: 1,
-                isWait: 0
+    const handleAcceptOrRefuseClick = async (senderId, isAccept, event) => {
+        await Apis
+            .put(`/friends/${senderId}`, {
+                isAccept: isAccept
             })
             .then((response) => {
-                //console.log(response);
-
                 getSenders();
             })
             .catch((error) => {
@@ -80,56 +74,21 @@ function SenderList(props) {
             })
     }
 
-    const handleRefuseClick = async (senderId, event) => {  // 화살표함수로 선언하여 이벤트 사용시 바인딩되도록 함.
-        // e.preventDefault();  // 리프레쉬 방지 (spa로서)
-
-        await axios
-            .put(`${process.env.REACT_APP_DB_HOST}/users/${userId}/senders/${senderId}`, {
-                isFriend: 0,
-                isWait: 0
-            })
-            .then((response) => {
-                //console.log(response);
-
-                getSenders();
-            })
-            .catch((error) => {
-                //console.log(error);
-            })
-    }
-
-    async function getSenders() {  // 해당 사용자의 모든 친구요청발신자 리스트 조회
-        await axios
-            .get(`${process.env.REACT_APP_DB_HOST}/users/${userId}/senders`)
-            .then((response) => {
-                setSenders(response.data.data);
-                //console.log(response);
-            })
-            .catch((error) => {
-                //console.log(error);
-            })
-    }
-
-    useEffect(() => {
-        CheckToken();
-
-        getSenders();
-    }, []);
 
     return (
         <SendersWrapper>
             {senders && senders.map((sender) => {
                 return (
-                    <SenderItemsWrapper key={sender.id}>
+                    <SenderItemsWrapper key={sender.userId}>
                         <i className="fa fa-user" aria-hidden="true"></i>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <NameIdWrapper style={{ flexGrow: "8" }}>
-                            <div className="nameDiv">이름:&nbsp;{sender && sender.username}</div>
-                            <div className="idDiv">id:&nbsp;{sender && sender.loginId}</div>
+                            <div className="nameDiv">이름:&nbsp;{sender && sender.nickname}</div>
+                            <div className="idDiv">id:&nbsp;{sender && sender.email}</div>
                         </NameIdWrapper>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <button className="acceptButton" onClick={(event) => sender && handleAcceptClick(sender.id, event)}>수락</button>&nbsp;&nbsp;
-                        <button className="refuseButton" onClick={(event) => sender && handleRefuseClick(sender.id, event)}>거절</button>
+                        <button className="acceptButton" onClick={(event) => sender && handleAcceptOrRefuseClick(sender.userId, 1, event)}>수락</button>&nbsp;&nbsp;
+                        <button className="refuseButton" onClick={(event) => sender && handleAcceptOrRefuseClick(sender.userId, 0, event)}>거절</button>
                     </SenderItemsWrapper>
                 );
             })}

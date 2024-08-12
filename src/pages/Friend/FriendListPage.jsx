@@ -72,7 +72,7 @@ const MoreWrapper = styled(BasicWrapper)`
 function FriendListPage(props) {
     const navigate = useNavigate();
 
-    const [friends, setFriends] = useState();
+    const [friends, setFriends] = useState([]);
 
     const dropItemsFriends = [
         {
