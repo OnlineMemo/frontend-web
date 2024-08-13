@@ -46,6 +46,7 @@ Apis.interceptors.response.use(
                     }
                 } catch (err) {
                     console.error(err);
+                    localStorage.clear();
                     redirectToLogin(); // 토큰 재발급 실패 시 로그인 화면으로 이동
                 }
             return Promise.reject(err);
