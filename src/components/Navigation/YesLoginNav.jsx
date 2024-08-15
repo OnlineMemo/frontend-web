@@ -46,6 +46,7 @@ const Wrapper = styled(NavWrapper)`
         padding: 1px 7px;
 
         &:hover {
+            cursor: pointer;
             color: #463f3a;
             background-color: #bcb8b1;
             border-left: #463f3a solid 2px;
@@ -75,7 +76,7 @@ const Wrapper = styled(NavWrapper)`
 
 function YesLoginNav(props) {
     const navigate = useNavigate();
-    
+
     const { memoListPageFriends } = props;  // undefined 가능. 선택적.
 
     const dropItemsUser = [
