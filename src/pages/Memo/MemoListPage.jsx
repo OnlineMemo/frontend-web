@@ -7,9 +7,9 @@ import SearchMemo from "../../components/UI/SearchMemo";
 import MemoList from "../../components/List/MemoList";
 import { CheckToken } from "../../utils/CheckToken";
 import Apis from "../../apis/Api";
+import YesLoginNav from "../../components/Navigation/YesLoginNav";
 
 const DivWrapper = styled.div`
-
     // flex-container 역할
     display: flex;
     flex-direction: row;
@@ -20,7 +20,6 @@ const DivWrapper = styled.div`
 
     // flex-item 역할
     .flex-item {
-
     }
 `;
 
@@ -75,13 +74,16 @@ function MemoListPage(props) {
 
 
     return (
-        <BasicWrapper>
-            <DivWrapper className="flex-container">
-                <SortMemo className="flex-item" setParams={setParams} />
-                <SearchMemo className="flex-item" setParams={setParams} />
-            </DivWrapper>
-            <MemoList memos={memos} search={search} allFriends={allFriends} getMemos={getMemos} />
-        </BasicWrapper>
+        <>
+            <YesLoginNav memoListPageFriends={allFriends} />
+            <BasicWrapper>
+                <DivWrapper className="flex-container">
+                    <SortMemo className="flex-item" setParams={setParams} />
+                    <SearchMemo className="flex-item" setParams={setParams} />
+                </DivWrapper>
+                <MemoList memos={memos} search={search} allFriends={allFriends} getMemos={getMemos} />
+            </BasicWrapper>
+        </>
     );
 }
 

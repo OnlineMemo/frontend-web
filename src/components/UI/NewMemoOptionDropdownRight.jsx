@@ -92,7 +92,7 @@ const FriendsWrapper = styled.div`
 function NewMemoOptionDropdownRight(props) {
     const navigate = useNavigate();
 
-    const { dropMain, dropItems } = props;
+    const { dropMain, dropItems, memoListPageFriends } = props;  // memoListPageFriends는 undefined 가능. 선택적.
 
     const [ddIsOpen, ddRef, ddHandler] = useDetectDropdown(false);  // props를 받아오는게 아닌 훅 종류를 사용하였으므로, {}가 아닌, []로 받아야한다.
     // useDetectDropdown(initialValue)의 initialValue를 false로 넣어주었다. 그러므로, IsOpen이 false가 되어 ddIsOpen도 false가 된다.
@@ -115,8 +115,9 @@ function NewMemoOptionDropdownRight(props) {
     }
 
     useEffect(() => {
-        getFriends();
-    }, []);
+        if(memoListPageFriends) setFriends(memoListPageFriends);
+        else getFriends();
+    }, [memoListPageFriends]);
 
 
     return (

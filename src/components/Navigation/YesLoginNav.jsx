@@ -75,6 +75,8 @@ const Wrapper = styled(NavWrapper)`
 
 function YesLoginNav(props) {
     const navigate = useNavigate();
+    
+    const { memoListPageFriends } = props;  // undefined 가능. 선택적.
 
     const dropItemsUser = [
         {
@@ -121,6 +123,7 @@ function YesLoginNav(props) {
                 <NewMemoOptionDropdownRight
                     dropMain={<span><button>+ 새 메모&nbsp;<i className="fa fa-caret-down" aria-hidden="true"></i></button></span>}
                     dropItems={dropItemsPlus}
+                    memoListPageFriends={memoListPageFriends}
                 />
             </ul>
         </Wrapper>
