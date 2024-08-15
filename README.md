@@ -7,8 +7,8 @@
 
 ### Refactor
 - <a href="https://github.com/OnlineMemo/frontend-web/issues/1">Github Issue</a>
-- <a href="https://github.com/OnlineMemo/frontend-web/tree/5882c62ecf8e801c6045009a6c82fc5197cd556f">Before Code</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="https://github.com/OnlineMemo/backend/tree/d90ba0052e07c23c4bbd5c85dd018515eb6ca80b">After Code</a>
-- <a href="https://github.com/OnlineMemo/backend">Backend Refactor</a>
+- <a href="https://github.com/OnlineMemo/frontend-web/tree/5882c62ecf8e801c6045009a6c82fc5197cd556f">Before Code</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="https://github.com/OnlineMemo/frontend-web/tree/refactor/onlinememo-v2">After Code</a>
+- <a href="https://github.com/OnlineMemo/backend/tree/refactor/onlinememo-v2">Backend Refactor</a>
 
 <details open>
     <summary><h3>&nbsp;Contents</h3></summary>
