@@ -154,7 +154,7 @@ function ChangePwPage(props) {
 
     useEffect(() => {
         const storedAccessToken = localStorage.getItem("accessToken");
-        const storedRefreshToken = localStorage.getItem("accessToken");
+        const storedRefreshToken = localStorage.getItem("refreshToken");
 
         if (storedAccessToken && storedRefreshToken) {
             navigate(`/memos`);

@@ -84,12 +84,16 @@ function LoginPage(props) {
 
     useEffect(() => {
         const storedAccessToken = localStorage.getItem("accessToken");
-        const storedRefreshToken = localStorage.getItem("accessToken");
+        const storedRefreshToken = localStorage.getItem("refreshToken");
 
         if (!storedAccessToken || !storedRefreshToken) {
-            setTimeout(() => {
-                setNoticeModalOn(true);
-            }, 300); // 0.3초 딜레이 후에 공지 모달 생성.
+            const currentDate = new Date();
+            const noticeLimitDate = new Date('2024-09-01T00:00:00+09:00');  // 한국 시각 기준으로 2024.09.01 00시
+            if (currentDate < noticeLimitDate) {  // 9월1일이 되기전까지는 공지모달 띄움.
+                setTimeout(() => {
+                    setNoticeModalOn(true);
+                }, 300); // 0.3초 딜레이 후에 공지 모달 생성.
+            }
         }
         else {
             navigate(`/memos`);
