@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-// import axios from 'axios'
-// import { CheckToken } from "../../utils/CheckToken";
 
 const TitleDateUserWrapper = styled.div`
     display: flex;
@@ -75,41 +73,21 @@ const UserWrapper = styled.div`
 `;
 
 function MemoListItem(props) {
-    const { memo } = props;
-    // const { memoId } = props;
+    const { title, modifiedTime, userResponseDtoList, memoHasUsersCount } = props;
 
-    // const [memo, setMemo] = useState();
-
-    // async function getMemo() {  // 해당 사용자의 메모 1개 조회
-    //     await axios
-    //         .get(`${process.env.REACT_APP_DB_HOST}/memos/${memoId}`)
-    //         .then((response) => {
-    //             setMemo(response.data.data);
-    //             //console.log(response);
-    //         })
-    //         .catch((error) => {
-    //             //console.log(error);
-    //         })
-    // }
-
-    // useEffect(() => {
-    //     CheckToken();
-
-    //     getMemo();  // 출생시점에 getMemo 한번 실행.
-    // }, []);
 
     return (
         <TitleDateUserWrapper>
             <TitleDateWrapper>
-                <div className="titleDiv">{memo && memo.title}</div>
-                <div className="dateDiv">{memo && memo.modifiedDate}</div>
+                <div className="titleDiv">{title && title}</div>
+                <div className="dateDiv">{modifiedTime && modifiedTime}</div>
             </TitleDateWrapper>
             <UserWrapper>
-                {memo && memo.userResponseDtos.map((user) => {
+                {(userResponseDtoList && memoHasUsersCount) && userResponseDtoList.map((user) => {
                     return (
-                        <ul key={user.id} className="user-ul" style={memo.memoHasUsersCount == 1 ? { visibility: "hidden" } : { visibility: "visible" }}>
+                        <ul key={user.userId} className="user-ul" style={memoHasUsersCount == 1 ? { visibility: "hidden" } : { visibility: "visible" }}>
                             <li className="user-li">
-                                &nbsp;{user.username}&nbsp;
+                                &nbsp;{user.nickname}&nbsp;
                             </li>
                         </ul>
                     );

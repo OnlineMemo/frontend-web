@@ -5,7 +5,6 @@ import axios from 'axios'
 import MemoListItem from "./MemoListItem";
 import IsStarButton from "../UI/IsStarButton";
 import MemoOptionButton from "../UI/MemoOptionButton";
-import { CheckToken } from "../../utils/CheckToken";
 
 const MemosWrapper = styled.div`
     display: flex;
@@ -88,95 +87,28 @@ const NoneSearch = styled.div`
 `;
 
 function MemoList(props) {
-    const { userId, sortValue, searchValue } = props;
+    const { search, memos, allFriends, getMemos } = props;
 
-    const [memos, setMemos] = useState();
-
-    async function getMemos() {  // 해당 사용자의 모든 메모 리스트 조회 (초기 메인 화면)
-        await axios
-            .get(`${process.env.REACT_APP_DB_HOST}/users/${userId}/memos`)
-            .then((response) => {
-                setMemos(response.data.data);
-                //console.log(response);
-
-                var result = document.getElementById("noneResult");
-                result.style.display = 'none';
-            })
-            .catch((error) => {
-                //console.log(error);
-            })
-    }
-
-    async function sortMemos() {  // 메모들 정렬해서 조회
-        await axios
-            .get(`${process.env.REACT_APP_DB_HOST}/users/${userId}/memos?order=${sortValue}`)
-            .then((response) => {
-                setMemos(response.data.data);
-                //console.log(response);
-
-                var result = document.getElementById("noneResult");
-                result.style.display = 'none';
-            })
-            .catch((error) => {
-                //console.log(error);
-            })
-    }
-
-    async function searchMemos() {  // 메모들 검색해서 조회
-        await axios
-            .get(`${process.env.REACT_APP_DB_HOST}/users/${userId}/memos?search=${searchValue}`)
-            .then((response) => {
-                setMemos(response.data.data);
-                //console.log(response);
-
-                if (Object.keys(response.data.data).length == 0) {  // 검색 결과가 0개일 경우
-                    var result = document.getElementById("noneResult");
-                    result.style.display = 'block';
-                }
-                else {
-                    var result = document.getElementById("noneResult");
-                    result.style.display = 'none';
-                }
-            })
-            .catch((error) => {
-                //console.log(error);
-            })
-    }
-
-    useEffect(() => {  // 출생시점과, sortValue 또는 searchValue 의 값이 변경될때 실행.
-        CheckToken();
-
-        if (sortValue == null && searchValue == null) {
-            getMemos();
-        }
-        else if (sortValue != null) {
-            sortMemos();
-        }
-        else if (searchValue != null) {
-            searchMemos();
-        }
-    }, [sortValue, searchValue]);
 
     return (
         <MemosWrapper>
             <NoneSearch>
                 <div id="noneResult">
                     <span><i className="fa fa-times-circle" aria-hidden="true"></i></span><div style={{ lineHeight: "45%" }}><br></br></div>
-                    검색하신 <strong>&#39;{searchValue}&#39;</strong>을 포함하는 <span>메모가 존재하지 않습니다.</span><br></br>
+                    검색하신 <strong>&#39;{search}&#39;</strong>을 포함하는 <span>메모가 존재하지 않습니다.</span><br></br>
                     제목 또는 내용에 포함된 키워드로 <span>다시 검색해주십시오.</span>
                 </div>
             </NoneSearch>
             {memos && memos.map((memo) => {
                 return (
-                    <MemoItemsWrapper key={memo.id}>
-                        <IsStarButton memoId={memo.id} style={{ flexGrow: "4" }} />
+                    <MemoItemsWrapper key={memo.memoId}>
+                        <IsStarButton style={{ flexGrow: "4" }} memoId={memo.memoId} isStar={memo.isStar} memoHasUsersCount={memo.memoHasUsersCount} />
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <Link style={{ textDecoration: "none", flexGrow: "8" }} to={`/memos/${memo.id}`} state={{ userId: userId }}>
-                            <MemoListItem memo={memo} /> 
-                            {/* <MemoListItem memoId={memo.id} /> */}
+                        <Link style={{ textDecoration: "none", flexGrow: "8" }} to={`/memos/${memo.memoId}`} >
+                            <MemoListItem title={memo.title} modifiedTime={memo.modifiedTime} userResponseDtoList={memo.userResponseDtoList} memoHasUsersCount={memo.memoHasUsersCount} /> 
                         </Link>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <MemoOptionButton memoHasUsersCount={memo.memoHasUsersCount} style={{ flexGrow: "4" }} userId={userId} memoId={memo.id} rerendering={getMemos} />
+                        <MemoOptionButton style={{ flexGrow: "4" }} memoId={memo.memoId} userResponseDtoList={memo.userResponseDtoList} memoHasUsersCount={memo.memoHasUsersCount} allFriends={allFriends} getMemos={getMemos} />
                     </MemoItemsWrapper>
                 );
             })}

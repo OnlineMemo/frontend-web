@@ -7,7 +7,7 @@ import axios from 'axios'
 import FriendGroupModal from "../Modal/FriendGroupModal";
 import InviteFriendList from "../List/InviteFriendList";
 import ConfirmModal from "../Modal/ConfirmModal";
-import { CheckToken } from "../../utils/CheckToken";
+import Apis from "../../apis/Api";
 
 const DropdownContainer = styled.div`
     position: relative;
@@ -34,7 +34,7 @@ const DropMenu = styled.div`
     text-align: left;
     border-radius: 7px;
     transform: translate(-50%, -20px);
-    z-index: 990;  // 페이지위에 겹친 요소들중 가장 위에있는 정도. 숫자가 클수록 위에 있다.
+    z-index: 990;
 
     @media(max-width: 565px) {
         // left: 145%;
@@ -102,17 +102,15 @@ const FriendsWrapper = styled.div`
 function MemoOptionDropdownRight(props) {
     const navigate = useNavigate();
 
+    const { dropMain, dropItems, memoId, userResponseDtoList, allFriends, getMemos } = props;
+
     const [ddIsOpen, ddRef, ddHandler] = useDetectDropdown(false);  // props를 받아오는게 아닌 훅 종류를 사용하였으므로, {}가 아닌, []로 받아야한다.
     // useDetectDropdown(initialValue)의 initialValue를 false로 넣어주었다. 그러므로, IsOpen이 false가 되어 ddIsOpen도 false가 된다.
-    // 참고로 dd는 dropdown을 줄여서 적어본것이다.
-
-    const { dropMain, dropItems, userId, memoId, rerendering } = props;
+    // 참고로 dd는 dropdown을 줄여서 적은것이다.
 
     const [inviteModalOn, setInviteModalOn] = useState(false);
     const [checkedList, setCheckedList] = useState([]);
 
-    const [allFriends, setAllFriends] = useState([]);
-    const [users, setUsers] = useState([]);
     const [invitableFriends, setInvitableFriends] = useState([]);
 
     const [deleteModalOn, setDeleteModalOn] = useState(false);
@@ -129,56 +127,26 @@ function MemoOptionDropdownRight(props) {
         }
     }
 
-    const handleInviteGroupMemo = async (e) => {  // 화살표함수로 선언하여 이벤트 사용시 바인딩되도록 함.
-        // e.preventDefault();  // 리프레쉬 방지 (spa로서)
+    const handleInviteGroupMemo = async (e) => {
+        const checkedIdList = checkedList.map((user) => user.userId);  // 친구의 userId만 추출한 리스트 생성.
 
-        await axios
-            .post(`${process.env.REACT_APP_DB_HOST}/memos/${memoId}`, {
-                userRequestDtos: checkedList
+        await Apis
+            .post(`memos/${memoId}`, {
+                userIdList: checkedIdList
             })
             .then((response) => {
-                //console.log(response);
-
-                navigate(`/memos/${memoId}`, { state: { userId: userId } });
+                navigate(`/memos/${memoId}`);
             })
             .catch((error) => {
                 //console.log(error);
             })
     }
 
-    const handleDeleteClick = async (e) => {  // 화살표함수로 선언하여 이벤트 사용시 바인딩되도록 함.
-        // e.preventDefault();  // 리프레쉬 방지 (spa로서)
-
-        await axios
-            .delete(`${process.env.REACT_APP_DB_HOST}/users/${userId}/memos/${memoId}`)
+    const handleDeleteClick = async (e) => { 
+        await Apis
+            .delete(`/memos/${memoId}`)
             .then((response) => {
-                //console.log(response);
-
-                rerendering();
-            })
-            .catch((error) => {
-                //console.log(error);
-            })
-    }
-
-    async function getFriends() {  // 해당 사용자의 모든 친구 리스트 조회
-        await axios
-            .get(`${process.env.REACT_APP_DB_HOST}/users/${userId}/friends`)
-            .then((response) => {
-                setAllFriends(response.data.data);
-                //console.log(response);
-            })
-            .catch((error) => {
-                //console.log(error);
-            })
-    }
-
-    async function getMemoHasUsers() {  // 해당 메모의 모든 사용자 리스트 조회 (메모 조회)
-        await axios
-            .get(`${process.env.REACT_APP_DB_HOST}/memos/${memoId}`)
-            .then((response) => {
-                setUsers(response.data.data.userResponseDtos);
-                //console.log(response);
+                getMemos();
             })
             .catch((error) => {
                 //console.log(error);
@@ -186,14 +154,12 @@ function MemoOptionDropdownRight(props) {
     }
 
     useEffect(() => {
-        CheckToken();
-
-        getFriends();
-        getMemoHasUsers();
+        const users = userResponseDtoList;
         const invitableFriendList = allFriends.filter(obj => !users.map(x => JSON.stringify(x)).includes(JSON.stringify(obj)));
         // 초대할수있는 친구목록 = 친구전체목록 - 원래메모사용자들 차집합
         setInvitableFriends(invitableFriendList);
-    }, [rerendering]);
+    }, [getMemos]);
+
 
     return (
         <DropdownContainer>
@@ -221,7 +187,7 @@ function MemoOptionDropdownRight(props) {
                 <FriendGroupModal closeModal={() => setInviteModalOn(!inviteModalOn)}>
                     <h2 style={{ fontSize: "2rem", color: "#463f3a", marginTop: "1.5px", marginBottom: "15px" }}>-&nbsp;초대할 친구들 선택&nbsp;-</h2>
                     <FriendsWrapper>
-                        <InviteFriendList userId={userId} checkedList={checkedList} setCheckedList={setCheckedList} friends={invitableFriends} />
+                        <InviteFriendList checkedList={checkedList} setCheckedList={setCheckedList} friends={invitableFriends} />
                     </FriendsWrapper>
                     <button style={{ float: "right", fontSize: "1.5rem", marginTop: "10px", padding: "1px 6px 1px 6px", borderTop: "2px solid #767676", borderLeft: "2px solid #767676", borderBottom: "2px solid #212121", borderRight: "2px solid #212121" }} onClick={handleInviteGroupMemo}>선택 완료</button>
                 </FriendGroupModal>

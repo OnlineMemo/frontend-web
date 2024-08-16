@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from 'axios'
 import OneMemoWrapper from "../../components/Styled/OneMemoWrapper";
 import ReadAndEditMemoNav from "../../components/Navigation/ReadAndEditMemoNav";
 import { CheckToken } from "../../utils/CheckToken";
+import Apis from "../../apis/Api";
 
 function ReadAndEditMemoPage(props) {
     const { memoId } = useParams();
-
-    const location = useLocation();
-    const { userId } = location.state;
 
     const [memo, setMemo] = useState();
     const [titleValue, setTitleValue] = useState("");
@@ -77,8 +75,8 @@ function ReadAndEditMemoPage(props) {
     };
 
     async function getMemo() {  // 해당 사용자의 메모 1개 조회
-        await axios
-            .get(`${process.env.REACT_APP_DB_HOST}/memos/${memoId}`)
+        await Apis
+            .get(`/memos/${memoId}`)
             .then((response) => {
                 setMemo(response.data.data);
                 setTitleValue(response.data.data.title);
@@ -90,8 +88,6 @@ function ReadAndEditMemoPage(props) {
                     let height = textarea.scrollHeight;  // 높이
                     textarea.style.height = `${height + 8}px`;
                 }  // textarea 초기 높이 지정
-
-                //console.log(response);
             })
             .catch((error) => {
                 //console.log(error);
@@ -100,8 +96,7 @@ function ReadAndEditMemoPage(props) {
 
     useEffect(() => {
         CheckToken();
-
-        getMemo();  // 출생시점에 getMemo 한번 실행.
+        getMemo();
     }, [purpose]);
 
     let purposeText;
@@ -138,7 +133,7 @@ function ReadAndEditMemoPage(props) {
 
     return (
         <div>
-            <ReadAndEditMemoNav purpose={purposeText} userId={userId} memoId={memoId} title={memo && titleValue} content={memo && contentValue} propPurposeFunction={highPurposeFunction} rerendering={getMemo} />
+            <ReadAndEditMemoNav purpose={purposeText} memoId={memoId} title={memo && titleValue} content={memo && contentValue} propPurposeFunction={highPurposeFunction} rerendering={getMemo} />
             <OneMemoWrapper>
                 {purposeComponent}
             </OneMemoWrapper>

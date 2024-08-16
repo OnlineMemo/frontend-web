@@ -129,8 +129,7 @@ const Inform = () => {
             <h5>&lt;&nbsp;개발자 정보&nbsp;&nbsp;<i className="fa fa-id-badge" aria-hidden="true"></i>&nbsp;&gt;</h5>
             <ul>
                 <li><strong>이름 :</strong>&nbsp;&nbsp;사현진 (SAHYUNJIN)</li>
-                <li><strong>정보 :</strong>&nbsp;&nbsp;상명대학교 소프트웨어학과 19학번</li>
-                <li><strong>역할 :</strong>&nbsp;&nbsp;프론트엔드, 백엔드 개발, 웹 디자인</li>
+                <li><strong>역할 :</strong>&nbsp;&nbsp;FullStack, DevOps, Design</li>
                 <div style={{ lineHeight: "17%" }}><br></br></div>
                 <span>&nbsp;&nbsp;<i className="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;Full Stack Developer</span>
             </ul>
@@ -144,7 +143,7 @@ const Inform = () => {
                 <li><strong>프론트엔드 :</strong>&nbsp;&nbsp;React, JavaScript</li>
                 <li><strong>백엔드 :</strong>&nbsp;&nbsp;Spring Boot, Java</li>
                 <li><strong>데이터베이스 :</strong>&nbsp;&nbsp;MySQL</li>
-                <li><strong>보안 :</strong>&nbsp;&nbsp;Spring Security, JSON Web Token</li>
+                <li><strong>보안 :</strong>&nbsp;&nbsp;Spring Security, JWT</li>
                 <li><strong>기타 :</strong>&nbsp;&nbsp;Amazon AWS</li>
                 <div style={{ lineHeight: "17%" }}><br></br></div>
                 <span>&nbsp;&nbsp;<i className="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;REST API, HTTPS</span>

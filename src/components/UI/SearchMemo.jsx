@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import '../../App.css';
 
@@ -23,9 +22,7 @@ const Button = styled.button`
 `;
 
 function SearchMemo(props) {
-    const navigate = useNavigate();
-
-    const { userId } = props;
+    const { setParams } = props;
 
     const [value, setValue] = useState('');
 
@@ -34,13 +31,24 @@ function SearchMemo(props) {
     }
 
     const handleSearchClick = (event) => {
-        navigate(`/users/${userId}/memos?search=${value}`);
+        const filter = null;
+        const search = (value == "") ? null : value;
+        setParams(filter, search);
     }
+
+    const doClickEnter = (event) => {
+        if (event.key === 'Enter') {
+            handleSearchClick();
+        }
+    };
+
 
     return (
         <div>
             <input 
-                type="text" value={value} placeholder="검색" onChange={handleChange}
+                type="text" value={value} placeholder="검색"
+                onChange={handleChange}
+                onKeyDown={(event) => doClickEnter(event)}
                 style={{ border:"solid 2px #645b56", borderRadius:"3px",
                     width: "91px", height: "19px", fontSize: "1.5rem", fontFamily: "jua", color:"#463f3a", paddingTop: "0px", paddingBottom: "0px" }}
             />

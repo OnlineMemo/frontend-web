@@ -3,6 +3,7 @@ import styled from "styled-components";
 import axios from 'axios'
 import ConfirmModal from "../Modal/ConfirmModal";
 import { CheckToken } from "../../utils/CheckToken";
+import Apis from "../../apis/Api";
 
 const FriendsWrapper = styled.div`
     display: flex;
@@ -59,9 +60,8 @@ const NameIdWrapper = styled.div`
 `;
 
 function FriendList(props) {
-    const { userId } = props;
+    const { friends, getFriends } = props;
 
-    const [friends, setFriends] = useState();
     const [modalOn, setModalOn] = useState(false);
     const [modalFriendId, setModalFriendId] = useState();
 
@@ -70,14 +70,10 @@ function FriendList(props) {
         setModalFriendId(friendId);
     }
 
-    const handleDeleteClick = async (friendId) => {  // 화살표함수로 선언하여 이벤트 사용시 바인딩되도록 함.
-        // e.preventDefault();  // 리프레쉬 방지 (spa로서)
-
-        await axios
-            .delete(`${process.env.REACT_APP_DB_HOST}/users/${userId}/friends/${friendId}`)
+    const handleDeleteClick = async (friendId) => {
+        await Apis
+            .delete(`/friends/${friendId}`)
             .then((response) => {
-                //console.log(response);
-
                 setModalOn((modalOn) => !modalOn);
                 getFriends();
             })
@@ -86,37 +82,20 @@ function FriendList(props) {
             })
     }
 
-    async function getFriends() {  // 해당 사용자의 모든 친구 리스트 조회
-        await axios
-            .get(`${process.env.REACT_APP_DB_HOST}/users/${userId}/friends`)
-            .then((response) => {
-                setFriends(response.data.data);
-                //console.log(response);
-            })
-            .catch((error) => {
-                //console.log(error);
-            })
-    }
-
-    useEffect(() => {
-        CheckToken();
-
-        getFriends();
-    }, []);
 
     return (
         <FriendsWrapper>
             {friends && friends.map((friend) => {
                 return (
-                    <FriendItemsWrapper key={friend.id}>
+                    <FriendItemsWrapper key={friend.userId}>
                         <i className="fa fa-user" aria-hidden="true"></i>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <NameIdWrapper style={{ flexGrow: "8" }}>
-                            <div className="nameDiv">이름:&nbsp;{friend && friend.username}</div>
-                            <div className="idDiv">id:&nbsp;{friend && friend.loginId}</div>
+                            <div className="nameDiv">이름:&nbsp;{friend && friend.nickname}</div>
+                            <div className="idDiv">id:&nbsp;{friend && friend.email}</div>
                         </NameIdWrapper>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <button className="deleteFriendButton" onClick={(event) => friend && handleFirstModalClick(friend.id, event)}>- 친구 삭제</button>
+                        <button className="deleteFriendButton" onClick={(event) => friend && handleFirstModalClick(friend.userId, event)}>- 친구 삭제</button>
                     </FriendItemsWrapper>
                 );
             })}

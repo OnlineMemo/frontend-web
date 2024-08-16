@@ -70,14 +70,12 @@ const DropMenu = styled.div`
 function DropdownLeft(props) {
     const [ddIsOpen, ddRef, ddHandler] = useDetectDropdown(false);  // props를 받아오는게 아닌 훅 종류를 사용하였으므로, {}가 아닌, []로 받아야한다.
     // useDetectDropdown(initialValue)의 initialValue를 false로 넣어주었다. 그러므로, IsOpen이 false가 되어 ddIsOpen도 false가 된다.
-    // 참고로 dd는 dropdown을 줄여서 적어본것이다.
+    // 참고로 dd는 dropdown을 줄여서 적어본것임.
 
     const { dropMain, dropItems } = props;
 
     const handleLogoutClick = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('expirationTime');
-        
+        localStorage.clear();  // 이때는 모두 비워주도록함.
         window.location.href = '/login';
     }
 

@@ -58,7 +58,7 @@ const NameIdWrapper = styled.div`
 `;
 
 function InviteFriendList(props) {
-    const { userId, checkedList, setCheckedList, friends } = props;
+    const { checkedList, setCheckedList, friends } = props;
 
     const [isChecked, setIsChecked] = useState(false);
 
@@ -88,12 +88,12 @@ function InviteFriendList(props) {
         <FriendsWrapper>
             {friends && friends.map((friend) => {
                 return (
-                    <FriendItemsWrapper key={friend.id} onClick={() => handleClick(friend.id)}>
-                        <Checkbox friend={friend} friendId={friend.id} checked={isChecked} onChange={(e) => checkHandler(friend, e)} checkedList={checkedList} checkHandler={checkHandler}></Checkbox>
+                    <FriendItemsWrapper key={friend.userId} onClick={() => handleClick(friend.userId)}>
+                        <Checkbox friend={friend} friendId={friend.userId} checked={isChecked} onChange={(e) => checkHandler(friend, e)} checkedList={checkedList} checkHandler={checkHandler}></Checkbox>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <NameIdWrapper style={{ flexGrow: "8" }}>
-                            <div className="nameDiv">이름:&nbsp;{friend && friend.username}</div>
-                            <div className="idDiv">id:&nbsp;{friend && friend.loginId}</div>
+                            <div className="nameDiv">이름:&nbsp;{friend && friend.nickname}</div>
+                            <div className="idDiv">id:&nbsp;{friend && friend.email}</div>
                         </NameIdWrapper>
                     </FriendItemsWrapper>
                 );

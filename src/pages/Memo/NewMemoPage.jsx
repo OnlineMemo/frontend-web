@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import OneMemoWrapper from "../../components/Styled/OneMemoWrapper";
 import NewMemoNav from "../../components/Navigation/NewMemoNav";
 import { CheckToken } from "../../utils/CheckToken";
 
 function NewMemoPage(props) {
-    const { userId } = useParams();
-
     const location = useLocation();
     const { isGroup, friendList } = location.state;
 
@@ -80,7 +78,6 @@ function NewMemoPage(props) {
 
     useEffect(() => {
         CheckToken();
-
         startNewMemo();  // 출생시점에 startNewMemo 한번 실행.
     }, []);
 
@@ -101,7 +98,7 @@ function NewMemoPage(props) {
 
     return (
         <div>
-            <NewMemoNav userId={userId} title={titleValue} content={contentValue} isGroup={isGroup} friendList={friendList} />
+            <NewMemoNav title={titleValue} content={contentValue} isGroup={isGroup} friendList={friendList} />
             <OneMemoWrapper>
                 {purposeComponent}
             </OneMemoWrapper>

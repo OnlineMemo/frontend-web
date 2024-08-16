@@ -1,25 +1,11 @@
-//import { useNavigate } from "react-router-dom";
 import axios from 'axios'
 
 function CheckToken() {
-    //const navigateLogin = useNavigate();
-    
-    const storedToken = localStorage.getItem('token');
-    const storedExpirationDate = localStorage.getItem('expirationTime') || '0';
+    const storedAccessToken = localStorage.getItem("accessToken");
+    const storedRefreshToken = localStorage.getItem("refreshToken");
 
-    if (storedToken) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
-
-        const remainingTime = storedExpirationDate - String(new Date().getTime());
-        if (remainingTime <= '1000') {
-            localStorage.removeItem('token');
-            localStorage.removeItem('expirationTime');
-
-            window.location.href = '/login';
-        }
-    }
-    else {
-        window.location.href = '/login';
+    if(!storedAccessToken || !storedRefreshToken) {
+        window.location.href = "/login";
     }
 }
 

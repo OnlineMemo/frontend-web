@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import '../../App.css';
 
@@ -23,9 +22,7 @@ const Button = styled.button`
 `;
 
 function SortMemo(props) {
-    const navigate = useNavigate();
-
-    const { userId } = props;
+    const { setParams } = props;
 
     const [value, setValue] = useState('all-memo');
 
@@ -34,8 +31,11 @@ function SortMemo(props) {
     }
 
     const handleSortClick = (event) => {
-        navigate(`/users/${userId}/memos?order=${value}`);
+        const filter = (value == 'all-memo') ? null : value;
+        const search = null;
+        setParams(filter, search);
     }
+
 
     return (
         <div>

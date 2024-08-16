@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import '../../App.css';
 import NavWrapper from "../Styled/NavWrapper";
@@ -46,6 +46,7 @@ const Wrapper = styled(NavWrapper)`
         padding: 1px 7px;
 
         &:hover {
+            cursor: pointer;
             color: #463f3a;
             background-color: #bcb8b1;
             border-left: #463f3a solid 2px;
@@ -76,12 +77,12 @@ const Wrapper = styled(NavWrapper)`
 function YesLoginNav(props) {
     const navigate = useNavigate();
 
-    const { userId } = useParams();
+    const { memoListPageFriends } = props;  // undefined 가능. 선택적.
 
     const dropItemsUser = [
         {
             name: "회원정보",
-            link: `/users/${userId}`,
+            link: `/users`,
         },
         {
             name: "공지사항",
@@ -99,7 +100,7 @@ function YesLoginNav(props) {
     const dropItemsPlus = [
         {
             name: "+ 개인 메모",
-            link: `/users/${userId}/memo`,
+            link: `/memos/new-memo`,
         },
         {
             name: "+ 공동 메모",
@@ -110,6 +111,7 @@ function YesLoginNav(props) {
         CheckToken();
     }, []);
 
+
     return (
         <Wrapper>
             <ul>
@@ -117,12 +119,12 @@ function YesLoginNav(props) {
                     dropMain={<i className="fa fa-user-o" aria-hidden="true"></i>}
                     dropItems={dropItemsUser}
                 />
-                <li><a onClick={() => { navigate(`/users/${userId}/memos`) }}>메모 목록</a></li>
-                <li><a onClick={() => { navigate(`/users/${userId}/friends`) }}>친구 목록</a></li>
+                <li><a onClick={() => { navigate(`/memos`) }}>메모 목록</a></li>
+                <li><a onClick={() => { navigate(`/friends`) }}>친구 목록</a></li>
                 <NewMemoOptionDropdownRight
                     dropMain={<span><button>+ 새 메모&nbsp;<i className="fa fa-caret-down" aria-hidden="true"></i></button></span>}
                     dropItems={dropItemsPlus}
-                    userId={userId}
+                    memoListPageFriends={memoListPageFriends}
                 />
             </ul>
         </Wrapper>

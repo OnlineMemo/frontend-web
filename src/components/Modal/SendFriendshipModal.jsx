@@ -46,6 +46,7 @@ function SendFriendshipModal(props) {
         props.closeModal();
     }
 
+    
     return (
         <ModalWrapper onClick={handleCloseModalClick}>
             <div className="modalBody" onClick={(e) => e.stopPropagation()}>

@@ -5,6 +5,7 @@ import '../../App.css';
 import { useNavigate } from "react-router-dom";
 import HelloWrapper from "../../components/Styled/HelloWrapper"
 import ConfirmModal from "../../components/Modal/ConfirmModal";
+import Apis from "../../apis/Api";
 
 const MoreWrapper = styled(HelloWrapper)`
     .flex-container {
@@ -47,7 +48,7 @@ function ChangePwPage(props) {
     const [samePwErrorModalOn, setSamePwErrorModalOn] = useState(false);
     const [loginErrorModalOn, setLoginErrorModalOn] = useState(false);
 
-    const [loginIdValue, setLoginIdValue] = useState("");
+    const [emailValue, setEmailValue] = useState("");
     const [pwValue, setPwValue] = useState("");
     const [newPwValue, setNewPwValue] = useState("");
     const [confirmValue, setConfirmValue] = useState("");
@@ -59,10 +60,8 @@ function ChangePwPage(props) {
 
     const [isWrongResult, setIsWrongResult] = useState(false);
 
-    const [tokenUserId, setTokenUserId] = useState();
-
-    const handleChangeLoginId = (event) => {
-        setLoginIdValue(event.target.value);
+    const handleChangeEmail = (event) => {
+        setEmailValue(event.target.value);
     }
 
     const handleChangePw = (event) => {
@@ -79,9 +78,7 @@ function ChangePwPage(props) {
         setConfirmValue(event.target.value);
     }
 
-    const handleUpdatePwClick = async (loginIdValue, pwValue, newPwValue, confirmValue, e) => {  // 화살표함수로 선언하여 이벤트 사용시 바인딩되도록 함.
-        // e.preventDefault();  // 리프레쉬 방지 (spa로서)
-
+    const handleUpdatePwClick = async (emailValue, pwValue, newPwValue, confirmValue, e) => {
         if (newPwValue === confirmValue) {
             if (newPwValue.length < 8 && pwValue !== newPwValue) {
                 setIsWrongId(false);
@@ -108,12 +105,12 @@ function ChangePwPage(props) {
 
                 setSamePwErrorModalOn(true);  // 새로운 비밀번호와 입력한 이전 비밀번호가 일치함 에러.
             }
-            else {  // 만약 (newPwValue.length >= 8 && pwValue !== newPwValue) 일때를 의미함.
-                await axios
-                    .put(process.env.REACT_APP_DB_HOST + '/password', {
-                        loginId: loginIdValue,
-                        firstPw: pwValue,
-                        newFirstPw: newPwValue
+            else {  // if (newPwValue.length >= 8 && pwValue !== newPwValue)
+                await Apis
+                    .put('/password', {
+                        email: emailValue,
+                        password: pwValue,
+                        newPassword: newPwValue
                     })
                     .then((response) => {
                         setIsWrongId(false);
@@ -123,7 +120,6 @@ function ChangePwPage(props) {
                         setIsWrongResult(false);
 
                         setSuccessModalOn(true);
-                        //console.log(response);
                     })
                     .catch((error) => {
                         setIsWrongId(true);
@@ -133,7 +129,6 @@ function ChangePwPage(props) {
                         setIsWrongResult(true);
 
                         setLoginErrorModalOn(true);  // 로그인 정보가 불일치함 에러.
-                        //console.log(error);
                     })
             }
         }
@@ -157,39 +152,15 @@ function ChangePwPage(props) {
         }
     }
 
-    async function checkLogin() {  // 로그인 상태 여부 확인하고 해당 사용자의 userId 반환
-        await axios
-            .get(process.env.REACT_APP_DB_HOST + '/auth')
-            .then((response) => {
-                setTokenUserId(response.data.data.id);
-                //console.log(response);
-            })
-            .catch((error) => {
-                //console.log(error);
-            })
-    }
-
     useEffect(() => {
-        const storedToken = localStorage.getItem('token');
-        const storedExpirationDate = localStorage.getItem('expirationTime') || '0';
+        const storedAccessToken = localStorage.getItem("accessToken");
+        const storedRefreshToken = localStorage.getItem("refreshToken");
 
-        if (storedToken) {
-            axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
-
-            const remainingTime = storedExpirationDate - String(new Date().getTime());
-            if (remainingTime <= '1000') {  // 토큰 잔여만료시간이 1초 이하라면
-                localStorage.removeItem('token');
-                localStorage.removeItem('expirationTime');
-
-                navigate('/login');
-            }
-
-            checkLogin();
-            if (tokenUserId) {
-                navigate(`/users/${tokenUserId}/memos`);
-            }
+        if (storedAccessToken && storedRefreshToken) {
+            navigate(`/memos`);
         }
-    }, [tokenUserId]);
+    }, []);
+
 
     return (
         <MoreWrapper>
@@ -202,7 +173,7 @@ function ChangePwPage(props) {
                 비밀번호 변경<br></br>
                 <hr></hr>
                 <div className="flex-container">
-                    &nbsp;&nbsp;현재 id:&nbsp;&nbsp;<input type="text" className={isWrongId ? 'wrongId inputInform' : 'inputInform'} style={{ width: "96px" }} size="15" maxLength="16" onChange={handleChangeLoginId} />
+                    &nbsp;&nbsp;현재 id:&nbsp;&nbsp;<input type="text" className={isWrongId ? 'wrongId inputInform' : 'inputInform'} style={{ width: "96px" }} size="15" maxLength="16" onChange={handleChangeEmail} />
                 </div>
                 <div className="flex-container">
                     현재 pw:&nbsp;&nbsp;<input type="password" className={isWrongPw ? 'wrongPw inputInform' : 'inputInform'} style={{ width: "98px" }} size="15" onChange={handleChangePw} />
@@ -215,7 +186,7 @@ function ChangePwPage(props) {
                 </div>
                 <div style={{ lineHeight: "40%" }}><br></br></div>
                 <div className="flex-container">
-                    <button style={{ padding: "1px 6px 1px 6px", borderTop: "2px solid #767676", borderLeft: "2px solid #767676", borderBottom: "2px solid #212121", borderRight: "2px solid #212121" }} onClick={(event) => handleUpdatePwClick(loginIdValue, pwValue, newPwValue, confirmValue)}>변경 완료</button>
+                    <button style={{ padding: "1px 6px 1px 6px", borderTop: "2px solid #767676", borderLeft: "2px solid #767676", borderBottom: "2px solid #212121", borderRight: "2px solid #212121" }} onClick={(event) => handleUpdatePwClick(emailValue, pwValue, newPwValue, confirmValue)}>변경 완료</button>
                 </div>
                 {isWrongResult &&
                     <span style={{ fontSize: "1.1rem", color: "#dd2b2b" }}>!!! 입력하신 정보를 재확인해주세요 !!!</span>
