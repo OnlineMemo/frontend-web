@@ -160,7 +160,7 @@ function LoginPage(props) {
                     <i className="fa fa-thumbs-o-up" aria-hidden="true"></i>
                     <h2 className="successSignupModalTitle">
                         서버 대규모 패치 완료.<br></br>
-                        빨라진 속도를 체감해보세요!
+                        속도 60배, 직접 실감하세요!
                     </h2>
                     <button className="cancelButton" onClick={() => setNoticeModalOn(false)}>확인</button>
                 </ConfirmModal>
