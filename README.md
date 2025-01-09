@@ -2,13 +2,13 @@
 ***&#8594;&nbsp;&nbsp;60x Speed Improvement***
 
 ### Project
-- <a href="https://github.com/OnlineMemo">README.md</a>
-- <a href="https://github.com/orgs/OnlineMemo/repositories?q=sort%3Aname-asc">FullStack Repo</a>
+- Detail : <a href="https://github.com/OnlineMemo">README.md</a>
+- All Repo : <a href="https://github.com/orgs/OnlineMemo/repositories?q=sort%3Aname-asc">FullStack Repo</a>
 
 ### Refactor
 - <a href="https://github.com/OnlineMemo/frontend-web/pull/2">Github PR</a>
-- <a href="https://github.com/OnlineMemo/frontend-web/tree/5882c62ecf8e801c6045009a6c82fc5197cd556f">Before Code</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="https://github.com/OnlineMemo/frontend-web/tree/refactor/onlinememo-v2">After Code</a>
-- <a href="https://github.com/OnlineMemo/backend/tree/refactor/onlinememo-v2">Backend Refactor</a>
+- <a href="https://github.com/OnlineMemo/backend">Backend Refactor</a>
+<!-- - <a href="https://github.com/OnlineMemo/frontend-web/tree/5882c62ecf8e801c6045009a6c82fc5197cd556f">Before Code</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="https://github.com/OnlineMemo/frontend-web/tree/refactor/onlinememo-v2">After Code</a> -->
 
 <details open>
     <summary><h3>&nbsp;Contents</h3></summary>
