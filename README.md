@@ -1,14 +1,22 @@
-# OnlineMemo - Frontend Refactoring
-***&#8594;&nbsp;&nbsp;60x Speed Improvement***
+# OnlineMemo - Frontend Refactor
+유저로부터 메모페이지 속도 지연 피드백을 받음.<br>
+성능 측정 결과 문제가 확인되어, 서버와 함께 Frontend 대규모 리팩토링을 진행.<br>
+props 간의 API 호출 구조를 재설계하는 등 여러 최적화를 수행.
+
+>[ 메모페이지 응답 개선 ]<br>
+◦&nbsp;&nbsp;API 호출 횟수 :&nbsp;&nbsp;91회 &#8594; 2회<br>
+◦&nbsp;&nbsp;페이지 렌더링 속도 :&nbsp;&nbsp;11.27초 &#8594; 0.19초&nbsp;&nbsp;**(60배 ↑, 98% ↑)**
 
 ### Project
-- Detail : <a href="https://github.com/OnlineMemo">README.md</a>
-- All Repo : <a href="https://github.com/orgs/OnlineMemo/repositories?q=sort%3Aname-asc">FullStack Repo</a>
+- 프로젝트 설명 & 아키텍처&nbsp;:&nbsp;&nbsp;<a href="https://github.com/OnlineMemo">README.md</a>
+- 전체 레포지토리&nbsp;:&nbsp;&nbsp;<a href="https://github.com/orgs/OnlineMemo/repositories?q=sort%3Aname-asc">FullStack Repo</a>
 
+<!--
 ### Refactor
 - <a href="https://github.com/OnlineMemo/frontend-web/pull/2">Github PR</a>
 - <a href="https://github.com/OnlineMemo/backend">Backend Refactor</a>
-<!-- - <a href="https://github.com/OnlineMemo/frontend-web/tree/5882c62ecf8e801c6045009a6c82fc5197cd556f">Before Code</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="https://github.com/OnlineMemo/frontend-web/tree/refactor/onlinememo-v2">After Code</a> -->
+- <a href="https://github.com/OnlineMemo/frontend-web/tree/5882c62ecf8e801c6045009a6c82fc5197cd556f">Before Code</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="https://github.com/OnlineMemo/frontend-web/tree/refactor/onlinememo-v2">After Code</a>
+-->
 
 <details open>
     <summary><h3>&nbsp;Contents</h3></summary>
@@ -25,7 +33,8 @@
 
 #### API 데이터 처리 방식 변경
 - Backend 리팩토링에 따라 요청 및 응답 데이터 타입과 네이밍 수정.
-- API를 상위 컴포넌트에서 호출하고, props로 하위 컴포넌트에 전달하는 방식으로 전환.
+- Fetch Join 적용된 API를 도입해, 각 메모의 연관 정보 조회를 위한 별도 API 호출 로직을 제거.
+- 통합 API를 상위 컴포넌트에서 호출하고, props로 하위 컴포넌트에 전달하는 방식으로 전환.
 - API 호출 횟수를 최소화하고 구조를 개선하여 데이터 흐름이 최적화됨.
 
 #### Axios Interceptor 적용
@@ -35,7 +44,7 @@
 #### Refesh Token 추가 운용
 - 기존 방식인 JWT Access Token만 운용 시, 6시간의 짧은 로그인 유지시간을 가지며 보안에 취약함.
 - Access Token 만료 시, Refresh Token으로 재발급 받아 2주동안 로그인 유지가 가능하도록 보안을 강화.
-- Access Token&nbsp;&nbsp;&#8594;&nbsp;&nbsp;Access Token + Refresh Token 함께 운용.
+- Access Token&nbsp;&nbsp;&#8594;&nbsp;&nbsp;Access Token + Refresh Token 동시 운용.
 
 <br>
 
@@ -43,7 +52,7 @@
 
 ## 📗 API
 
-**<a href="https://github.com/user-attachments/assets/128c819e-2424-487d-aac0-23611d68af1c">Before</a>**|**<a href="https://github.com/user-attachments/assets/4b60a166-ff46-4a0e-a14e-20bb2722273b">After</a>**
+**Before**|**After**
 |:-----:|:-----:|
 <img src="https://github.com/user-attachments/assets/128c819e-2424-487d-aac0-23611d68af1c" width="100%">|<img src="https://github.com/user-attachments/assets/4b60a166-ff46-4a0e-a14e-20bb2722273b" width="100%">
 | -&nbsp;&nbsp;불필요하게 많은 API 호출로 성능 저하 발생<br> -&nbsp;&nbsp;사용자에게 userId가 자주 노출되어 보안성 저하| -&nbsp;&nbsp;RestFul URI 및 API 개수 단축으로 성능 향상<br> -&nbsp;&nbsp;Security Context 정보로 userId를 대체하여 보안성 향상|
