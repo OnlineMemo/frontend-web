@@ -49,6 +49,11 @@ const ModalWrapper = styled.div`
         color: #463f3a;
     }
 
+    .fa-lock {
+        font-size: 2.95rem;
+        color: brown;
+    }
+
     .modalTitle {
         font-size: 1.93rem;
         color: #dd2b2b;
@@ -94,6 +99,22 @@ const ModalWrapper = styled.div`
             background-color: #463f3aa4;
         }
     }
+
+    .copyModalButton {
+        font-size: 1.53rem;
+        background-color: #f4f3ee;
+        color: #463f3a;
+
+        padding: 1px 6px 1px 6px;
+        border-top: 2px solid #767676;
+        border-left: 2px solid #767676;
+        border-bottom: 2px solid #212121;
+        border-right: 2px solid #212121;
+
+        &:hover {
+            background-color: #f4f3eea4;
+        }
+    }
 `;
 
 function ConfirmModal(props) {
@@ -104,7 +125,7 @@ function ConfirmModal(props) {
 
     return (
         <ModalWrapper onClick={handleCloseModalClick}>
-            <div className="modalBody" onClick={(e) => e.stopPropagation()}>
+            <div className="modalBody" onClick={(e) => e.stopPropagation()} style={props.customStyle}>
                 <button id="modalCloseButton" onClick={handleCloseModalClick}>
                     X
                 </button>
