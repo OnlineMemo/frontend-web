@@ -88,8 +88,8 @@ function LoginPage(props) {
 
         if (!storedAccessToken || !storedRefreshToken) {
             const currentDate = new Date();
-            const noticeLimitDate = new Date('2024-09-01T00:00:00+09:00');  // 한국 시각 기준으로 2024.09.01 00시
-            if (currentDate < noticeLimitDate) {  // 9월1일이 되기전까지는 공지모달 띄움.
+            const noticeLimitDate = new Date('2025-06-26T00:00:00+09:00');  // 한국 시각 기준으로 2025.06.26 00시
+            if (currentDate < noticeLimitDate) {  // 6월26일이 되기전까지는 공지모달 띄움.
                 setTimeout(() => {
                     setNoticeModalOn(true);
                 }, 300); // 0.3초 딜레이 후에 공지 모달 생성.
@@ -171,7 +171,7 @@ function LoginPage(props) {
                     <i className="fa fa-exclamation-circle" aria-hidden="true" style={{ fontSize: "4rem" }}></i>
                     <h2 className="successSignupModalTitle">
                         - 점검 안내 -<br></br>
-                        6월 17일(화) 01시~06시<br></br><br></br>
+                        6월 19일(목) 00시~06시<br></br><br></br>
                         * 메모 동시편집 충돌 해결<br></br>
                         * 현재 수정 중인 사용자 알림<br></br>
                         * 검색 시 대소문자 구분 제거<br></br>

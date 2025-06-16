@@ -6,7 +6,8 @@ const Apis = axios.create({
 
 // API 요청시 헤더에 AccessToken 달아줌.
 Apis.interceptors.request.use(function (config) {
-    // blockUseService();  // 서비스 이용을 막음. (점검시간에 적용 예정.)
+    blockUseService();  // 서비스 이용을 막음. (점검시간에 적용 예정.)
+
     const storedAccessToken = localStorage.getItem("accessToken");
     if (storedAccessToken) {
         config.headers["Authorization"] = `Bearer ${storedAccessToken}`;
@@ -67,8 +68,12 @@ function redirectToLogin() {
 }
 
 function blockUseService() {  // 서비스 이용을 막음. (점검시간에 적용 예정.)
-    localStorage.clear();
-    window.location.href = '/login';
+    const currentDate = new Date();
+    const checkStartDate = new Date('2025-06-19T00:00:00+09:00');  // 한국 시각 기준으로 2025.06.19 00시
+    if (currentDate >= checkStartDate) {
+        localStorage.clear();
+        window.location.href = '/login';
+    }
 }
 
 export default Apis;
