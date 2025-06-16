@@ -178,10 +178,19 @@ function ReadAndEditMemoNav(props) {
 
     const [modalOn, setModalOn] = useState(false);
     const [modalText, setModalText] = useState();
+    const [lockModalOn, setLockModalOn] = useState(false);
+    const [lockUserNickname, setLockUserNickname] = useState();
 
     const handleFirstModalClick = (textValue, event) => {
         setModalOn((modalOn) => !modalOn);
         setModalText(textValue);
+    }
+
+    const handleLockModalOn = (userNickname, event) => {
+        setLockUserNickname(userNickname);
+        setTimeout(() => {
+            setLockModalOn(true);
+        }, 10);
     }
 
     const handleClickCopy = (event) => {   
@@ -194,8 +203,24 @@ function ReadAndEditMemoNav(props) {
         }, 2000); // 2초 딜레이 후에 다시 아이콘 변경.
     }
 
-    const handleEditClick = (event) => {
-        props.propPurposeFunction("edit");  // 하위 컴포넌트 함수
+    const handleEditClick = async (event) => {
+        if (props.purpose == "readGroup") {  // 공동메모일때만 락 제어 API 호출 (불필요한 리소스 낭비 방지.)
+            await Apis
+                .post(`/memos/${props.memoId}/lock`)
+                .then((response) => {
+                    props.propPurposeFunction("edit");  // 하위 컴포넌트 함수
+                })
+                .catch((error) => {
+                    const httpStatus = error.response?.status;
+                    if (httpStatus == 423) {
+                        const lockUserInfo = error.response?.data?.data;
+                        handleLockModalOn(lockUserInfo);  // userNickname
+                    }
+                })
+        }
+        else {
+            props.propPurposeFunction("edit");  // 하위 컴포넌트 함수
+        }
     }
 
     const handleUpdateSaveClick = async (titleValue, contentValue, e) => {
@@ -220,7 +245,7 @@ function ReadAndEditMemoNav(props) {
         }
     }
 
-    const handleDeleteClick = async (e) => {
+    const handleDeleteClick = async (event) => {
         await Apis
             .delete(`/memos/${props.memoId}`)
             .then((response) => {
@@ -230,6 +255,21 @@ function ReadAndEditMemoNav(props) {
                 //console.log(error);
             })
     }
+
+    useEffect(() => {
+        const handleEnterKeyDown = (event) => {  // 엔터키로 편집잠금(Lock) 모달 닫기.
+            if (event.key === "Enter" && lockModalOn == true) {
+                event.preventDefault();  // '엔터키로 모달이 닫아도 다시 열리는 문제'를 방지 가능.
+                setLockModalOn(false);
+            }
+        };
+        if (lockModalOn) window.addEventListener("keydown", handleEnterKeyDown);
+
+        return () => {
+            window.removeEventListener("keydown", handleEnterKeyDown);
+        };
+    }, [lockModalOn]);
+
 
     const readPrivateNavItems = [  // 개인메모 보기 용도
         <span className="flex-left">
@@ -279,7 +319,6 @@ function ReadAndEditMemoNav(props) {
         navItems = editNavItems;
     }
 
-
     return (
         <Wrapper>
             <ul>
@@ -300,6 +339,15 @@ function ReadAndEditMemoNav(props) {
                         <button className="confirmDeleteButton" onClick={handleDeleteClick}>확인</button>&nbsp;&nbsp;
                         <button className="cancelButton" onClick={() => setModalOn(!modalOn)}>취소</button>
                     </div>
+                </ConfirmModal>
+            )}
+            {lockModalOn && (
+                <ConfirmModal closeModal={() => setLockModalOn(!lockModalOn)} customStyle={{ height: "220px" }}>  {/* height: "208px" */}
+                    <i className="fa fa-lock" aria-hidden="true" style={{ fontSize: "4rem", color: "brown" }}></i>
+                    <h2 className="successSignupModalTitle">
+                        {lockUserNickname}
+                    </h2>
+                    <button className="cancelButton" onClick={() => setLockModalOn(false)}>확인</button>
                 </ConfirmModal>
             )}
         </Wrapper>
