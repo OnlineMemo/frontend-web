@@ -212,7 +212,6 @@ function ReadAndEditMemoNav(props) {
             await Apis
                 .post(`/memos/${props.memoId}/lock`)
                 .then((response) => {
-                    console.log("??? 첫 락 성공 ???");
                     props.propPurposeFunction("edit");  // 하위 컴포넌트 함수
                 })
                 .catch((error) => {
