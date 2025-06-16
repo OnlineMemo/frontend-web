@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from 'axios'
 import OneMemoWrapper from "../../components/Styled/OneMemoWrapper";
@@ -14,16 +14,58 @@ function ReadAndEditMemoPage(props) {
     const [contentValue, setContentValue] = useState("");
     const [purpose, setPurpose] = useState("read");
 
+    const extendLockGap = (1000 * 60 * 8) - (1000 * 15);  // 8분 - 15초 (밀리초 단위)
+    const extendLockTimerRef = useRef(null);
+    const lastTypedTimeRef = useRef(Date.now());
+
     const highPurposeFunction = (text) => {  // 상위 컴포넌트 함수
         setPurpose(text);
     }
 
     const handleChangeTitle = (event) => {
         setTitleValue(event.target.value);
+        handleIsTypingForTimer();
     }
     const handleChangeContent = (event) => {
         setContentValue(event.target.value);
+        handleIsTypingForTimer();
     }
+
+    const handleIsTypingForTimer = () => {
+        if (purpose === "edit" && memo?.memoHasUsersCount > 1) {
+            lastTypedTimeRef.current = Date.now();
+            if (!extendLockTimerRef.current) {
+                startExtendLockTimer();
+            }
+        }
+    }
+    const startExtendLockTimer = () => {
+        extendLockTimerRef.current = setTimeout(() => {  // 타이머 Ref를 생성
+            const now = Date.now();
+            const diffTime = now - lastTypedTimeRef.current;
+
+            if (diffTime <= extendLockGap) {
+                // 시간 내에 타이핑이 있었으니, API 호출
+                Apis.post(`/memos/${memoId}/lock`)
+                    .then(() => {
+                        // 락 연장에 성공했으므로, 타이머 초기화 후 재시작
+                        clearTimeout(extendLockTimerRef.current);
+                        extendLockTimerRef.current = null;
+                        startExtendLockTimer();
+                    })
+                    .catch((error) => {
+                        // 락 연장에 실패했으므로, API 호출 중지 및 타이머 종료
+                        clearTimeout(extendLockTimerRef.current);
+                        extendLockTimerRef.current = null;
+                    });
+            }
+            else {
+                // 시간 내에 타이핑이 없었으니, API 호출 중지 및 타이머 종료
+                clearTimeout(extendLockTimerRef.current);
+                extendLockTimerRef.current = null;
+            }
+        }, extendLockGap);  // extendLockGap 시간 이후에, 내부 메소드 로직을 실행.
+    };
 
     const autoResizeTextarea = () => {
         let textarea = document.querySelector('.autoTextarea');
@@ -98,6 +140,30 @@ function ReadAndEditMemoPage(props) {
         CheckToken();
         getMemo();
     }, [purpose]);
+
+    useEffect(() => {
+        if (purpose === "edit" && memo?.memoHasUsersCount > 1) {
+            if (!extendLockTimerRef.current) {
+                startExtendLockTimer();
+            }
+        }
+        else {
+            if (extendLockTimerRef.current) {
+                clearTimeout(extendLockTimerRef.current);
+                extendLockTimerRef.current = null;
+            }
+        }
+    }, [purpose, memo]);
+
+    useEffect(() => {
+        return () => {
+            if (extendLockTimerRef.current) {
+                clearTimeout(extendLockTimerRef.current);
+                extendLockTimerRef.current = null;
+            }
+        };
+    }, []);      
+
 
     let purposeText;
     let purposeComponent;
