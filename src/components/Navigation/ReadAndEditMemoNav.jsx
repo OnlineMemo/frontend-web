@@ -175,25 +175,37 @@ function ReadAndEditMemoNav(props) {
     const navigate = useNavigate();
 
     const [copyClassName, setCopyClassName] = useState('fa fa-clone');
+    const [isCopyComplete, setIsCopyComplete] = useState(false);
 
     const [modalOn, setModalOn] = useState(false);
     const [modalText, setModalText] = useState();
     const [lockModalOn, setLockModalOn] = useState(false);
     const [lockUserNickname, setLockUserNickname] = useState();
+    const [conflictModalOn, setConflictModalOn] = useState(false);
+    const [conflictModalText, setConflictModalText] = useState();
 
     const handleFirstModalClick = (textValue, event) => {
         setModalOn((modalOn) => !modalOn);
         setModalText(textValue);
     }
 
-    const handleLockModalOn = (userNickname, event) => {
+    const setDisplayNickname = (userNickname) => {
         const displayNickname =
             userNickname.length >= 5  // userNickname 길이가 5 이상이면, '앞4글자 + ..'로 변환
                 ? userNickname.slice(0, 4) + '..'
                 : userNickname;
         setLockUserNickname(displayNickname);
+    }
+    const handleLockModalOn = (userNickname, event) => {
+        setDisplayNickname(userNickname);
         setTimeout(() => {
             setLockModalOn(true);
+        }, 10);
+    }
+    const handleConflictModalOn = (textValue, event) => {
+        setConflictModalText(textValue);
+        setTimeout(() => {
+            setConflictModalOn(true);
         }, 10);
     }
 
@@ -202,8 +214,10 @@ function ReadAndEditMemoNav(props) {
         window.ReactNativeWebView && window.ReactNativeWebView.postMessage(props.content);  // 리액트 네이티브에 복사한 텍스트 전송 (모바일 웹뷰앱을 위한 코드)
 
         setCopyClassName('fa fa-check');
+        setIsCopyComplete(true);  // 모달 내 복사버튼 전용
         setTimeout(() => {
             setCopyClassName('fa fa-clone');
+            setIsCopyComplete(false);  // 모달 내 복사버튼 전용
         }, 2000); // 2초 딜레이 후에 다시 아이콘 변경.
     }
 
@@ -244,7 +258,13 @@ function ReadAndEditMemoNav(props) {
                     props.propPurposeFunction("read");  // 하위 컴포넌트 함수
                 })
                 .catch((error) => {
-                    //console.log(error);
+                    const httpStatus = error.response?.status;
+                    if (httpStatus == 409) {
+                        handleConflictModalOn("다른 사용자가 수정한 메모입니다.");
+                    }
+                    else if (httpStatus == 423) {
+                        handleConflictModalOn("다른 사용자가 수정 중입니다.");
+                    }
                 })
         }
     }
@@ -353,6 +373,27 @@ function ReadAndEditMemoNav(props) {
                         완료될 때까지 기다려 주세요.
                     </h2>
                     <button className="cancelButton" onClick={() => setLockModalOn(false)}>확인</button>
+                </ConfirmModal>
+            )}
+            {conflictModalOn && (
+                <ConfirmModal closeModal={() => setConflictModalOn(!conflictModalOn)} customStyle={{ height: "147px" }}>
+                    <br></br>
+                    <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
+                    <h2 className="modalTitle" style={{ fontSize: "1.82rem" }}>
+                        {conflictModalText}<br></br>
+                        작성 내용을 복사한 뒤<br></br>
+                        페이지를 이동해주세요.
+                    </h2>
+                    <div style={{ lineHeight: "50%" }}><br></br></div>
+                    <div style={{ float: "right" }}>
+                        <button className="copyModalButton" onClick={handleClickCopy}>
+                            {isCopyComplete == false
+                                ? <span>복사</span>
+                                : <i className="fa fa-check" aria-hidden="true"></i>
+                            }
+                        </button>&nbsp;&nbsp;
+                        <button className="cancelButton" onClick={() => { window.location.reload() }}>이동</button>
+                    </div>
                 </ConfirmModal>
             )}
         </Wrapper>
