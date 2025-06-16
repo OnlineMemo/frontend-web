@@ -187,7 +187,11 @@ function ReadAndEditMemoNav(props) {
     }
 
     const handleLockModalOn = (userNickname, event) => {
-        setLockUserNickname(userNickname);
+        const displayNickname =
+            userNickname.length >= 5  // userNickname 길이가 5 이상이면, '앞4글자 + ..'로 변환
+                ? userNickname.slice(0, 4) + '..'
+                : userNickname;
+        setLockUserNickname(displayNickname);
         setTimeout(() => {
             setLockModalOn(true);
         }, 10);
@@ -342,10 +346,11 @@ function ReadAndEditMemoNav(props) {
                 </ConfirmModal>
             )}
             {lockModalOn && (
-                <ConfirmModal closeModal={() => setLockModalOn(!lockModalOn)} customStyle={{ height: "220px" }}>  {/* height: "208px" */}
-                    <i className="fa fa-lock" aria-hidden="true" style={{ fontSize: "4rem", color: "brown" }}></i>
+                <ConfirmModal closeModal={() => setLockModalOn(!lockModalOn)}>
+                    <i className="fa fa-lock" aria-hidden="true"></i>
                     <h2 className="successSignupModalTitle">
-                        {lockUserNickname}
+                        '{lockUserNickname}'님이 수정 중입니다.<br></br>
+                        완료될 때까지 기다려 주세요.
                     </h2>
                     <button className="cancelButton" onClick={() => setLockModalOn(false)}>확인</button>
                 </ConfirmModal>
