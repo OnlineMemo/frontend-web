@@ -199,7 +199,7 @@ function ReadAndEditMemoPage(props) {
 
     return (
         <div>
-            <ReadAndEditMemoNav purpose={purposeText} memoId={memoId} title={memo && titleValue} content={memo && contentValue} propPurposeFunction={highPurposeFunction} rerendering={getMemo} />
+            <ReadAndEditMemoNav purpose={purposeText} memoId={memoId} title={memo && titleValue} content={memo && contentValue} currentVersion={memo && memo.currentVersion} propPurposeFunction={highPurposeFunction} rerendering={getMemo} />
             <OneMemoWrapper>
                 {purposeComponent}
             </OneMemoWrapper>

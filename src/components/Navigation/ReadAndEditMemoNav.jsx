@@ -252,7 +252,8 @@ function ReadAndEditMemoNav(props) {
                 .put(`/memos/${props.memoId}`, {
                     title: titleValue,
                     content: contentValue,
-                    isStar: null
+                    isStar: null,
+                    currentVersion: props.currentVersion
                 })
                 .then((response) => {
                     props.propPurposeFunction("read");  // 하위 컴포넌트 함수
