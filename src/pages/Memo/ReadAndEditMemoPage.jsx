@@ -14,7 +14,7 @@ function ReadAndEditMemoPage(props) {
     const [contentValue, setContentValue] = useState("");
     const [purpose, setPurpose] = useState("read");
 
-    const extendLockGap = (1000 * 60 * 8) - (1000 * 15);  // 8분 - 15초 (밀리초 단위)
+    const extendLockGap = (1000 * 60 * 10) - (1000 * 15);  // 10분 - 15초 (밀리초 단위)
     const extendLockTimerRef = useRef(null);
     const lastTypedTimeRef = useRef(Date.now());
 
@@ -162,7 +162,7 @@ function ReadAndEditMemoPage(props) {
                 extendLockTimerRef.current = null;
             }
         };
-    }, []);      
+    }, []);
 
 
     let purposeText;
@@ -199,7 +199,16 @@ function ReadAndEditMemoPage(props) {
 
     return (
         <div>
-            <ReadAndEditMemoNav purpose={purposeText} memoId={memoId} title={memo && titleValue} content={memo && contentValue} currentVersion={memo && memo.currentVersion} propPurposeFunction={highPurposeFunction} rerendering={getMemo} />
+            <ReadAndEditMemoNav
+                purpose={purposeText} 
+                memoId={memoId}
+                title={memo && titleValue}
+                content={memo && contentValue}
+                memoHasUsersCount={memo && memo.memoHasUsersCount}
+                currentVersion={memo && memo.currentVersion}
+                propPurposeFunction={highPurposeFunction}
+                rerendering={getMemo}
+            />
             <OneMemoWrapper>
                 {purposeComponent}
             </OneMemoWrapper>

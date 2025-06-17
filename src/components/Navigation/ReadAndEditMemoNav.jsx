@@ -226,6 +226,7 @@ function ReadAndEditMemoNav(props) {
             await Apis
                 .post(`/memos/${props.memoId}/lock`)
                 .then((response) => {
+                    sessionStorage.setItem('editGroupMemoId', props.memoId);
                     props.propPurposeFunction("edit");  // 하위 컴포넌트 함수
                 })
                 .catch((error) => {
@@ -256,6 +257,9 @@ function ReadAndEditMemoNav(props) {
                     currentVersion: props.currentVersion
                 })
                 .then((response) => {
+                    if (props.purpose === "edit" && props.memoHasUsersCount > 1) {
+                        sessionStorage.removeItem('editGroupMemoId');
+                    }
                     props.propPurposeFunction("read");  // 하위 컴포넌트 함수
                 })
                 .catch((error) => {
@@ -281,6 +285,19 @@ function ReadAndEditMemoNav(props) {
             })
     }
 
+    const deleteLock = async (event) => {
+        if (props.purpose === "edit" && props.memoHasUsersCount > 1) {
+            await Apis
+                .delete(`/memos/${props.memoId}/lock`)
+                .then((response) => {
+                    sessionStorage.removeItem('editGroupMemoId');
+                })
+                .catch((error) => {
+                    // console.log(error);
+                })
+        }
+    }
+
     useEffect(() => {
         const handleEnterKeyDown = (event) => {  // 엔터키로 편집잠금(Lock) 모달 닫기.
             if (event.key === "Enter" && lockModalOn == true) {
@@ -294,6 +311,17 @@ function ReadAndEditMemoNav(props) {
             window.removeEventListener("keydown", handleEnterKeyDown);
         };
     }, [lockModalOn]);
+
+    useEffect(() => {
+        const handleBeforeunload = (event) => {
+            deleteLock();
+        };
+        window.addEventListener('beforeunload', handleBeforeunload);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeunload);
+        };
+    }, [props.purpose]);
 
 
     const readPrivateNavItems = [  // 개인메모 보기 용도
@@ -329,7 +357,7 @@ function ReadAndEditMemoNav(props) {
         <span><button className="editButton" onClick={handleEditClick}>수정</button>&nbsp;&nbsp;<button className="deleteGroupButton" onClick={(event) => handleFirstModalClick("그룹을 탈퇴", event)}>그룹 탈퇴</button>&nbsp;</span>
     ];
     const editNavItems = [  // 메모 수정 용도
-        <span className="flex-left">&nbsp;<i className="fa fa-arrow-left" aria-hidden="true" onClick={() => {props.propPurposeFunction("read")}}></i></span>,
+        <span className="flex-left">&nbsp;<i className="fa fa-arrow-left" aria-hidden="true" onClick={() => { deleteLock(); props.propPurposeFunction("read"); }}></i></span>,
         <span><button className="saveButton" onClick={(event) => handleUpdateSaveClick(props.title, props.content, event)}>저장</button>&nbsp;</span>
     ];
 
