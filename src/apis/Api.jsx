@@ -69,9 +69,12 @@ function blockUseService() {  // 서비스 이용을 막음. (점검시간에 �
     const currentDate = new Date();
     const checkStartDate = new Date('2025-06-19T00:00:00+09:00');  // 한국 시각 기준으로 2025.06.19 00시
     if (currentDate >= checkStartDate) {
-        localStorage.clear();
-        sessionStorage.clear();
-        redirectToLogin();
+        const isTest = localStorage.getItem("isTest");
+        if (!(isTest && isTest === 'true')) {
+            localStorage.clear();
+            sessionStorage.clear();
+            redirectToLogin();
+        }
     }
 }
 
