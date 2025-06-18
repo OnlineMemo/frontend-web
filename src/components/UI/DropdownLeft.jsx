@@ -76,6 +76,7 @@ function DropdownLeft(props) {
 
     const handleLogoutClick = () => {
         localStorage.clear();  // 이때는 모두 비워주도록함.
+        sessionStorage.clear();
         window.location.href = '/login';
     }
 
