@@ -128,39 +128,43 @@ const Inform = () => {
             <div style={{ lineHeight: "150%" }}><br></br></div>
             <h5>&lt;&nbsp;개발자 정보&nbsp;&nbsp;<i className="fa fa-id-badge" aria-hidden="true"></i>&nbsp;&gt;</h5>
             <ul>
-                <li><strong>이름 :</strong>&nbsp;&nbsp;사현진 (SAHYUNJIN)</li>
+                <li><strong>이름 :</strong>&nbsp;&nbsp;사현진 (Hyunjin Sa)</li>
                 <li><strong>역할 :</strong>&nbsp;&nbsp;FullStack, DevOps, Design</li>
-                <div style={{ lineHeight: "17%" }}><br></br></div>
-                <span>&nbsp;&nbsp;<i className="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;Full Stack Developer</span>
+                <li><strong>운영 :</strong>&nbsp;&nbsp;2023.09.03 ~ ing</li>
+                {/* <div style={{ lineHeight: "17%" }}><br></br></div>
+                <span>&nbsp;&nbsp;<i className="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;Full Stack Developer</span> */}
             </ul>
-            <div style={{ lineHeight: "145%" }}><br></br></div>
+            <div style={{ lineHeight: "147%" }}><br></br></div>
 
             <h5>&lt;&nbsp;개발 기술&nbsp;&nbsp;<i className="fa fa-wrench" aria-hidden="true"></i>&nbsp;&gt;</h5>
-            <div style={{ lineHeight: "12.8px" }}><br></br></div>
+            {/* <div style={{ lineHeight: "12.8px" }}><br></br></div> */}
+            <div style={{ lineHeight: "16px" }}><br></br></div>
             <span className="device"><i className="fa fa-angle-down" aria-hidden="true"></i>&nbsp;WEB&nbsp;&nbsp;<i className="fa fa-desktop" aria-hidden="true"></i></span>
             <ul style={{ marginTop: "0px", marginBottom: "0px" }}>
                 <div style={{ lineHeight: "30%" }}><br></br></div>
                 <li><strong>프론트엔드 :</strong>&nbsp;&nbsp;React, JavaScript</li>
                 <li><strong>백엔드 :</strong>&nbsp;&nbsp;Spring Boot, Java</li>
-                <li><strong>데이터베이스 :</strong>&nbsp;&nbsp;MySQL</li>
+                <li><strong>데이터베이스 :</strong>&nbsp;&nbsp;MySQL, Redis</li>
                 <li><strong>보안 :</strong>&nbsp;&nbsp;Spring Security, JWT</li>
-                <li><strong>기타 :</strong>&nbsp;&nbsp;Amazon AWS</li>
-                <div style={{ lineHeight: "17%" }}><br></br></div>
+                <li><strong>인프라 :</strong>&nbsp;&nbsp;Amazon AWS</li>
+                {/* <div style={{ lineHeight: "17%" }}><br></br></div>
                 <span>&nbsp;&nbsp;<i className="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;REST API, HTTPS</span>
-                <div style={{ lineHeight: "10.5px" }}><br></br></div>
+                <div style={{ lineHeight: "10.5px" }}><br></br></div> */}
             </ul>
+            <div style={{ lineHeight: "11px" }}><br></br></div>
             <span className="device"><i className="fa fa-angle-down" aria-hidden="true"></i>&nbsp;APP&nbsp;&nbsp;<i className="fa fa-mobile" aria-hidden="true"></i></span>
             <div style={{ lineHeight: "30%" }}><br></br></div>
             <ul style={{ marginTop: "0px" }}>
-                <li><strong>모바일 앱 :</strong>&nbsp;&nbsp;React Native + WebView</li>
+                <li><strong>모바일 :</strong>&nbsp;&nbsp;React Native + WebView</li>
+                <li><strong>설치 :</strong>&nbsp;&nbsp;Google Play 스토어, PWA</li>
             </ul>
-            <div style={{ lineHeight: "145%" }}><br></br></div>
+            <div style={{ lineHeight: "147%" }}><br></br></div>
 
             <h5>&lt;&nbsp;Contact&nbsp;&nbsp;<i className="fa fa-handshake-o" aria-hidden="true"></i>&nbsp;&gt;</h5>
             <div style={{ lineHeight: "11.3px" }}><br></br></div>
             <span className="contacts">
                 <a href="mailto:tkguswls1106@gmail.com?subject=OnlineMemo 문의제목: &body=%0D%0A%0D%0A%0D%0A%0D%0A  -----------------------------------------------------------%0D%0A문의 및 건의사항 및 보완할점 내용을 위에 적어주세요!"><i className="fa fa-envelope-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
-                <a href="https://www.instagram.com/sa.hyunjin/"><i className="fa fa-instagram" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                {/* <a href="https://www.instagram.com/sa.hyunjin/"><i className="fa fa-instagram" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a> */}
                 <a href="https://github.com/tkguswls1106"><i className="fa fa-github" aria-hidden="true"></i></a>
             </span>
             <div style={{ lineHeight: "150%" }}><br></br></div>

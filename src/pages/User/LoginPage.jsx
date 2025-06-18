@@ -166,6 +166,21 @@ function LoginPage(props) {
                     <button className="cancelButton" onClick={() => setNoticeModalOn(false)}>확인</button>
                 </ConfirmModal>
             )} */}
+            {/* {noticeModalOn && (
+                <ConfirmModal closeModal={() => setNoticeModalOn(!noticeModalOn)} customStyle={{ height: "241px" }}>
+                    <i className="fa fa-thumbs-o-up" aria-hidden="true" style={{ fontSize: "4rem" }}></i>
+                    <h2 className="successSignupModalTitle">
+                        [ 2.1.0 업데이트 완료 ]<br></br>
+                        공동 메모를 중심으로<br></br>여러 패치가 적용되었습니다.<br></br><br></br>
+                        * 메모 동시편집 충돌 해결<br></br>
+                        * 현재 수정 중인 사용자 알림<br></br>
+                        * 검색 시 대소문자 구분 제거<br></br>
+                        * 기타 버그 및 기능 개선
+                    </h2>
+                    <button className="cancelButton" onClick={() => setNoticeModalOn(false)}>확인</button>
+                </ConfirmModal>
+            )} */}
+            
             {noticeModalOn && (
                 <ConfirmModal closeModal={() => setNoticeModalOn(!noticeModalOn)} customStyle={{ height: "220px" }}>  {/* height: "208px" */}
                     <i className="fa fa-exclamation-circle" aria-hidden="true" style={{ fontSize: "4rem" }}></i>

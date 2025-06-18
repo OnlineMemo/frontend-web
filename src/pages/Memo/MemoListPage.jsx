@@ -66,11 +66,29 @@ function MemoListPage(props) {
             })
     }
 
+    async function deleteLock(memoId) {
+        await Apis
+            .delete(`/memos/${memoId}/lock`)
+            .then((response) => {
+                sessionStorage.removeItem('editGroupMemoId');
+            })
+            .catch((error) => {
+                //console.log(error);
+            })
+    }
+
     useEffect(() => {
         CheckToken();
         getMemos();
         getFriends();
     }, [filter, search]);
+
+    useEffect(() => {
+        const prevEditGroupMemoId = sessionStorage.getItem('editGroupMemoId');
+        if(prevEditGroupMemoId) {
+            deleteLock(prevEditGroupMemoId);
+        }
+    }, []);
 
 
     return (
