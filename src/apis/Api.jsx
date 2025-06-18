@@ -49,6 +49,7 @@ Apis.interceptors.response.use(
                 } catch (err) {
                     console.error(err);
                     localStorage.clear();
+                    sessionStorage.clear();
                     redirectToLogin(); // 토큰 재발급 실패 시 로그인 화면으로 이동
                 }
             return Promise.reject(err);
@@ -56,6 +57,7 @@ Apis.interceptors.response.use(
         // 기타 401 에러 처리
         else if (err.response?.data?.status === 401) {
             localStorage.clear();  // 이때는 모두 비워주도록함.
+            sessionStorage.clear();
             redirectToLogin(); // 로그인 화면으로 이동
         }
 
@@ -63,18 +65,18 @@ Apis.interceptors.response.use(
     }
 );
 
-function redirectToLogin() {
-    window.location.href = '/login';
-}
-
 function blockUseService() {  // 서비스 이용을 막음. (점검시간에 적용 예정.)
     const currentDate = new Date();
     const checkStartDate = new Date('2025-06-19T00:00:00+09:00');  // 한국 시각 기준으로 2025.06.19 00시
     if (currentDate >= checkStartDate) {
         localStorage.clear();
         sessionStorage.clear();
-        window.location.href = '/login';
+        redirectToLogin();
     }
+}
+
+function redirectToLogin() {
+    window.location.href = '/login';
 }
 
 export default Apis;

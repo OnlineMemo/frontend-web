@@ -181,7 +181,7 @@ function LoginPage(props) {
                 </ConfirmModal>
             )} */}
             
-            {false && (
+            {noticeModalOn && (
                 <ConfirmModal closeModal={() => setNoticeModalOn(!noticeModalOn)} customStyle={{ height: "220px" }}>  {/* height: "208px" */}
                     <i className="fa fa-exclamation-circle" aria-hidden="true" style={{ fontSize: "4rem" }}></i>
                     <h2 className="successSignupModalTitle">
