@@ -166,7 +166,7 @@ function LoginPage(props) {
                     <button className="cancelButton" onClick={() => setNoticeModalOn(false)}>확인</button>
                 </ConfirmModal>
             )} */}
-            {/* {noticeModalOn && (
+            {noticeModalOn && (
                 <ConfirmModal closeModal={() => setNoticeModalOn(!noticeModalOn)} customStyle={{ height: "241px" }}>
                     <i className="fa fa-thumbs-o-up" aria-hidden="true" style={{ fontSize: "4rem" }}></i>
                     <h2 className="successSignupModalTitle">
@@ -179,10 +179,10 @@ function LoginPage(props) {
                     </h2>
                     <button className="cancelButton" onClick={() => setNoticeModalOn(false)}>확인</button>
                 </ConfirmModal>
-            )} */}
+            )}
             
-            {noticeModalOn && (
-                <ConfirmModal closeModal={() => setNoticeModalOn(!noticeModalOn)} customStyle={{ height: "220px" }}>  {/* height: "208px" */}
+            {/* {noticeModalOn && (
+                <ConfirmModal closeModal={() => setNoticeModalOn(!noticeModalOn)} customStyle={{ height: "220px" }}>
                     <i className="fa fa-exclamation-circle" aria-hidden="true" style={{ fontSize: "4rem" }}></i>
                     <h2 className="successSignupModalTitle">
                         - 점검 안내 -<br></br>
@@ -194,7 +194,7 @@ function LoginPage(props) {
                     </h2>
                     <button className="cancelButton" onClick={() => setNoticeModalOn(false)}>확인</button>
                 </ConfirmModal>
-            )}
+            )} */}
         </HelloWrapper>
     );
 }
