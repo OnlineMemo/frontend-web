@@ -265,7 +265,7 @@ function ReadAndEditMemoNav(props) {
                 .catch((error) => {
                     const httpStatus = error.response?.status;
                     if (httpStatus == 409) {
-                        handleConflictModalOn("다른 사용자가 수정한 메모입니다.");
+                        handleConflictModalOn("이미 수정된 메모입니다.");
                     }
                     else if (httpStatus == 423) {
                         handleConflictModalOn("다른 사용자가 수정 중입니다.");
