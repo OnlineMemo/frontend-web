@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
+import { Helmet } from 'react-helmet';
 import axios from 'axios'
 import OneMemoWrapper from "../../components/Styled/OneMemoWrapper";
 import ReadAndEditMemoNav from "../../components/Navigation/ReadAndEditMemoNav";
@@ -199,6 +200,17 @@ function ReadAndEditMemoPage(props) {
 
     return (
         <div>
+            {(titleValue !== "" && purpose === "read") &&
+                <Helmet>
+                    <title>{titleValue} (온라인 메모장)</title>
+                </Helmet>
+            }
+            {(purpose === "edit") &&
+                <Helmet>
+                    <title>편집 중... (온라인 메모장)</title>
+                </Helmet>
+            }
+
             <ReadAndEditMemoNav
                 purpose={purposeText} 
                 memoId={memoId}

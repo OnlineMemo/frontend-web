@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import styled from "styled-components";
 import './App.css';
 import LoadingNav from "./components/Navigation/LoadingNav";
@@ -49,6 +50,10 @@ function App(props) {
 
   return (
     <BrowserRouter>
+      <Helmet>
+        <title>온라인 메모장</title>
+      </Helmet>
+
       <MainTitleText>
         <Link to="/" style={{textDecoration: "none", color:"#463f3a"}}>
           온라인 메모장 <i className="fa fa-pencil-square-o" aria-hidden="true"></i>
