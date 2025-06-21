@@ -79,7 +79,9 @@ function blockUseService() {  // 서비스 이용을 막음. (점검시간에 �
 }
 
 function redirectToLogin() {
-    window.location.href = '/login';
+    if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+    }
 }
 
 export default Apis;
