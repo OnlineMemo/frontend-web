@@ -94,7 +94,7 @@ function MemoListPage(props) {
     return (
         <>
             <YesLoginNav memoListPageFriends={allFriends} />
-            <BasicWrapper>
+            <BasicWrapper style={{ overflowX: "hidden" }}>
                 <DivWrapper className="flex-container">
                     <SortMemo className="flex-item" setParams={setParams} />
                     <SearchMemo className="flex-item" setParams={setParams} />
