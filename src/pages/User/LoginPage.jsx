@@ -7,6 +7,13 @@ import HelloWrapper from "../../components/Styled/HelloWrapper";
 import ConfirmModal from "../../components/Modal/ConfirmModal";
 import Apis from "../../apis/Api";
 
+const MoreWrapper = styled(HelloWrapper)`
+    .wrongInput {
+        border: 3.3px solid #dd2b2b;
+        border-radius: 3px;
+    }
+`;
+
 const DivWrapper = styled.div`
     font-size: 1.5rem;
     color: #463f3a;
@@ -47,6 +54,8 @@ function LoginPage(props) {
 
     const [emailValue, setEmailValue] = useState("");
     const [pwValue, setPwValue] = useState("");
+    const [isWrongEmail, setIsWrongEmail] = useState(false);
+    const [isWrongPw, setIsWrongPw] = useState(false);
 
     const handleChangeLoginId = (event) => {
         setEmailValue(event.target.value);
@@ -66,20 +75,27 @@ function LoginPage(props) {
     };
 
     const handleLoginClick = async (emailValue, pwValue, e) => {
-        await Apis
-            .post('/login', {
-                email: emailValue,
-                password: pwValue
-            })
-            .then((response) => {
-                localStorage.setItem('accessToken', response.data.data.accessToken);
-                localStorage.setItem('refreshToken', response.data.data.refreshToken);
-                // localStorage.setItem('expirationTime', String(response.data.data.accessTokenExpiresIn));
-                navigate(`/memos`);
-            })
-            .catch((error) => {
-                setLoginFailModalOn(true);
-            })
+        const isValidEmail = emailValue.length > 0;
+        const isValidPw = pwValue.length > 0;
+        setIsWrongEmail(!isValidEmail);
+        setIsWrongPw(!isValidPw);
+
+        if (isValidEmail && isValidPw) {
+            await Apis
+                .post('/login', {
+                    email: emailValue,
+                    password: pwValue
+                })
+                .then((response) => {
+                    localStorage.setItem('accessToken', response.data.data.accessToken);
+                    localStorage.setItem('refreshToken', response.data.data.refreshToken);
+                    // localStorage.setItem('expirationTime', String(response.data.data.accessTokenExpiresIn));
+                    navigate(`/memos`);
+                })
+                .catch((error) => {
+                    setLoginFailModalOn(true);
+                })
+        }
     }
 
     useEffect(() => {
@@ -115,17 +131,17 @@ function LoginPage(props) {
 
 
     return (
-        <HelloWrapper>
+        <MoreWrapper>
             <h2>나만의 메모 보관함으로 접속&nbsp;&nbsp;<i className="fa fa-mouse-pointer" aria-hidden="true"></i></h2>
             <h2 style={{ paddingLeft: "18px", paddingRight: "18px" }}>
                 <i className="fa fa-user-circle" aria-hidden="true"></i><br></br>
                 Login<br></br>
                 <hr></hr>
                 <div className="flex-container">
-                    &nbsp;&nbsp;id:&nbsp;&nbsp;<input type="text" style={{ width: "120px" }} maxLength="16" onChange={handleChangeLoginId} onKeyDown={(event) => doClickEnter(event)} />
+                    &nbsp;&nbsp;id:&nbsp;&nbsp;<input type="text" className={isWrongEmail ? 'wrongInput' : undefined} style={{ width: "120px" }} maxLength="16" onChange={handleChangeLoginId} onKeyDown={(event) => doClickEnter(event)} />
                 </div>
                 <div className="flex-container">
-                    pw:&nbsp;&nbsp;<input type="password" style={{ width: "122.5px" }} onChange={handleChangePw} onKeyDown={(event) => doClickEnter(event)} />
+                    pw:&nbsp;&nbsp;<input type="password" className={isWrongPw ? 'wrongInput' : undefined} style={{ width: "122.5px" }} onChange={handleChangePw} onKeyDown={(event) => doClickEnter(event)} />
                 </div>
                 <div className="flex-container">
                     <Link to={'/password'}>pw 변경</Link>
@@ -194,7 +210,7 @@ function LoginPage(props) {
                     <button className="cancelButton" onClick={() => setNoticeModalOn(false)}>확인</button>
                 </ConfirmModal>
             )} */}
-        </HelloWrapper>
+        </MoreWrapper>
     );
 }
 
