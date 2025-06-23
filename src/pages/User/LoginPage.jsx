@@ -145,7 +145,7 @@ function LoginPage(props) {
                     &nbsp;&nbsp;id:&nbsp;&nbsp;<input type="text" className={`loginInput ${isWrongEmail ? 'wrongInput' : ''}`}  maxLength="16" onChange={handleChangeLoginId} onKeyDown={(event) => doClickEnter(event)} />
                 </div>
                 <div className="flex-container">
-                    pw:&nbsp;&nbsp;<span style={{ width: "0.21px" }}></span><input type="password" className={`loginInput ${isWrongPw ? 'wrongInput' : ''}`}  onChange={handleChangePw} onKeyDown={(event) => doClickEnter(event)} />
+                    pw:&nbsp;&nbsp;<span style={{ width: "0.3px" }}></span><input type="password" className={`loginInput ${isWrongPw ? 'wrongInput' : ''}`}  onChange={handleChangePw} onKeyDown={(event) => doClickEnter(event)} />
                 </div>
                 <div className="flex-container">
                     <Link to={'/password'}>pw 변경</Link>
