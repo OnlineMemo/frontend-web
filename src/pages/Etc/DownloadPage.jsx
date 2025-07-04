@@ -3,6 +3,7 @@ import styled from "styled-components";
 import '../../App.css';
 import { useNavigate } from "react-router-dom";
 import BasicWrapper from "../../components/Styled/BasicWrapper";
+import { QRCodeSVG } from 'qrcode.react';
 
 const MoreWrapper = styled(BasicWrapper)`
     display: flex;
@@ -11,15 +12,15 @@ const MoreWrapper = styled(BasicWrapper)`
 
     position: relative;
 
-    @media(max-height: 767.1px) {
+    @media(max-height: 863.1px) {  // 기존 범위 : @media(max-height: 767.1px)
         height: 100%;
     }
 
-    @media(min-height: 767.2px) {
+    @media(min-height: 863.2px) {  // 기존 범위 : @media(min-height: 767.2px)
         height: calc(100vh - 271px);
     }
 
-    @media(min-height: 767.2px) and (max-width: 1364.9px) {
+    @media(min-height: 863.2px) and (max-width: 1364.9px) {  // 기존 범위 : @media(min-height: 767.2px) and (max-width: 1364.9px)
         height: calc(100vh - 271px + 43.5px);
     }
 
@@ -46,16 +47,18 @@ const MoreWrapper = styled(BasicWrapper)`
 `;
 
 const DivWrapper = styled.div`
-
     display: flex;
     justify-content: center;
+
+    padding-top: 35px;
+    padding-bottom: 35px;
 
     font-size: 1.8rem;
     color: #322d2a;
 
     line-height: 130%;
-
     text-align: center;
+    overflow-y: hidden;
 
     h5 {
         display: flex;
@@ -92,17 +95,29 @@ const DivWrapper = styled.div`
     }
 `;
 
+const playStoreUrl = "https://play.google.com/store/apps/details?id=com.shj.onlinememo";
+
+const QRimage = () => {
+    const url = playStoreUrl;
+    const qrSize = 85;
+    return (
+        <QRCodeSVG value={url} size={qrSize} bgColor="#bcb8b1" />
+    );
+};
+
 const Download = () => {
     return (
         <div>
-            <br></br><br></br><br></br><br></br>
+            {/* <br></br><br></br> */}
 
             <div style={{ lineHeight: "185%" }}><br></br></div>
             <h5>&lt;&nbsp;Android&nbsp;&nbsp;<i className="fa fa-android" aria-hidden="true"></i>&nbsp;&gt;</h5>
-            <div style={{ lineHeight: "35%" }}><br></br></div>
+            {/* <div style={{ lineHeight: "35%" }}><br></br></div> */}
+            <div style={{ lineHeight: "70%" }}><br></br></div>
+            <QRimage />
             <div className="notCenter">
                 <ul>
-                    <li>방법 1: Play Store 다운로드:&nbsp;&nbsp;<a href="https://play.google.com/store/apps/details?id=com.shj.onlinememo"><i className="fa fa-download" aria-hidden="true"></i></a></li>
+                    <li>방법 1: Play Store 다운로드:&nbsp;&nbsp;<a href={playStoreUrl}><i className="fa fa-download" aria-hidden="true"></i></a></li>
                     <li>방법 2: iOS와 동일한 방법으로 설치</li>
                 </ul>
             </div>
@@ -129,7 +144,7 @@ const Download = () => {
             </strong>
             <div style={{ lineHeight: "185%" }}><br></br></div>
 
-            <br></br><br></br><br></br><br></br>
+            {/* <br></br><br></br> */}
         </div>
     );
 }
