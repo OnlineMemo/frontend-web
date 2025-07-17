@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import '../../App.css';
 import NavWrapper from "../Styled/NavWrapper";
@@ -19,7 +19,7 @@ const Wrapper = styled(NavWrapper)`
         line-height:50px;
     }  
 
-    a {
+    a {  // Link 태그도 영향 받음.
         text-decoration:none;
         font-size:2rem;
         color: #ffffff;
@@ -44,8 +44,8 @@ function NoLoginNav(props) {
     return (
         <Wrapper>
             <ul>
-                <li><a onClick={() => { navigate('/notice') }}>공지사항</a></li>
-                <li><a onClick={() => { navigate('/information') }}>개발 정보</a></li>
+                <li><Link to={'/notice'}>공지사항</Link></li>
+                <li><Link to={'/information'}>개발 정보</Link></li>
             </ul>
         </Wrapper>
     );

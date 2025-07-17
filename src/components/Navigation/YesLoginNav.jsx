@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import '../../App.css';
 import NavWrapper from "../Styled/NavWrapper";
@@ -37,7 +37,7 @@ const Wrapper = styled(NavWrapper)`
         }
     }
 
-    a {
+    a {  // Link 태그도 영향 받음.
         text-decoration:none;
         font-size:2rem;
         color: #ffffff;
@@ -119,8 +119,8 @@ function YesLoginNav(props) {
                     dropMain={<i className="fa fa-user-o" aria-hidden="true"></i>}
                     dropItems={dropItemsUser}
                 />
-                <li><a onClick={() => { navigate(`/memos`) }}>메모 목록</a></li>
-                <li><a onClick={() => { navigate(`/friends`) }}>친구 목록</a></li>
+                <li><Link to={'/memos'}>메모 목록</Link></li>
+                <li><Link to={'/friends'}>친구 목록</Link></li>
                 <NewMemoOptionDropdownRight
                     dropMain={<span><button>+ 새 메모&nbsp;<i className="fa fa-caret-down" aria-hidden="true"></i></button></span>}
                     dropItems={dropItemsPlus}
