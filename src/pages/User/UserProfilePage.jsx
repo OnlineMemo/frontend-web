@@ -215,7 +215,7 @@ function UserProfilePage(props) {
                 <span style={{ lineHeight: "175%" }}><br></br></span>
                 <div>
                     <div className="flex-container">
-                        <span>이름:&nbsp;&nbsp;{nameComponent}</span>
+                        <span>이름&nbsp;:&nbsp;{nameComponent}</span>
                         {isWrongName &&
                             <span style={{ fontSize: "1.35rem", color: "#dd2b2b" }}>!!! 2자 이상 입력하세요 !!!</span>
                         }
@@ -223,7 +223,7 @@ function UserProfilePage(props) {
                     </div>
                     <hr className="divideHr"></hr>
                     <div className="flex-container">
-                        <span>초대 id:&nbsp;&nbsp;<span>{user && user.email}</span></span>
+                        <span>초대 id&nbsp;:&nbsp;<span>{user && user.email}</span></span>
                         <button className="copyButton" onClick={handleClickCopy}>복사&nbsp;<i className={copyClassName} aria-hidden="true"></i></button>
                     </div>
                     <hr className="divideHr"></hr>
