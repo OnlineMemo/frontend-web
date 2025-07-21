@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import styled from "styled-components";
 import './App.css';
@@ -46,14 +46,33 @@ const LittleTitle = styled.div`
     }
 `;
 
+function HelmetComponent() {
+  const location = useLocation();
+
+  const getHelmetTitle = () => {
+    const pathName = location.pathname;
+    let helmetTitle = "온라인 메모장";
+    if (pathName === "/signup") helmetTitle += " - 회원가입";
+    else if (pathName === "/password") helmetTitle += " - 비밀번호 변경";
+    else if (pathName === "/information") helmetTitle += " - 개발 정보";
+    else if (pathName === "/notice") helmetTitle += " - 공지사항";
+    else if (pathName === "/download") helmetTitle += " - 다운로드 안내";
+    return helmetTitle;
+  }
+
+  return (
+      <Helmet>
+        <title>{getHelmetTitle()}</title>
+        <meta name="description" content="📝 모든 기기에서 간편하게 메모를 작성하고, 친구와 공동 편집도 가능한 온라인 메모장입니다. 📝" data-react-helmet="true"/>
+      </Helmet>
+  );
+}
+
 function App(props) {
 
   return (
     <BrowserRouter>
-      <Helmet>
-        <title>온라인 메모장</title>
-        <meta name="description" content="📝 모든 기기에서 간편하게 메모를 작성하고, 친구와 공동 편집도 가능한 온라인 메모장입니다. 📝" data-react-helmet="true"/>
-      </Helmet>
+      <HelmetComponent />
 
       <MainTitleText>
         <Link to="/" style={{textDecoration: "none", color:"#463f3a"}}>

@@ -1,7 +1,15 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Allow: /$
-Allow: /signup
-Allow: /notice
-Allow: /download
-Disallow: /
+Disallow: /login
+Disallow: /password
+Disallow: /information
+Disallow: /memos
+Disallow: /users
+Disallow: /friends
+Disallow: /senders
+
+# Allow: /$
+# Allow: /signup
+# Allow: /notice
+# Allow: /download
+# Disallow: /
