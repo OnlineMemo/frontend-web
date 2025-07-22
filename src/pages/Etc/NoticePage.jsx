@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import '../../App.css';
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import BasicWrapper from "../../components/Styled/BasicWrapper";
 
 const MoreWrapper = styled(BasicWrapper)`
@@ -120,7 +120,8 @@ const Notice = () => {
 
                 <strong><li>&nbsp;사이트 및 앱 다운로드</li></strong>
                 - 웹사이트:&nbsp;<a href="https://www.OnlineMemo.kr">www.OnlineMemo.kr</a><br></br>
-                - 모바일 앱:&nbsp;<button onClick={() => { navigate('/download') }}>다운로드 안내</button>
+                - 모바일 앱:&nbsp;<Link to={'/download'}><button>다운로드 안내</button></Link>
+                {/* - 모바일 앱:&nbsp;<button onClick={() => { navigate('/download') }}>다운로드 안내</button> */}
                 <div style={{ lineHeight: "60%" }}><br></br></div>
 
                 <strong><li>&nbsp;로그인 유지 기간 안내</li></strong>
