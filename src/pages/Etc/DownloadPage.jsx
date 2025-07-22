@@ -117,7 +117,7 @@ const Download = () => {
             <QRimage />
             <div className="notCenter">
                 <ul>
-                    <li>방법 1: Play Store 다운로드:&nbsp;&nbsp;<a href={playStoreUrl}><i className="fa fa-download" aria-hidden="true"></i></a></li>
+                    <li>방법 1: Play Store 다운로드:&nbsp;&nbsp;<a href={playStoreUrl} aria-label="Play Store에서 온라인 메모장 앱 다운로드"><i className="fa fa-download" aria-hidden="true"></i></a></li>
                     <li>방법 2: iOS와 동일한 방법으로 설치</li>
                 </ul>
             </div>
