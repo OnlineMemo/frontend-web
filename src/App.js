@@ -48,9 +48,9 @@ const LittleTitle = styled.div`
 
 function HelmetComponent() {
   const location = useLocation();
+  const pathName = location.pathname || "/";
 
   const getHelmetTitle = () => {
-    const pathName = location.pathname;
     let helmetTitle = "온라인 메모장";
     if (pathName === "/signup") helmetTitle += " - 회원가입";
     else if (pathName === "/password") helmetTitle += " - 비밀번호 변경";
@@ -60,10 +60,18 @@ function HelmetComponent() {
     return helmetTitle;
   }
 
+  const getHelmetCanonical = () => {
+    let helmetCanonical = "https://www.onlinememo.kr";
+    if (pathName === "/login") helmetCanonical += "/";
+    else helmetCanonical += pathName;
+    return helmetCanonical;
+  }
+
   return (
       <Helmet>
         <title>{getHelmetTitle()}</title>
         <meta name="description" content="📝 모든 기기에서 간편하게 메모를 작성하고, 친구와 공동 편집도 가능한 온라인 메모장입니다. 📝" data-react-helmet="true"/>
+        <link rel="canonical" href={getHelmetCanonical()} />
       </Helmet>
   );
 }
