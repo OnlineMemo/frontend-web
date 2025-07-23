@@ -56,10 +56,16 @@ function HelmetComponent() {
     if (!isLocalhost && typeof window.gtag === 'function') {
       // '/memos/${memoId}' 패턴이면 '/memos/:memoId'로 통합 집계 (event)
       const normalizedPathName = pathName.replace(/^\/memos\/\d+$/, '/memos/:memoId');
-      window.gtag('event', 'page_view', {
-        page_path: normalizedPathName,
-        page_location: window.location.href
-      });
+      // 로그인 유지 상태에서 홈키를 눌렀을 때, GA 중복 집계를 방지.
+      const isClickHome = (pathName === "/" || pathName === "/login");
+      const isLoggedIn = (localStorage.getItem("accessToken") && localStorage.getItem("refreshToken"));
+      const isJwtRedirectToLogin = (isClickHome && isLoggedIn);
+      if (isJwtRedirectToLogin === false) {
+        window.gtag('event', 'page_view', {
+          page_path: normalizedPathName,
+          page_location: window.location.href
+        });
+      }
     }
   }, [pathName]);
 
