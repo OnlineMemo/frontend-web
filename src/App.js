@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import styled from "styled-components";
@@ -49,6 +49,19 @@ const LittleTitle = styled.div`
 function HelmetComponent() {
   const location = useLocation();
   const pathName = location.pathname || "/";
+
+  // <!-- Google tag (gtag.js) - GA4 -->
+  useEffect(() => {
+    const isLocalhost = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+    if (!isLocalhost && typeof window.gtag === 'function') {
+      // '/memos/${memoId}' 패턴이면 '/memos/:memoId'로 통합 집계 (event)
+      const normalizedPathName = pathName.replace(/^\/memos\/\d+$/, '/memos/:memoId');
+      window.gtag('event', 'page_view', {
+        page_path: normalizedPathName,
+        page_location: window.location.href
+      });
+    }
+  }, [pathName]);
 
   const getHelmetTitle = () => {
     let helmetTitle = "온라인 메모장";

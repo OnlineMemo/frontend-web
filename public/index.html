@@ -21,12 +21,26 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <!-- Google tag (gtag.js) - GA4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GHDM9RQKGZ"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-GHDM9RQKGZ');
+      const isLocalhost = (location.hostname === "localhost" || location.hostname === "127.0.0.1");
+      if (!isLocalhost) {
+        const gtagScript = document.createElement("script");
+        gtagScript.src = "https://www.googletagmanager.com/gtag/js?id=G-GHDM9RQKGZ";
+        gtagScript.async = true;
+        gtagScript.onload = () => {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          window.gtag = gtag;
+          gtag('js', new Date());
+          gtag('config', 'G-GHDM9RQKGZ', {
+            send_page_view: false
+          });
+        };
+        document.head.appendChild(gtagScript);
+      }
+      else {
+        window.gtag = function () {};
+      }
     </script>
   </head>
   <body>
