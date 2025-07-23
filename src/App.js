@@ -70,7 +70,7 @@ function HelmetComponent() {
   return (
       <Helmet>
         <title>{getHelmetTitle()}</title>
-        <meta name="description" content="📝 모든 기기에서 간편하게 메모를 작성하고, 친구와 공동 편집도 가능한 온라인 메모장입니다. 📝" data-react-helmet="true"/>
+        {/* <meta name="description" content="📝 모든 기기에서 간편하게 메모를 작성하고, 친구와 공동 편집도 가능한 온라인 메모장입니다. 📝" data-react-helmet="true"/> */}
         <link rel="canonical" href={getHelmetCanonical()} />
       </Helmet>
   );
