@@ -65,7 +65,7 @@ footer {
 .disablePreviewAndDrag {
   /* disable Preview */
   -webkit-touch-callout: none;
-  -webkit-user-select: none;
   /* disable Drag */
+  -webkit-user-select: none;
   user-select: none;
 }
