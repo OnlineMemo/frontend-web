@@ -42,29 +42,15 @@ function MemoListPage(props) {
 
     const getMemos = async (e) => {  // 해당 사용자의 모든 메모 리스트 조회 (초기 메인 화면)
         let queryParams = '';
-        if (filter != null && search == null) queryParams = `?filter=${filter}`;
-        else if (filter == null && search != null) queryParams = `?search=${search}`;
+        if (filter !== null && search === null) queryParams = `?filter=${filter}`;
+        else if (filter === null && search !== null) queryParams = `?search=${search}`;
         
         await Apis
             .get(`/memos` + queryParams)
             .then((response) => {
                 setMemos(response.data.data);
-
-                var result = document.getElementById("noneResult");
-                if (queryParams.startsWith('?search=') && Object.keys(response.data.data).length == 0)  // 검색 결과가 0개일 경우
-                    result.style.display = "block";
-                else
-                    result.style.display = "none";
-
-                const isSortClick = (queryParams === '' || queryParams.startsWith("?filter="));
-                if (isSortClick === true) {
-                    setIsSortClick(true);
-                    setIsSearchClick(false);
-                }
-                else {
-                    setIsSortClick(false);
-                    setIsSearchClick(true);
-                }
+                setIsSortClick(search === null);
+                setIsSearchClick(filter === null);
             })
             .catch((error) => {
                 //console.log(error);
@@ -133,7 +119,7 @@ function MemoListPage(props) {
                     <SortMemo className="flex-item" setParams={setParams} isSearchClick={isSearchClick} />
                     <SearchMemo className="flex-item" setParams={setParams} isSortClick={isSortClick} />
                 </DivWrapper>
-                <MemoList memos={memos} search={search} allFriends={allFriends} getMemos={getMemos} />
+                <MemoList memos={memos} filter={filter} search={search} allFriends={allFriends} getMemos={getMemos} />
             </BasicWrapper>
         </>
     );

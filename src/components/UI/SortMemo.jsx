@@ -31,7 +31,7 @@ function SortMemo(props) {
     }
 
     const handleSortClick = (event) => {
-        const filter = (value == 'all-memo') ? null : value;
+        const filter = (value === 'all-memo') ? null : value;
         const search = null;
         setParams(filter, search);
     }

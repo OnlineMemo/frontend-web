@@ -32,7 +32,7 @@ function SearchMemo(props) {
 
     const handleSearchClick = (event) => {
         const filter = null;
-        const search = (value == "") ? null : value;
+        const search = (value === "") ? null : value;
         setParams(filter, search);
     }
 
