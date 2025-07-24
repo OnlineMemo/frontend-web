@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import '../../App.css';
 import BasicWrapper from "../../components/Styled/BasicWrapper";
@@ -24,10 +25,15 @@ const DivWrapper = styled.div`
 `;
 
 function MemoListPage(props) {
+    const location = useLocation();
+
     const [filter, setFilter] = useState(null);
     const [search, setSearch] = useState(null);
     const [memos, setMemos] = useState([]);
     const [allFriends, setAllFriends] = useState([]);
+
+    const [isSortClick, setIsSortClick] = useState(false);  // 정렬 시, 검색텍스트 초기화를 위함.
+    const [isSearchClick, setIsSearchClick] = useState(false);  // 검색 시, 정렬기준 초기화를 위함.
 
     const setParams = (filter, search) => {
         setFilter(filter);
@@ -49,6 +55,16 @@ function MemoListPage(props) {
                     result.style.display = "block";
                 else
                     result.style.display = "none";
+
+                const isSortClick = (queryParams === '' || queryParams.startsWith("?filter="));
+                if (isSortClick === true) {
+                    setIsSortClick(true);
+                    setIsSearchClick(false);
+                }
+                else {
+                    setIsSortClick(false);
+                    setIsSearchClick(true);
+                }
             })
             .catch((error) => {
                 //console.log(error);
@@ -90,14 +106,32 @@ function MemoListPage(props) {
         }
     }, []);
 
+    useEffect(() => {
+        const handleBeforeHomeClick = (event) => {
+            if (event.target.closest("#mainTitleLink")) {
+                const pathName = location.pathname || "/";
+                if (pathName === "/memos" && !(filter === null && search === null)) {
+                    setIsSortClick(true);
+                    setIsSearchClick(true);
+                    setParams(null, null);
+                }
+            }
+        };
+        document.addEventListener("click", handleBeforeHomeClick);
+        
+        return () => {
+            document.removeEventListener("click", handleBeforeHomeClick);
+        };
+    }, [location]);
+
 
     return (
         <>
             <YesLoginNav memoListPageFriends={allFriends} />
             <BasicWrapper style={{ overflowX: "hidden" }}>
                 <DivWrapper className="flex-container">
-                    <SortMemo className="flex-item" setParams={setParams} />
-                    <SearchMemo className="flex-item" setParams={setParams} />
+                    <SortMemo className="flex-item" setParams={setParams} isSearchClick={isSearchClick} />
+                    <SearchMemo className="flex-item" setParams={setParams} isSortClick={isSortClick} />
                 </DivWrapper>
                 <MemoList memos={memos} search={search} allFriends={allFriends} getMemos={getMemos} />
             </BasicWrapper>

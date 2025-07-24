@@ -116,9 +116,9 @@ function NotFoundPage(props) {
                 contentRef.current.style.height = `${restHeight}px`;
             }
         };
-
         updateContentHeight();
         window.addEventListener("resize", updateContentHeight);
+        
         return () => {
             window.removeEventListener("resize", updateContentHeight);
         };

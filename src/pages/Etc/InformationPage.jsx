@@ -46,7 +46,6 @@ const MoreWrapper = styled(BasicWrapper)`
 `;
 
 const DivWrapper = styled.div`
-
     display: flex;
     justify-content: center;
 

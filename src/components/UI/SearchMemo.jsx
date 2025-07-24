@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import '../../App.css';
 
@@ -22,7 +22,7 @@ const Button = styled.button`
 `;
 
 function SearchMemo(props) {
-    const { setParams } = props;
+    const { setParams, isSortClick } = props;
 
     const [value, setValue] = useState('');
 
@@ -41,6 +41,12 @@ function SearchMemo(props) {
             handleSearchClick();
         }
     };
+
+    useEffect(() => {
+        if (isSortClick === true) {
+            setValue('');
+        }
+    }, [isSortClick]);
 
 
     return (
