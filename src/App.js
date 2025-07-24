@@ -96,6 +96,34 @@ function HelmetComponent() {
 }
 
 function App(props) {
+  useEffect(() => {
+    const applyStyle = (element) => {
+      // 길게 터치해 이동 시, 나타나는 링크 미리보기 창 방지
+      if (!element.hasAttribute('draggable')) {
+        element.setAttribute('draggable', 'false');
+      }
+      // 길게 터치 시, 나타나는 페이지 미리보기 창 방지
+      element.style.webkitTouchCallout = 'none';  // -webkit-touch-callout: none;
+      // 텍스트 드래그 선택 방지
+      element.style.webkitUserSelect = 'none';  // -webkit-user-select: none;
+      element.style.userSelect = 'none';  // user-select: none;
+    };
+
+    const observer = new MutationObserver(() => {
+      const dragElements = document.querySelectorAll('a, img');
+      dragElements.forEach(dragElement => applyStyle(dragElement));
+    });
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    // 초기에도 한 번 적용
+    const initElements = document.querySelectorAll('a, img');
+    initElements.forEach(initElement => applyStyle(initElement));
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <BrowserRouter>

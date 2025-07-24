@@ -43,7 +43,8 @@ function SortMemo(props) {
                 value={value} onChange={handleChange}
                 style={{
                     border: "solid 2px #645b56", borderRadius: "3px",
-                    height: "23px", weight: "102px", fontSize: "1.5rem", fontFamily: "jua", color: "#463f3a"
+                    height: "23px", weight: "102px", fontSize: "1.5rem", fontFamily: "jua", color: "#463f3a",
+                    cursor: "pointer"
                 }}
             >
                 <option value="all-memo">전체 메모</option>

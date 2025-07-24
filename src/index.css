@@ -61,3 +61,11 @@ footer {
     margin-bottom: 18px;
   }
 }
+
+.disablePreviewAndDrag {
+  /* disable Preview */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  /* disable Drag */
+  user-select: none;
+}
