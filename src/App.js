@@ -78,6 +78,15 @@ function HelmetComponent() {
         page_path: normalizedPathName,
         page_location: window.location.href
       });
+
+      // 로그인 필수 페이지의 통합 집계 (event)
+      const authRequiredPages = ['/users', '/friends', '/senders', '/memos', '/memos/:memoId', '/memos/new-memo'];
+      if (authRequiredPages.includes(normalizedPathName)) {
+        window.gtag('event', 'page_view', {
+          page_path: '/auth-pages',
+          page_location: window.location.href
+        });
+      }
     }
   }, [pathName]);
 
