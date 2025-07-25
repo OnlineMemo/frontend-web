@@ -190,7 +190,7 @@ function App(props) {
 
           {/* 로그인 사용자용 - Nav가 병합된 페이지 */}
           <Route path="/memos" element={<MemoListPage />} />
-          <Route path="/memos/:memoId" element={<ReadAndEditMemoPage />} />
+          <Route path="/memos/:memoId" element={<ReadAndEditMemoPage />} /> {/* 또는 path="/memos/:memoId(\d+) 정규표현식 적용할것. */}
           <Route path="/memos/new-memo" element={<NewMemoPage />} />
 
           {/* 404 Not Found 페이지 */}
