@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Helmet } from 'react-helmet';
 import axios from 'axios'
 import OneMemoWrapper from "../../components/Styled/OneMemoWrapper";
@@ -8,6 +8,7 @@ import { CheckToken } from "../../utils/CheckToken";
 import Apis from "../../apis/Api";
 
 function ReadAndEditMemoPage(props) {
+    const navigate = useNavigate();
     const { memoId } = useParams();
 
     const [memo, setMemo] = useState();
@@ -157,6 +158,10 @@ function ReadAndEditMemoPage(props) {
     }, [purpose, memo]);
 
     useEffect(() => {
+        if (memoId && !/^\d+$/.test(memoId)) {  // '/memos/숫자' 경로가 아닌 경우, 404 페이지로 이동
+            navigate('/404');
+        }
+
         return () => {
             if (extendLockTimerRef.current) {
                 clearTimeout(extendLockTimerRef.current);
