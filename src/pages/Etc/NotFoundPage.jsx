@@ -126,7 +126,8 @@ function NotFoundPage(props) {
 
     return (
         <MoreWrapper ref={contentRef}>
-            <i className="fa fa-arrow-left" aria-hidden="true" onClick={() => { navigate(-1) }}></i>
+            {/* <i className="fa fa-arrow-left" aria-hidden="true" onClick={() => { navigate(-1) }}></i> */}
+            <i className="fa fa-arrow-left" aria-hidden="true" onClick={() => navigate(isLoggedIn === true ? "/memos" : "/")}></i>
             <DivWrapper className="flex-container">
                 <div style={{ lineHeight: "140%" }}><br></br></div>
 
@@ -141,8 +142,8 @@ function NotFoundPage(props) {
                     새롭게 변경되었을 수 있습니다.
                 </span>
                 <div style={{ lineHeight: "51%" }}><br></br></div>
-                <button onClick={() => navigate(isLoggedIn === true ? "/memos" : "/")}>홈으로 이동</button>
                 {/* <Link to={isLoggedIn === true ? "/memos" : "/"}><button>홈으로 이동</button></Link> */}
+                <button onClick={() => navigate(isLoggedIn === true ? "/memos" : "/")}>홈으로 이동</button>
 
                 <br></br><br></br>
                 <div style={{ lineHeight: "140%" }}><br></br></div>
