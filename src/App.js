@@ -80,23 +80,26 @@ function HelmetComponent() {
   // <!-- Google tag (gtag.js) - GA4 -->
   useEffect(() => {
     const isLocalhost = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+    // 로그인 필수 페이지의 통합 집계 (event)
+    let loginUserId = ParseToken();
+    if (loginUserId === null) loginUserId = 0;  // 만약 비로그인 사용자라면, 사용자id를 0으로 설정.
+
     if (!isLocalhost && typeof window.gtag === 'function') {
       // '/memos/${memoId}' 패턴이면 '/memos/:memoId'로 통합 집계 (event)
       const normalizedPathName = pathName.replace(/^\/memos\/\d+$/, '/memos/:memoId');
       window.gtag('event', 'page_view', {
         page_path: normalizedPathName,
-        page_location: window.location.href
+        page_location: window.location.href,
+        login_user_id: loginUserId  // 커스텀 속성
       });
 
       // 로그인 필수 페이지의 통합 집계 (event)
-      let loginUserId = ParseToken();
-      if (loginUserId === null) loginUserId = 0;  // 만약 비로그인 사용자라면, 사용자id를 0으로 설정. (잘못된 접근)
       const authRequiredPages = ['/users', '/friends', '/senders', '/memos', '/memos/:memoId', '/memos/new-memo'];
       if (authRequiredPages.includes(normalizedPathName)) {
         window.gtag('event', 'page_view', {
           page_path: '/auth-pages',
           page_location: window.location.href,
-          login_user_id: loginUserId  // 커스텀 속성
+          login_user_id: loginUserId  // 커스텀 속성 (이 경우, 사용자id가 0이라면 잘못된 접근을 의미.)
         });
       }
     }
