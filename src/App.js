@@ -6,6 +6,7 @@ import './App.css';
 import LoadingNav from "./components/Navigation/LoadingNav";
 import BasicWrapper from "./components/Styled/BasicWrapper";
 import { retryLazy } from "./utils/lazyUtil.js"
+import { ParseToken } from "./utils/ParseToken"
 const LazyLoad = (path) => retryLazy(() => import(`${path}`));
 const NoLoginNav = LazyLoad("./components/Navigation/NoLoginNav");
 const LoginPage = LazyLoad("./pages/User/LoginPage");
@@ -88,11 +89,14 @@ function HelmetComponent() {
       });
 
       // 로그인 필수 페이지의 통합 집계 (event)
+      let loginUserId = ParseToken();
+      if (loginUserId === null) loginUserId = 0;  // 만약 비로그인 사용자라면, 사용자id를 0으로 설정. (잘못된 접근)
       const authRequiredPages = ['/users', '/friends', '/senders', '/memos', '/memos/:memoId', '/memos/new-memo'];
       if (authRequiredPages.includes(normalizedPathName)) {
         window.gtag('event', 'page_view', {
           page_path: '/auth-pages',
-          page_location: window.location.href
+          page_location: window.location.href,
+          login_user_id: loginUserId  // 커스텀 속성
         });
       }
     }
