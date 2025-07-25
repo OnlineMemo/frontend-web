@@ -60,6 +60,9 @@ Apis.interceptors.response.use(
             sessionStorage.clear();
             redirectToLogin(); // 로그인 화면으로 이동
         }
+        else if (err.response?.data?.status === 404) {
+            redirectTo404Page(); // 404 Not Found 페이지로 이동
+        }
 
         return Promise.reject(err); // 그 외의 에러는 그대로 반환
     }
@@ -83,6 +86,10 @@ function redirectToLogin() {
     if (pathname !== '/' && pathname !== '/login') {
         window.location.href = '/login';
     }
+}
+
+function redirectTo404Page() {
+    window.location.href = '/404';
 }
 
 export default Apis;
