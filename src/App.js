@@ -61,6 +61,14 @@ function HelmetComponent() {
     return helmetTitle;
   }
 
+  const getHelmetDescription = () => {
+    let helmetDescription = "📝 모든 기기에서 간편하게 메모를 작성하고, 친구와 공동 편집도 가능한 온라인 메모장입니다. 📝";
+    if (pathName === "/signup") helmetDescription = "심플 회원가입 - 생성할 ID/PW만 입력하면, 개인정보 없이 빠르게 가입할 수 있어요.";
+    else if (pathName === "/notice") helmetDescription = "이용방법 안내 – 웹사이트 주소는 OnlineMemo.kr 이며, 문의는 기재된 메일로 부탁드립니다.";
+    else if (pathName === "/download") helmetDescription = "모바일 앱 지원 - 웹은 물론, Android · iOS 앱에서도 쾌적한 풀스크린 환경을 제공합니다.";
+    return helmetDescription;
+  }
+
   const getHelmetCanonical = () => {
     let helmetCanonical = "https://www.onlinememo.kr";
     if (pathName === "/login") helmetCanonical += "/";
@@ -93,6 +101,7 @@ function HelmetComponent() {
   return (
       <Helmet>
         <title>{getHelmetTitle()}</title>
+        <meta name="description" content={getHelmetDescription()} data-react-helmet="true"/>
         {/* <meta name="description" content="📝 모든 기기에서 간편하게 메모를 작성하고, 친구와 공동 편집도 가능한 온라인 메모장입니다. 📝" data-react-helmet="true"/> */}
         <link rel="canonical" href={getHelmetCanonical()} />
       </Helmet>
