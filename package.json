@@ -12,6 +12,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
+    "react-hydratable-shj": "^1.0.0",
     "react-router-dom": "^6.6.2",
     "react-scripts": "^5.0.1",
     "styled-components": "^5.3.6",
@@ -43,8 +44,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "react-hydratable": "^1.5.0"
   }
 }
