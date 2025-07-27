@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkonlinememo_react_project=self.webpackChunkonlinememo_react_project||[]).push([[9203],{9203:(e,t,c)=>{e.exports=c.p+"static/media/BMJUA_ttf.bf12d2d886260d73277b.ttf"}}]);
