@@ -89,10 +89,14 @@ function HelmetComponent() {
     if (normalizedPathName && normalizedPathName.length >= 2 && normalizedPathName.endsWith('/')) {
       normalizedPathName = normalizedPathName.slice(0, -1);  
     }
+    // '/login' 주소이면 '/'로 통합 집계
+    if (normalizedPathName === '/login') {
+      normalizedPathName = '/';
+    }
     // '/memos/${memoId}' 패턴이면 '/memos/:memoId'로 통합 집계
     normalizedPathName = normalizedPathName.replace(/^\/memos\/\d+$/, '/memos/:memoId');
     // 잘못된 주소라면 '/404'로 통합 집계
-    const publicPages = ['/login', '/signup', '/password', '/information', '/notice', '/download', '/404'];
+    const publicPages = ['/signup', '/password', '/information', '/notice', '/download', '/404'];  // '/login'은 이미 '/'로 치환되었으므로 제외.
     const authPages = ['/users', '/friends', '/senders', '/memos', '/memos/:memoId', '/memos/new-memo'];
     const isIncludePublicPages = publicPages.includes(normalizedPathName);
     const isIncludeAuthPages = authPages.includes(normalizedPathName);
