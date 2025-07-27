@@ -28,5 +28,8 @@ yarn-error.log*
 **/.DS_Store
 **/._.DS_Store
 
+Icon?
+.vscode
+
 dev_notes.txt
 dev_BigQuery.sql
