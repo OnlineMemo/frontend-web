@@ -50,7 +50,7 @@ const LittleTitle = styled.div`
 
 function HelmetComponent() {
   const location = useLocation();
-  const pathName = location.pathname || "/";
+  const pathName = location?.pathname || "/";
 
   const getHelmetTitle = () => {
     let helmetTitle = "온라인 메모장";
@@ -79,28 +79,53 @@ function HelmetComponent() {
 
   // <!-- Google tag (gtag.js) - GA4 -->
   useEffect(() => {
-    const isLocalhost = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
-    if (!isLocalhost && typeof window.gtag === 'function') {
-      // '/memos/${memoId}' 패턴이면 '/memos/:memoId'로 통합 집계 (event)
-      const normalizedPathName = pathName.replace(/^\/memos\/\d+$/, '/memos/:memoId');
+    const isTest = false;  // Dev mode
+    if (!window.gtag || !location?.pathname) return;
+    const isLocalhost = isTest ? false : (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+    if (!(!isLocalhost && typeof window.gtag === 'function')) return;
+
+    // 주소 끝에 '/'가 있으면 제거 (예: '/memos/' -> '/memos')
+    let normalizedPathName = pathName;
+    if (normalizedPathName && normalizedPathName.length >= 2 && normalizedPathName.endsWith('/')) {
+      normalizedPathName = normalizedPathName.slice(0, -1);  
+    }
+    // '/memos/${memoId}' 패턴이면 '/memos/:memoId'로 통합 집계
+    normalizedPathName = normalizedPathName.replace(/^\/memos\/\d+$/, '/memos/:memoId');
+    // 잘못된 주소라면 '/404'로 통합 집계
+    const publicPages = ['/login', '/signup', '/password', '/information', '/notice', '/download', '/404'];
+    const authPages = ['/users', '/friends', '/senders', '/memos', '/memos/:memoId', '/memos/new-memo'];
+    const isIncludePublicPages = publicPages.includes(normalizedPathName);
+    const isIncludeAuthPages = authPages.includes(normalizedPathName);
+    if (isIncludePublicPages === false && isIncludeAuthPages === false) {
+      normalizedPathName = '/404';
+    }
+
+    // 전체 페이지의 통합 집계 (event)
+    setTimeout(() => {
+      if (isTest === true) {
+        console.log('========================');
+        console.log('- pathName :', normalizedPathName);
+        console.log('- title :', document.title);
+      }
       window.gtag('event', 'page_view', {
         page_path: normalizedPathName,
         page_location: window.location.href
       });
+    }, 100);
 
-      // 로그인 필수 페이지의 통합 집계 (event)
-      let loginUserId = ParseToken();
-      if (loginUserId === null) loginUserId = 0;  // 만약 비로그인 사용자라면, 사용자id를 0으로 설정. (잘못된 접근)
-      const authRequiredPages = ['/users', '/friends', '/senders', '/memos', '/memos/:memoId', '/memos/new-memo'];
-      if (authRequiredPages.includes(normalizedPathName)) {
+    // 로그인 필수 페이지의 통합 집계 (event)
+    let loginUserId = ParseToken();
+    if (loginUserId === null) loginUserId = 0;  // 만약 비로그인 사용자라면, 사용자id를 0으로 설정. (잘못된 접근)
+    setTimeout(() => {
+      if (isIncludeAuthPages === true) {
         window.gtag('event', 'page_view', {
           page_path: '/auth-pages',
           page_location: window.location.href,
           login_user_id: loginUserId  // 커스텀 속성
         });
       }
-    }
-  }, [pathName]);
+    }, 100);
+  }, [location?.pathname]);
 
   return (
       <Helmet>
