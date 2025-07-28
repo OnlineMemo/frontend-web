@@ -25,7 +25,10 @@ const element = (
 );
 const rootElement = document.getElementById('root');
 
-if (rootElement.hasChildNodes()){  // SSR인 경우
+const prerenderPaths = ["/", "/signup", "/notice", "/download"];
+const curPath = window.location.pathname;
+
+if (rootElement.hasChildNodes() && prerenderPaths.includes(curPath)){  // SSR인 경우
   hydrateRoot(rootElement, element);
 }
 else {  // CSR인 경우
