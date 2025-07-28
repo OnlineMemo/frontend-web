@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Routes, Route, Link, useLocation } from "react-router-dom";
 import { Helmet } from 'react-helmet-async';
 import styled from "styled-components";
@@ -144,7 +144,12 @@ function HelmetComponent() {
 function TitleComponent() {  // 홈키
   const location = useLocation();
   const pathName = location.pathname || "/";
-  const isLoggedIn = !!(localStorage.getItem("accessToken") && localStorage.getItem("refreshToken"));
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {  // hydration 오류(#418, #423) 해결 : 서버와 클라이언트의 렌더링 출력이 일치하도록 함.
+    const isHasTokens = !!(localStorage.getItem("accessToken") && localStorage.getItem("refreshToken"));
+    setIsLoggedIn(isHasTokens);
+  }, []);
 
   return (
       <MainTitleText>
@@ -177,8 +182,42 @@ function LoadingComponent() {
   );
 }
 
+function RouteComponent() {
+  return (
+    <Routes>
+      {/* 기본 라우트 */}
+      <Route index element={<><NoLoginNav /><LoginPage /></>} />
+
+      {/* 비로그인 및 로그인 사용자용 - Nav가 분리된 페이지 */}
+      <Route path="/login" element={<><NoLoginNav /><LoginPage /></>} />
+      <Route path="/signup" element={<><NoLoginNav /><SignupPage /></>} />
+      <Route path="/password" element={<><NoLoginNav /><ChangePwPage /></>} />
+      <Route path="/information" element={<><NoLoginNav /><InformationPage /></>} />
+      <Route path="/notice" element={<><NoLoginNav /><NoticePage /></>} />
+      <Route path="/download" element={<><NoLoginNav /><DownloadPage /></>} />
+
+      {/* 로그인 사용자용 - Nav가 분리된 페이지 */}
+      <Route path="/users" element={<><YesLoginNav /><UserProfilePage /></>} />
+      <Route path="/friends" element={<><YesLoginNav /><FriendListPage /></>} />
+      <Route path="/senders" element={<><YesLoginNav /><SenderListPage /></>} />
+
+      {/* 로그인 사용자용 - Nav가 병합된 페이지 */}
+      <Route path="/memos" element={<MemoListPage />} />
+      <Route path="/memos/:memoId" element={<ReadAndEditMemoPage />} /> {/* 또는 path="/memos/:memoId(\d+) 정규표현식 적용할것. */}
+      <Route path="/memos/new-memo" element={<NewMemoPage />} />
+
+      {/* 404 Not Found 페이지 */}
+      <Route path="*" element={<><NoLoginNav /><NotFoundPage /></>} />
+    </Routes>
+  );
+}
+
 function App(props) {
+  const [isCrawlTime, setIsCrawlTime] = useState(true);  // SSR hydration 크롤러가 첫 렌더링 중일때
+
   useEffect(() => {
+    setIsCrawlTime(false);
+
     const applyStyle = (element) => {
       // 길게 터치해 이동 시, 나타나는 링크 미리보기 창 방지
       if (!element.hasAttribute('draggable')) {
@@ -212,33 +251,13 @@ function App(props) {
       <HelmetComponent />
       <TitleComponent />
 
-      <React.Suspense fallback={<LoadingComponent />}>
-        <Routes>
-          {/* 기본 라우트 */}
-          <Route index element={<><NoLoginNav /><LoginPage /></>} />
-
-          {/* 비로그인 및 로그인 사용자용 - Nav가 분리된 페이지 */}
-          <Route path="/login" element={<><NoLoginNav /><LoginPage /></>} />
-          <Route path="/signup" element={<><NoLoginNav /><SignupPage /></>} />
-          <Route path="/password" element={<><NoLoginNav /><ChangePwPage /></>} />
-          <Route path="/information" element={<><NoLoginNav /><InformationPage /></>} />
-          <Route path="/notice" element={<><NoLoginNav /><NoticePage /></>} />
-          <Route path="/download" element={<><NoLoginNav /><DownloadPage /></>} />
-
-          {/* 로그인 사용자용 - Nav가 분리된 페이지 */}
-          <Route path="/users" element={<><YesLoginNav /><UserProfilePage /></>} />
-          <Route path="/friends" element={<><YesLoginNav /><FriendListPage /></>} />
-          <Route path="/senders" element={<><YesLoginNav /><SenderListPage /></>} />
-
-          {/* 로그인 사용자용 - Nav가 병합된 페이지 */}
-          <Route path="/memos" element={<MemoListPage />} />
-          <Route path="/memos/:memoId" element={<ReadAndEditMemoPage />} /> {/* 또는 path="/memos/:memoId(\d+) 정규표현식 적용할것. */}
-          <Route path="/memos/new-memo" element={<NewMemoPage />} />
-
-          {/* 404 Not Found 페이지 */}
-          <Route path="*" element={<><NoLoginNav /><NotFoundPage /></>} />
-        </Routes>
-      </React.Suspense>
+      {isCrawlTime === true ? (  // hydration 오류(#418, #423) 해결 : 서버와 클라이언트의 렌더링 출력이 일치하도록 함.
+        <RouteComponent />
+      ) : (
+        <React.Suspense fallback={<LoadingComponent />}>
+          <RouteComponent />
+        </React.Suspense>
+      )}
     </>
   );
 }

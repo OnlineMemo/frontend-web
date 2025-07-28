@@ -1,3 +1,4 @@
 {
-  "crawlingUrls": ["/", "/signup", "/notice", "/download"]
+  "crawlingUrls": ["/", "/signup", "/notice", "/download"],
+  "pageCount": 2
 }

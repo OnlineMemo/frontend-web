@@ -30,7 +30,7 @@ if (rootElement.hasChildNodes()){  // SSR인 경우
 }
 else {  // CSR인 경우
   const root = createRoot(rootElement);
-  root.render(element, rootElement);
+  root.render(element);  // root.render(element, rootElement);
 }
 
 reportWebVitals();
