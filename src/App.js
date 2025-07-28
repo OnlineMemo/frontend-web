@@ -7,6 +7,8 @@ import LoadingNav from "./components/Navigation/LoadingNav";
 import BasicWrapper from "./components/Styled/BasicWrapper";
 import { retryLazy } from "./utils/lazyUtil.js"
 import { ParseToken } from "./utils/ParseToken"
+import { getTitle, getDescription, getCanonical } from "./utils/MetaUtil"
+
 const LazyLoad = (path) => retryLazy(() => import(`${path}`));
 const NoLoginNav = LazyLoad("./components/Navigation/NoLoginNav");
 const LoginPage = LazyLoad("./pages/User/LoginPage");
@@ -23,6 +25,9 @@ const SenderListPage = LazyLoad("./pages/Friend/SenderListPage");
 const NoticePage = LazyLoad("./pages/Etc/NoticePage");
 const DownloadPage = LazyLoad("./pages/Etc/DownloadPage");
 const NotFoundPage = LazyLoad("./pages/Etc/NotFoundPage");
+
+
+// ============ < Styled Components > ============ //
 
 const MainTitleText = styled.header`
     font-size: 3rem;
@@ -48,38 +53,16 @@ const LittleTitle = styled.div`
     }
 `;
 
-function HelmetComponent() {
+
+// ============ < Sub Components > ============ //
+
+function HelmetGa4Component() {
   const location = useLocation();
   const pathName = location?.pathname || "/";
-
-  const getHelmetTitle = () => {
-    let helmetTitle = "온라인 메모장";
-    if (pathName === "/signup") helmetTitle += " - 회원가입";
-    else if (pathName === "/password") helmetTitle += " - 비밀번호 변경";
-    else if (pathName === "/information") helmetTitle += " - 개발 정보";
-    else if (pathName === "/notice") helmetTitle += " - 공지사항";
-    else if (pathName === "/download") helmetTitle += " - 다운로드 안내";
-    return helmetTitle;
-  }
-
-  const getHelmetDescription = () => {
-    let helmetDescription = "📝 모든 기기에서 간편하게 메모를 작성하고, 친구와 공동 편집도 가능한 온라인 메모장입니다. 📝";
-    if (pathName === "/signup") helmetDescription = "심플 회원가입 - 생성할 ID/PW만 입력하고, 개인정보 없이 빠르게 가입해 메모를 관리해요.";  // or '심플 회원가입 - 생성할 ID/PW만 입력하면, 개인정보 없이 빠르게 가입하고 메모를 관리할 수 있어요.'
-    else if (pathName === "/notice") helmetDescription = "이용방법 안내 - 웹 주소는 OnlineMemo.kr 이며, 로그인 상태가 2주간 안전하게 유지됩니다.";  // or '이용방법 안내 – 웹사이트 주소는 OnlineMemo.kr 이며, 문의는 기재된 메일로 부탁드립니다.'
-    else if (pathName === "/download") helmetDescription = "모바일 앱 지원 - 웹은 물론, Android · iOS 앱에서도 쾌적한 풀스크린 환경을 제공합니다.";
-    return helmetDescription;
-  }
-
-  const getHelmetCanonical = () => {
-    let helmetCanonical = "https://www.onlinememo.kr";
-    if (pathName === "/login") helmetCanonical += "/";
-    else helmetCanonical += pathName;
-    return helmetCanonical;
-  }
+  const isTest = false;  // Dev mode
 
   // <!-- Google tag (gtag.js) - GA4 -->
   useEffect(() => {
-    const isTest = false;  // Dev mode
     if (!window.gtag || !location?.pathname) return;
     const isLocalhost = isTest ? false : (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
     if (!(!isLocalhost && typeof window.gtag === 'function')) return;
@@ -133,10 +116,9 @@ function HelmetComponent() {
 
   return (
       <Helmet>
-        <title>{getHelmetTitle()}</title>
-        <meta name="description" content={getHelmetDescription()} />
-        {/* <meta name="description" content="📝 모든 기기에서 간편하게 메모를 작성하고, 친구와 공동 편집도 가능한 온라인 메모장입니다. 📝" /> */}
-        <link rel="canonical" href={getHelmetCanonical()} />
+        <title>{getTitle(pathName)}</title>
+        <meta name="description" content={getDescription(pathName)} />
+        <link rel="canonical" href={getCanonical(pathName)} />
       </Helmet>
   );
 }
@@ -168,6 +150,9 @@ function TitleComponent() {  // 홈키
       </MainTitleText>
   );
 }
+
+
+// ============ < Main Component > ============ //
 
 function LoadingComponent() {
   return (
@@ -248,7 +233,7 @@ function App(props) {
 
   return (
     <>
-      <HelmetComponent />
+      <HelmetGa4Component />
       <TitleComponent />
 
       {isCrawlTime === true ? (  // hydration 오류(#418, #423) 해결 : 서버와 클라이언트의 렌더링 출력이 일치하도록 함.

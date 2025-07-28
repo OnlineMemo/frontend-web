@@ -7,6 +7,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// < CSR - Original Ver. >
 // const root = ReactDOM.createRoot(document.getElementById('root'));
 // root.render(
 //   <React.StrictMode>
@@ -14,6 +15,7 @@ import reportWebVitals from './reportWebVitals';
 //   </React.StrictMode>
 // );
 
+// < CSR + SSR + Helmet - SEO Ver. >
 const element = (
   <React.StrictMode>
     <BrowserRouter>
