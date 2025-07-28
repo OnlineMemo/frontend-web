@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import { Routes, Route, Link, useLocation } from "react-router-dom";
+import { Helmet } from 'react-helmet-async';
 import styled from "styled-components";
 import './App.css';
 import LoadingNav from "./components/Navigation/LoadingNav";
@@ -96,7 +96,7 @@ function HelmetComponent() {
     // '/memos/${memoId}' 패턴이면 '/memos/:memoId'로 통합 집계
     normalizedPathName = normalizedPathName.replace(/^\/memos\/\d+$/, '/memos/:memoId');
     // 잘못된 주소라면 '/404'로 통합 집계
-    const publicPages = ['/signup', '/password', '/information', '/notice', '/download', '/404'];  // '/login'은 이미 '/'로 치환되었으므로 제외.
+    const publicPages = ['/', '/signup', '/password', '/information', '/notice', '/download', '/404'];  // '/login'은 이미 '/'로 치환되었으므로 제외.
     const authPages = ['/users', '/friends', '/senders', '/memos', '/memos/:memoId', '/memos/new-memo'];
     const isIncludePublicPages = publicPages.includes(normalizedPathName);
     const isIncludeAuthPages = authPages.includes(normalizedPathName);
@@ -134,8 +134,8 @@ function HelmetComponent() {
   return (
       <Helmet>
         <title>{getHelmetTitle()}</title>
-        <meta name="description" content={getHelmetDescription()} data-react-helmet="true"/>
-        {/* <meta name="description" content="📝 모든 기기에서 간편하게 메모를 작성하고, 친구와 공동 편집도 가능한 온라인 메모장입니다. 📝" data-react-helmet="true"/> */}
+        <meta name="description" content={getHelmetDescription()} />
+        {/* <meta name="description" content="📝 모든 기기에서 간편하게 메모를 작성하고, 친구와 공동 편집도 가능한 온라인 메모장입니다. 📝" /> */}
         <link rel="canonical" href={getHelmetCanonical()} />
       </Helmet>
   );
@@ -208,7 +208,7 @@ function App(props) {
   }, []);
 
   return (
-    <BrowserRouter>
+    <>
       <HelmetComponent />
       <TitleComponent />
 
@@ -239,7 +239,7 @@ function App(props) {
           <Route path="*" element={<><NoLoginNav /><NotFoundPage /></>} />
         </Routes>
       </React.Suspense>
-    </BrowserRouter>
+    </>
   );
 }
 

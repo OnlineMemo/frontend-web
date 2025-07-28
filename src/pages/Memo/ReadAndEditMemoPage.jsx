@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import axios from 'axios'
 import OneMemoWrapper from "../../components/Styled/OneMemoWrapper";
 import ReadAndEditMemoNav from "../../components/Navigation/ReadAndEditMemoNav";
@@ -208,14 +208,14 @@ function ReadAndEditMemoPage(props) {
             {(titleValue !== "" && purpose === "read") &&
                 <Helmet>
                     <title>{titleValue} (온라인 메모장)</title>
-                    {/* <meta name="description" content="📝 모든 기기에서 간편하게 메모를 작성하고, 친구와 공동 편집도 가능한 온라인 메모장입니다. 📝" data-react-helmet="true"/> */}
+                    {/* <meta name="description" content="📝 모든 기기에서 간편하게 메모를 작성하고, 친구와 공동 편집도 가능한 온라인 메모장입니다. 📝" /> */}
                     {/* <link rel="canonical" href={`https://www.onlinememo.kr/memos/${memoId}`} /> */}
                 </Helmet>
             }
             {(purpose === "edit") &&
                 <Helmet>
                     <title>편집 중... (온라인 메모장)</title>
-                    {/* <meta name="description" content="📝 모든 기기에서 간편하게 메모를 작성하고, 친구와 공동 편집도 가능한 온라인 메모장입니다. 📝" data-react-helmet="true"/> */}
+                    {/* <meta name="description" content="📝 모든 기기에서 간편하게 메모를 작성하고, 친구와 공동 편집도 가능한 온라인 메모장입니다. 📝" /> */}
                     {/* <link rel="canonical" href={`https://www.onlinememo.kr/memos/${memoId}`} /> */}
                 </Helmet>
             }
