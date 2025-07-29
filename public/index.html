@@ -22,25 +22,33 @@
 
     <!-- Google tag (gtag.js) - GA4 -->
     <script>
-      const isLocalhost = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
-      if (!isLocalhost) {
-        const gtagScript = document.createElement("script");
-        gtagScript.src = "https://www.googletagmanager.com/gtag/js?id=G-GHDM9RQKGZ";
-        gtagScript.async = true;
-        gtagScript.onload = () => {
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          window.gtag = gtag;
-          gtag('js', new Date());
-          gtag('config', 'G-GHDM9RQKGZ', {
-            send_page_view: false
-          });
-        };
-        document.head.appendChild(gtagScript);
-      }
-      else {
-        window.gtag = function () {};
-      }
+      (function () {  // IIFE 함수
+        const isTest = false;  // Dev mode (in index.html, App.js)
+        window.checkIsTest = isTest;  // 값일치여부 단순 비교용 (외부 인젝션 영향 X)
+
+        const isLocalhost = isTest ? false : ['localhost', '127.0.0.1'].includes(window.location.hostname);
+        if (!isLocalhost) {
+          const gtagScript = document.createElement("script");
+          gtagScript.src = "https://www.googletagmanager.com/gtag/js?id=G-GHDM9RQKGZ";
+          gtagScript.async = true;
+          gtagScript.onload = () => {
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            window.gtag = gtag;
+            gtag('js', new Date());
+            gtag('config', 'G-GHDM9RQKGZ', {
+              send_page_view: false,
+              // ...(isTest === true ? { debug_mode: true } : {})
+            });
+            window.isGa4Init = true;
+          };
+          document.head.appendChild(gtagScript);
+        }
+        else {
+          window.gtag = function () {};
+          window.isGa4Init = false;
+        }
+      })();
     </script>
   </head>
   <body>

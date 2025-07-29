@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Routes, Route, Link, useLocation } from "react-router-dom";
+import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
 import { Helmet } from 'react-helmet-async';
 import styled from "styled-components";
 import './App.css';
@@ -58,15 +58,33 @@ const LittleTitle = styled.div`
 
 function HelmetGa4Component() {
   const location = useLocation();
-  const pathName = location?.pathname || "/";
-  const isTest = false;  // Dev mode
+  const [prevPathName, setPrevPathName] = useState(null);  // prevPath
+  const pathName = location?.pathname || "/";  // curPath
 
   // <!-- Google tag (gtag.js) - GA4 -->
   useEffect(() => {
-    if (!window.gtag || !location?.pathname) return;
-    const isLocalhost = isTest ? false : (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
-    if (!(!isLocalhost && typeof window.gtag === 'function')) return;
+    const isTest = false;  // Dev mode (in index.html, App.js)
+    const checkIsTest = window.checkIsTest;
+    if (checkIsTest !== undefined) {
+      if (checkIsTest !== isTest) {  // 값일치여부 단순 비교용 (외부 인젝션 영향 X)
+        console.error(`ERROR - GA4 isTest 불일치 에러\n==> (isTest1: ${checkIsTest}, isTest2: ${isTest})\n`);
+      }
+      else if (isTest === true) {
+        console.warn(`WARN - GA4 isTest 활성화 경고\n==> (isTest1: true, isTest2: true)\n`);
+      }
+    }
 
+    // << GA4 사용여부 검사 >>
+    // 중복 경로의 이벤트 전송 방지
+    if (!location?.pathname || pathName === prevPathName) return;
+    setPrevPathName(pathName);  // 이는 다음 렌더링에서 반영됨.
+    // GA4 비활성화 상태의 실행 방지
+    if (!window.gtag || !window.isGa4Init || typeof window.gtag !== 'function') return;
+    // 로컬 환경의 이벤트 전송 방지 (단, isTest==true 경우는 허용)
+    const isLocalhost = isTest ? false : ['localhost', '127.0.0.1'].includes(window.location.hostname);
+    if (isLocalhost === true) return;
+
+    // << pathName 정규화 >>
     // 주소 끝에 '/'가 있으면 제거 (예: '/memos/' -> '/memos')
     let normalizedPathName = pathName;
     if (normalizedPathName && normalizedPathName.length >= 2 && normalizedPathName.endsWith('/')) {
@@ -87,19 +105,20 @@ function HelmetGa4Component() {
       normalizedPathName = '/404';
     }
 
+    // << event 전송 >>
     // 전체 페이지의 통합 집계 (event)
     setTimeout(() => {
       if (isTest === true) {
         console.log('========================');
-        console.log('- pathName :', normalizedPathName);
         console.log('- title :', document.title);
+        console.log('- pathName :', normalizedPathName);
+        console.log(`- Route : ${prevPathName} → ${pathName}`);
       }
       window.gtag('event', 'page_view', {
         page_path: normalizedPathName,
         page_location: window.location.href
       });
     }, 100);
-
     // 로그인 필수 페이지의 통합 집계 (event)
     let loginUserId = ParseToken();
     if (loginUserId === null) loginUserId = 0;  // 만약 비로그인 사용자라면, 사용자id를 0으로 설정. (잘못된 접근)
