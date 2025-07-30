@@ -168,11 +168,30 @@ function HelmetGa4Component() {
         });
       }
 
+      // 라우팅 테스트용 디버깅 로그
       if (isTest === true) {
+        let printPrevPathName = prevPathName;
+        if (pageReferrer === "X") {
+          if (prevPathName === null) {
+            printPrevPathName = "X";
+          }
+        }
+        else {
+          try {
+            const referrerUrl = new URL(pageReferrer);
+            const referrerOrigin = referrerUrl.origin;
+            if (referrerOrigin === window.location.origin) {
+              const referrerPathName = referrerUrl.pathname;
+              printPrevPathName = referrerPathName;
+            }
+          } catch (err) {
+            console.error(`ERROR - pageReferrer URL 파싱 에러\n==> (pageReferrer: ${pageReferrer})\n`);
+          }
+        }
         console.log('========================');
         console.log('- title :', document.title);
-        console.log('- pathName :', normalizedPathName);
-        console.log(`- Route pathName :\n${(prevPathName !== null) ? prevPathName : "X"} → ${pathName}`);
+        console.log('- pathName :', normalizedPathName);  // normalized pathName
+        console.log(`- Route pathName :\n${printPrevPathName} → ${pathName}`);  // original pathNames
         console.log(`- Route fullURL :\n${pageReferrer} → ${pageLocation}`);
       }
     }, 100);
