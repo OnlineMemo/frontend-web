@@ -58,6 +58,7 @@ const LittleTitle = styled.div`
 
 const publicPages = ['/', '/signup', '/password', '/information', '/notice', '/download', '/404'];  // '/login'은 이미 '/'로 치환되었으므로 제외.
 const authPages = ['/users', '/friends', '/senders', '/memos', '/memos/:memoId', '/memos/new-memo'];
+const redirectPages = ['/', '/signup', '/password'];  // '/login'은 이미 '/'로 치환되었으므로 제외.
 
 const convertPathName = (originPathName) => {
   // 주소 끝에 '/'가 있으면 제거 (예: '/memos/' -> '/memos')
@@ -123,6 +124,12 @@ function HelmetGa4Component() {
     // << pathName 및 referrer 도출 >>
     // pathName 정규화
     const {normalizedPathName, isIncludeAuthPages} = convertPathName(pathName);
+    // 강제 메인 리다이렉트 시 도착 URL을 기존 경로로 설정
+    let pageLocation = window.location.href;
+    const isLoggedIn = !!(localStorage.getItem("accessToken") && localStorage.getItem("refreshToken"));
+    if (isLoggedIn === true && redirectPages.includes(normalizedPathName) === true) {
+      pageLocation = `${window.location.origin}${pathName}`;
+    }
     // referrer 도출
     const referrer = document.referrer;
     let pageReferrer = null;
@@ -141,7 +148,6 @@ function HelmetGa4Component() {
     // << event 전송 >>
     setTimeout(() => {
       // null 값임을 명시 (string_value: "X", int_value: -1)
-      const pageLocation = window.location.href;
       pageReferrer = (pageReferrer !== null) ? pageReferrer : "X";  // '브라우저를 켜자마자 외부 페이지 없이 바로 진입한 경우' or 'http 및 localhost 이동 등으로 referrer 추적이 제한된 경우'
       let loginUserId = ParseToken();
       loginUserId = (loginUserId !== null) ? loginUserId : -1;  // '비로그인 유저가 잘못된 접근으로, 로그인 필수 페이지에 접근한 경우'
