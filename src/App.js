@@ -170,13 +170,8 @@ function HelmetGa4Component() {
 
       // 라우팅 테스트용 디버깅 로그
       if (isTest === true) {
-        let printPrevPathName = prevPathName;
-        if (pageReferrer === "X") {
-          if (prevPathName === null) {
-            printPrevPathName = "X";
-          }
-        }
-        else {
+        let printPrevPathName = (prevPathName !== null) ? prevPathName : "X";
+        if (prevPathName === null && pageReferrer !== "X") {
           try {
             const referrerUrl = new URL(pageReferrer);
             const referrerOrigin = referrerUrl.origin;
@@ -189,10 +184,10 @@ function HelmetGa4Component() {
           }
         }
         console.log('========================');
-        console.log('- title :', document.title);
-        console.log('- pathName :', normalizedPathName);  // normalized pathName
-        console.log(`- Route pathName :\n${printPrevPathName} → ${pathName}`);  // original pathNames
-        console.log(`- Route fullURL :\n${pageReferrer} → ${pageLocation}`);
+        console.log('- title :', document.title);  // (current)
+        console.log('- pathName :', normalizedPathName);  // normalized pathName (current)
+        console.log(`- Route pathName :\n${printPrevPathName} → ${pathName}`);  // original pathNames (prev -> current)
+        console.log(`- Route fullURL :\n${pageReferrer} → ${pageLocation}`);  // (prev -> current)
       }
     }, 100);
   }, [location?.pathname]);
