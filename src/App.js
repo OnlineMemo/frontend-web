@@ -93,7 +93,7 @@ function HelmetGa4Component() {
 
   // <!-- Google tag (gtag.js) - GA4 -->
   useEffect(() => {
-    const isTest = true;  // Dev mode (in index.html, App.js)
+    const isTest = false;  // Dev mode (in index.html, App.js)
     const checkIsTest = window.checkIsTest;
     if (checkIsTest !== undefined) {
       if (checkIsTest !== isTest) {  // 값일치여부 단순 비교용 (외부 인젝션 영향 X)
