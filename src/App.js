@@ -56,14 +56,43 @@ const LittleTitle = styled.div`
 
 // ============ < Sub Components > ============ //
 
+const publicPages = ['/', '/signup', '/password', '/information', '/notice', '/download', '/404'];  // '/login'은 이미 '/'로 치환되었으므로 제외.
+const authPages = ['/users', '/friends', '/senders', '/memos', '/memos/:memoId', '/memos/new-memo'];
+
+const convertPathName = (originPathName) => {
+  // 주소 끝에 '/'가 있으면 제거 (예: '/memos/' -> '/memos')
+  let normalizedPathName = originPathName;
+  if (normalizedPathName && normalizedPathName.length >= 2 && normalizedPathName.endsWith('/')) {
+    normalizedPathName = normalizedPathName.slice(0, -1);  
+  }
+
+  // '/login' 주소이면 '/'로 통합 집계
+  if (normalizedPathName === '/login') {
+    normalizedPathName = '/';
+  }
+
+  // '/memos/${memoId}' 패턴이면 '/memos/:memoId'로 통합 집계
+  normalizedPathName = normalizedPathName.replace(/^\/memos\/\d+$/, '/memos/:memoId');
+
+  // 잘못된 주소라면 '/404'로 통합 집계
+  const isIncludePublicPages = publicPages.includes(normalizedPathName);
+  const isIncludeAuthPages = authPages.includes(normalizedPathName);
+  if (isIncludePublicPages === false && isIncludeAuthPages === false) {
+    normalizedPathName = '/404';
+  }
+
+  return {normalizedPathName, isIncludeAuthPages};
+}
+
 function HelmetGa4Component() {
   const location = useLocation();
+  const [isHasReload, setIsHasReload] = useState(false);
   const [prevPathName, setPrevPathName] = useState(null);  // prevPath
   const pathName = location?.pathname || "/";  // curPath
 
   // <!-- Google tag (gtag.js) - GA4 -->
   useEffect(() => {
-    const isTest = false;  // Dev mode (in index.html, App.js)
+    const isTest = true;  // Dev mode (in index.html, App.js)
     const checkIsTest = window.checkIsTest;
     if (checkIsTest !== undefined) {
       if (checkIsTest !== isTest) {  // 값일치여부 단순 비교용 (외부 인젝션 영향 X)
@@ -78,57 +107,73 @@ function HelmetGa4Component() {
     // 중복 경로의 이벤트 전송 방지
     if (!location?.pathname || pathName === prevPathName) return;
     setPrevPathName(pathName);  // 이는 다음 렌더링에서 반영됨.
+    // 새로고침 시 재전송 방지
+    const navEntries = performance.getEntriesByType('navigation');
+    const isReload = navEntries.length > 0 && navEntries[0].type === 'reload';
+    if (isReload && !isHasReload) {
+      setIsHasReload(true);
+      return;
+    }
     // GA4 비활성화 상태의 실행 방지
     if (!window.gtag || !window.isGa4Init || typeof window.gtag !== 'function') return;
     // 로컬 환경의 이벤트 전송 방지 (단, isTest==true 경우는 허용)
     const isLocalhost = isTest ? false : ['localhost', '127.0.0.1'].includes(window.location.hostname);
     if (isLocalhost === true) return;
 
-    // << pathName 정규화 >>
-    // 주소 끝에 '/'가 있으면 제거 (예: '/memos/' -> '/memos')
-    let normalizedPathName = pathName;
-    if (normalizedPathName && normalizedPathName.length >= 2 && normalizedPathName.endsWith('/')) {
-      normalizedPathName = normalizedPathName.slice(0, -1);  
+    // << pathName 및 referrer 도출 >>
+    // pathName 정규화
+    const {normalizedPathName, isIncludeAuthPages} = convertPathName(pathName);
+    // referrer 도출
+    const referrer = document.referrer;
+    let pageReferrer = null;
+    if (prevPathName === null) {  // 온라인메모장 관련 페이지에 처음 접근한 경우
+      if (!referrer) {  // '브라우저를 켜자마자 외부 페이지 없이 바로 진입한 경우' or 'http 및 localhost 이동 등으로 referrer 추적이 제한된 경우'
+        pageReferrer = null;
+      }
+      else {  // '외부 페이지를 거쳐 유입된 경우' or '이전에 온라인메모장 로그아웃 후 메인페이지로 강제 리다이렉트된 경우'
+        pageReferrer = referrer;
+      }
     }
-    // '/login' 주소이면 '/'로 통합 집계
-    if (normalizedPathName === '/login') {
-      normalizedPathName = '/';
-    }
-    // '/memos/${memoId}' 패턴이면 '/memos/:memoId'로 통합 집계
-    normalizedPathName = normalizedPathName.replace(/^\/memos\/\d+$/, '/memos/:memoId');
-    // 잘못된 주소라면 '/404'로 통합 집계
-    const publicPages = ['/', '/signup', '/password', '/information', '/notice', '/download', '/404'];  // '/login'은 이미 '/'로 치환되었으므로 제외.
-    const authPages = ['/users', '/friends', '/senders', '/memos', '/memos/:memoId', '/memos/new-memo'];
-    const isIncludePublicPages = publicPages.includes(normalizedPathName);
-    const isIncludeAuthPages = authPages.includes(normalizedPathName);
-    if (isIncludePublicPages === false && isIncludeAuthPages === false) {
-      normalizedPathName = '/404';
+    else {  // 온라인메모장 서비스 내에서 라우팅중인 경우
+      pageReferrer = `${window.location.origin}${prevPathName}`;
     }
 
     // << event 전송 >>
-    // 전체 페이지의 통합 집계 (event)
     setTimeout(() => {
+      // null 값임을 명시 (string_value: "X", int_value: -1)
+      const pageLocation = window.location.href;
+      pageReferrer = (pageReferrer !== null) ? pageReferrer : "X";  // '브라우저를 켜자마자 외부 페이지 없이 바로 진입한 경우' or 'http 및 localhost 이동 등으로 referrer 추적이 제한된 경우'
+      let loginUserId = ParseToken();
+      loginUserId = (loginUserId !== null) ? loginUserId : -1;  // '비로그인 유저가 잘못된 접근으로, 로그인 필수 페이지에 접근한 경우'
+      const isDebugMode = (isTest === true) ? true : false;
+
+      // 전체 페이지의 통합 집계 (event)
+      window.gtag('event', 'page_view', {
+        page_path: normalizedPathName,
+        page_location: pageLocation,
+        page_referrer: pageReferrer,
+        is_debug_mode: isDebugMode,  // 이는 GA4 세그먼트 및 BigQuery 필터링용으로 사용 예정. (커스텀 속성)
+        is_manual_event: true,  // 수동으로 직접 전송한 이벤트인가? (커스텀 속성)
+      });
+
+      // 로그인 필수 페이지의 통합 집계 (event)
+      if (isIncludeAuthPages === true) {
+        window.gtag('event', 'page_view', {
+          page_path: '/auth-pages',
+          page_location: pageLocation,
+          page_referrer: pageReferrer,
+          is_debug_mode: isDebugMode,  // 이는 GA4 세그먼트 및 BigQuery 필터링용으로 사용 예정. (커스텀 속성)
+          is_manual_event: true,  // 수동으로 직접 전송한 이벤트인가? (커스텀 속성)
+          login_user_id: loginUserId,  // 로그인된 사용자id (커스텀 속성)
+        });
+      }
+
       if (isTest === true) {
         console.log('========================');
         console.log('- title :', document.title);
         console.log('- pathName :', normalizedPathName);
-        console.log(`- Route : ${prevPathName} → ${pathName}`);
-      }
-      window.gtag('event', 'page_view', {
-        page_path: normalizedPathName,
-        page_location: window.location.href
-      });
-    }, 100);
-    // 로그인 필수 페이지의 통합 집계 (event)
-    let loginUserId = ParseToken();
-    if (loginUserId === null) loginUserId = 0;  // 만약 비로그인 사용자라면, 사용자id를 0으로 설정. (잘못된 접근)
-    setTimeout(() => {
-      if (isIncludeAuthPages === true) {
-        window.gtag('event', 'page_view', {
-          page_path: '/auth-pages',
-          page_location: window.location.href,
-          login_user_id: loginUserId  // 커스텀 속성
-        });
+        console.log(`- Route pathName :\n${(prevPathName !== null) ? prevPathName : "X"} → ${pathName}`);
+        console.log(`- Route fullURL :\n${pageReferrer} → ${pageLocation}`);
       }
     }, 100);
   }, [location?.pathname]);
@@ -144,13 +189,14 @@ function HelmetGa4Component() {
 
 function TitleComponent() {  // 홈키
   const location = useLocation();
-  const pathName = location.pathname || "/";
+  const pathName = location?.pathname || "/";
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {  // hydration 오류(#418, #423) 해결 : 서버와 클라이언트의 렌더링 출력이 일치하도록 함.
+    if (!location?.pathname) return;
     const isHasTokens = !!(localStorage.getItem("accessToken") && localStorage.getItem("refreshToken"));
     setIsLoggedIn(isHasTokens);
-  }, []);
+  }, [location?.pathname]);
 
   return (
       <MainTitleText>

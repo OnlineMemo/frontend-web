@@ -23,7 +23,7 @@
     <!-- Google tag (gtag.js) - GA4 -->
     <script>
       (function () {  // IIFE 함수
-        const isTest = false;  // Dev mode (in index.html, App.js)
+        const isTest = true;  // Dev mode (in index.html, App.js)
         window.checkIsTest = isTest;  // 값일치여부 단순 비교용 (외부 인젝션 영향 X)
 
         const isLocalhost = isTest ? false : ['localhost', '127.0.0.1'].includes(window.location.hostname);
@@ -37,8 +37,11 @@
             window.gtag = gtag;
             gtag('js', new Date());
             gtag('config', 'G-GHDM9RQKGZ', {
+              // 'send_page_view: false'로 설정해도, SPA에서는 GA4 콘솔의 '향상된 측정'
+              // 또는 GA4 콘솔의 GTM 'Google 태그 / 태그 설정 구성 / 자동 이벤트 감지 관리' 등으로 인해,
+              // page_view 이벤트가 수동+자동 중복 전송되므로 주의할것.
               send_page_view: false,
-              // ...(isTest === true ? { debug_mode: true } : {})
+              ...(isTest === true ? { debug_mode: true } : {})  // 이는 DebugView 실시간 확인용으로 사용 예정.
             });
             window.isGa4Init = true;
           };
