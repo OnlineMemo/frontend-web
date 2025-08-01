@@ -145,7 +145,7 @@ function HelmetGa4Component() {
       pageReferrer = `${window.location.origin}${prevPathName}`;
     }
 
-    // << event 전송 >>  // 비로그인 사용자의 잘못된 접근 시도 수. 비로그인 사용자의 미인증 접근 수  // 고유 로그인 사용자 수
+    // << event 전송 >>
     setTimeout(() => {
       // null 값을 대체하여 전송 (string_value: "X", int_value: -1 or 0)
       pageReferrer = (pageReferrer !== null) ? pageReferrer : "X";  // '브라우저를 켜자마자 외부 페이지 없이 바로 진입한 경우' or 'http 및 localhost 이동 등으로 referrer 추적이 제한된 경우'
