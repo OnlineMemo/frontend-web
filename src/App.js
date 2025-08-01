@@ -82,7 +82,7 @@ const convertPathName = (originPathName) => {
     normalizedPathName = '/404';
   }
 
-  return {normalizedPathName, isIncludeAuthPages};
+  return {normalizedPathName, isIncludePublicPages, isIncludeAuthPages};
 }
 
 function HelmetGa4Component() {
@@ -123,7 +123,7 @@ function HelmetGa4Component() {
 
     // << pathName 및 referrer 도출 >>
     // pathName 정규화
-    const {normalizedPathName, isIncludeAuthPages} = convertPathName(pathName);
+    const {normalizedPathName, isIncludePublicPages, isIncludeAuthPages} = convertPathName(pathName);
     // 강제 메인 리다이렉트 시 도착 URL을 기존 경로로 설정
     let pageLocation = window.location.href;
     const isLoggedIn = !!(localStorage.getItem("accessToken") && localStorage.getItem("refreshToken"));
@@ -145,20 +145,30 @@ function HelmetGa4Component() {
       pageReferrer = `${window.location.origin}${prevPathName}`;
     }
 
-    // << event 전송 >>
+    // << event 전송 >>  // 비로그인 사용자의 잘못된 접근 시도 수. 비로그인 사용자의 미인증 접근 수  // 고유 로그인 사용자 수
     setTimeout(() => {
-      // null 값임을 명시 (string_value: "X", int_value: -1)
+      // null 값을 대체하여 전송 (string_value: "X", int_value: -1 or 0)
       pageReferrer = (pageReferrer !== null) ? pageReferrer : "X";  // '브라우저를 켜자마자 외부 페이지 없이 바로 진입한 경우' or 'http 및 localhost 이동 등으로 referrer 추적이 제한된 경우'
-      let loginUserId = ParseToken();
-      loginUserId = (loginUserId !== null) ? loginUserId : -1;  // '비로그인 유저가 잘못된 접근으로, 로그인 필수 페이지에 접근한 경우'
-      const isDebugMode = (isTest === true) ? true : false;
+      let loginUserId = ParseToken();  // 로그인 사용자id: 1~ (정상)
+      if (loginUserId === null) {  // 비로그인 사용자인 경우
+        if (isIncludePublicPages === true) {  // 비로그인 허용 페이지일 때
+          loginUserId = 0;  // 비로그인 사용자id: 0 (정상)
+        }
+        else if (isIncludeAuthPages === true) {  // 로그인 필수 페이지일 때
+          loginUserId = -1;  // 비로그인 사용자id: -1 (비정상: '비로그인 유저가 잘못된 접근으로, 로그인 필수 페이지에 접근한 경우')
+        }
+        else {  // 예외 처리 (사실상 발생하지 않음)
+          loginUserId = -1;  // 비로그인 사용자id: -1 (비정상: 잘못된 전송)
+        }
+      }
 
       // 전체 페이지의 통합 집계 (event)
       window.gtag('event', 'page_view', {
         page_path: normalizedPathName,
         page_location: pageLocation,
         page_referrer: pageReferrer,
-        is_debug_mode: isDebugMode,  // 이는 GA4 세그먼트 및 BigQuery 필터링용으로 사용 예정. (커스텀 속성)
+        login_user_id: loginUserId,  // 로그인된 사용자id (커스텀 속성)
+        is_debug_mode: isTest,  // 이는 GA4 세그먼트 및 BigQuery 필터링용으로 사용 예정. (커스텀 속성)
         is_manual_event: true,  // 수동으로 직접 전송한 이벤트인가? (커스텀 속성)
       });
 
@@ -168,9 +178,9 @@ function HelmetGa4Component() {
           page_path: '/auth-pages',
           page_location: pageLocation,
           page_referrer: pageReferrer,
-          is_debug_mode: isDebugMode,  // 이는 GA4 세그먼트 및 BigQuery 필터링용으로 사용 예정. (커스텀 속성)
-          is_manual_event: true,  // 수동으로 직접 전송한 이벤트인가? (커스텀 속성)
           login_user_id: loginUserId,  // 로그인된 사용자id (커스텀 속성)
+          is_debug_mode: isTest,  // 이는 GA4 세그먼트 및 BigQuery 필터링용으로 사용 예정. (커스텀 속성)
+          is_manual_event: true,  // 수동으로 직접 전송한 이벤트인가? (커스텀 속성)
         });
       }
 
