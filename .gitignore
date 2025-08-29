@@ -31,5 +31,6 @@ yarn-error.log*
 Icon?
 .vscode
 
+# notes.txt, counted.sql, filtered.sql
 dev_notes.txt
-dev_BigQuery.sql
+dev_bigQuery_*.sql
