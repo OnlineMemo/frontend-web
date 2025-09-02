@@ -16,9 +16,29 @@ const PageWrapper = styled.div`
 
     background-color: #f4f3ee;
     font-family: "jua";
+    font-size: 17px;
 
     h1 {
+        font-size: 27px;
         color: #463f3a;
+    }
+
+    #logoutButton {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        padding: 6px 10px;
+        background-color: #bcb8b1;
+        border: none;
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #463f3a;
+
+        &:hover {
+            cursor: pointer;
+            background-color: #837a72;
+        }
     }
     
     &::-webkit-scrollbar {
@@ -34,7 +54,6 @@ const PageWrapper = styled.div`
 
 function StatisticPage(props) {
     const [containerSize, setContainerSize] = useState(0);
-    // const [senders, setSenders] = useState([]);
 
     const handleLogoutClick = () => {
         localStorage.clear();  // 이때는 모두 비워주도록함.
@@ -42,19 +61,57 @@ function StatisticPage(props) {
         window.location.href = '/login';
     }
 
-    // async function getSenders() {  // 해당 사용자의 수신된 친구요청 리스트 조회
-    //     await Apis
-    //         .get(`/friends?isFriend=0`)
-    //         .then((response) => {
-    //             setSenders(response.data.data);
-    //         })
-    //         .catch((error) => {
-    //             //console.log(error);
-    //         })
-    // }
+    async function getGa4CalcData() {
+        await Apis
+            .get(`/back-office/ga4/calc-data`, {
+                params: {
+                    startDatetime: "2025-08-01 15:30:00",
+                    endDatetime: "2025-08-29 23:59:59"
+                }
+            })
+            .then((response) => {
+                const data = response.data.data;
+                // if (Array.isArray(data)) console.log(data.slice(0, 4));
+            })
+            .catch((error) => {
+                //console.log(error);
+            })
+    }
+
+    async function getGa4Statistics() {
+        await Apis
+            .get(`/back-office/ga4/statistics`, {
+                params: {
+                    startDatetime: "2025-08-01 15:30:00",
+                    endDatetime: "2025-08-29 23:59:59"
+                }
+            })
+            .then((response) => {
+                const data = response.data.data;
+                // if (Array.isArray(data)) console.log(data.slice(0, 4));
+            })
+            .catch((error) => {
+                //console.log(error);
+            })
+    }
+
+    async function getUserStatistics() {
+        await Apis
+            .get(`/back-office/users/statistics`)
+            .then((response) => {
+                const data = response.data.data;
+                console.log(data);
+            })
+            .catch((error) => {
+                //console.log(error);
+            })
+    }
 
     useEffect(() => {
         CheckToken();
+        // getGa4CalcData();
+        // getGa4Statistics();
+        // getUserStatistics();
     }, []);
 
     useEffect(() => {
@@ -86,12 +143,12 @@ function StatisticPage(props) {
 
     return (
         <PageWrapper className="backOfficePage">
-            <h1>
-                온라인 메모장 - Back Office
-            </h1>
-            <button onClick={handleLogoutClick}>로그아웃</button>
+            <button id="logoutButton" onClick={handleLogoutClick}>로그아웃 <i className="fa fa-sign-out" aria-hidden="true" /></button>
+            <h1>[ 온라인 메모장 - Back Office ]</h1>
+            <br /><br />
+
             <div>
-                가나다라
+                테스트 Text
             </div>
         </PageWrapper>
     );
