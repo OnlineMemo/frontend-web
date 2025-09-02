@@ -48,7 +48,7 @@
   display: flex;
   flex-direction: row;
   justify-content: center !important;
-  gap: 7px;
+  gap: 12px;
 }
 
 .react-confirm-alert-button-group button {

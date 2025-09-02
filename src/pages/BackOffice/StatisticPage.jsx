@@ -212,6 +212,8 @@ function StatisticPage(props) {
 
     useEffect(() => {
         if (ga4GridCols && ga4GridRef.current) {
+            ga4GridRef.current.innerHTML = "";
+            
             new Grid({
                 columns: Object.keys(ga4GridCols),
                 data: ga4GridCols['순위'].map((_, i) =>
@@ -257,7 +259,7 @@ function StatisticPage(props) {
         <PageWrapper>
             <TitleContainer>
                 <h1>[ 온라인 메모장 - Back Office ]</h1>
-                <div id="userContainer">
+                <div id="userContainer"> {/* !!! 차후 모바일버전에 가로스크롤 생기는것 꼭 막기 !!! */}
                     <div>가입자수위치1</div>
                     &nbsp;
                     <div>가입자수위치2</div>
