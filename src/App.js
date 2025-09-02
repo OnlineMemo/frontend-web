@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
 import { Helmet } from 'react-helmet-async';
 import styled from "styled-components";
@@ -25,6 +25,7 @@ const SenderListPage = LazyLoad("./pages/Friend/SenderListPage");
 const NoticePage = LazyLoad("./pages/Etc/NoticePage");
 const DownloadPage = LazyLoad("./pages/Etc/DownloadPage");
 const NotFoundPage = LazyLoad("./pages/Etc/NotFoundPage");
+const StatisticPage = LazyLoad("./pages/BackOffice/StatisticPage");
 
 
 // ============ < Styled Components > ============ //
@@ -56,9 +57,10 @@ const LittleTitle = styled.div`
 
 // ============ < Sub Components > ============ //
 
-const publicPages = ['/', '/signup', '/password', '/information', '/notice', '/download', '/404'];  // '/login'은 이미 '/'로 치환되었으므로 제외.
-const authPages = ['/users', '/friends', '/senders', '/memos', '/memos/:memoId', '/memos/new-memo'];
-const redirectPages = ['/', '/signup', '/password'];  // '/login'은 이미 '/'로 치환되었으므로 제외.
+const publicPages = new Set(['/', '/signup', '/password', '/information', '/notice', '/download', '/404']);  // '/login'은 이미 '/'로 치환되었으므로 제외
+const authPages = new Set(['/users', '/friends', '/senders', '/memos', '/memos/:memoId', '/memos/new-memo']);
+const redirectPages = new Set(['/', '/signup', '/password']);  // '/login'은 이미 '/'로 치환되었으므로 제외
+const securedPages = new Set(['/statistics']);
 
 const convertPathName = (originPathName) => {
   // 주소 끝에 '/'가 있으면 제거 (예: '/memos/' -> '/memos')
@@ -76,13 +78,13 @@ const convertPathName = (originPathName) => {
   normalizedPathName = normalizedPathName.replace(/^\/memos\/\d+$/, '/memos/:memoId');
 
   // 잘못된 주소라면 '/404'로 통합 집계
-  const isIncludePublicPages = publicPages.includes(normalizedPathName);
-  const isIncludeAuthPages = authPages.includes(normalizedPathName);
-  if (isIncludePublicPages === false && isIncludeAuthPages === false) {
+  const isInPublicPages = publicPages.has(normalizedPathName);
+  const isInAuthPages = authPages.has(normalizedPathName);
+  if (isInPublicPages === false && isInAuthPages === false) {
     normalizedPathName = '/404';
   }
 
-  return {normalizedPathName, isIncludePublicPages, isIncludeAuthPages};
+  return {normalizedPathName, isInPublicPages, isInAuthPages};
 }
 
 function HelmetGa4Component() {
@@ -108,6 +110,10 @@ function HelmetGa4Component() {
     // 중복 경로의 이벤트 전송 방지
     if (!location?.pathname || pathName === prevPathName) return;
     setPrevPathName(pathName);  // 이는 다음 렌더링에서 반영됨.
+    // Admin 유저의 이벤트 전송 방지 (ex. 백오피스 페이지)
+    const { decodedId, isLoggedIn, isAdminUser } = ParseToken();
+    if (isAdminUser) return;
+    if (securedPages.has(pathName) || securedPages.has(prevPathName)) return;
     // 새로고침 시 재전송 방지
     const navEntries = performance.getEntriesByType('navigation');
     const isReload = navEntries.length > 0 && navEntries[0].type === 'reload';
@@ -123,11 +129,10 @@ function HelmetGa4Component() {
 
     // << pathName 및 referrer 도출 >>
     // pathName 정규화
-    const {normalizedPathName, isIncludePublicPages, isIncludeAuthPages} = convertPathName(pathName);
+    const {normalizedPathName, isInPublicPages, isInAuthPages} = convertPathName(pathName);
     // 강제 메인 리다이렉트 시 도착 URL을 기존 경로로 설정
     let pageLocation = window.location.href;
-    const isLoggedIn = !!(localStorage.getItem("accessToken") && localStorage.getItem("refreshToken"));
-    if (isLoggedIn === true && redirectPages.includes(normalizedPathName) === true) {
+    if (isLoggedIn === true && redirectPages.has(normalizedPathName) === true) {
       pageLocation = `${window.location.origin}${pathName}`;
     }
     // referrer 도출
@@ -139,6 +144,11 @@ function HelmetGa4Component() {
       }
       else {  // '외부 페이지를 거쳐 유입된 경우' or '이전에 온라인메모장 로그아웃 후 메인페이지로 강제 리다이렉트된 경우'
         pageReferrer = referrer;
+        const referrerUrl = new URL(referrer);
+        if (referrerUrl.origin === window.location.origin) {
+          const referrerPathName = referrerUrl.pathname;
+          if (securedPages.has(referrerPathName)) return;  // 백오피스 로그아웃으로 메인페이지에 온 경우는 이벤트 미전송
+        }
       }
     }
     else {  // 온라인메모장 서비스 내에서 라우팅중인 경우
@@ -149,12 +159,12 @@ function HelmetGa4Component() {
     setTimeout(() => {
       // null 값을 대체하여 전송 (string_value: "X", int_value: -1 or 0)
       pageReferrer = (pageReferrer !== null) ? pageReferrer : "X";  // '브라우저를 켜자마자 외부 페이지 없이 바로 진입한 경우' or 'http 및 localhost 이동 등으로 referrer 추적이 제한된 경우'
-      let loginUserId = ParseToken();  // 로그인 사용자id: 1~ (정상)
+      let loginUserId = decodedId;  // 로그인 사용자id: 1~ (정상)
       if (loginUserId === null) {  // 비로그인 사용자인 경우
-        if (isIncludePublicPages === true) {  // 비로그인 허용 페이지일 때
+        if (isInPublicPages === true) {  // 비로그인 허용 페이지일 때
           loginUserId = 0;  // 비로그인 사용자id: 0 (정상)
         }
-        else if (isIncludeAuthPages === true) {  // 로그인 필수 페이지일 때
+        else if (isInAuthPages === true) {  // 로그인 필수 페이지일 때
           loginUserId = -1;  // 비로그인 사용자id: -1 (비정상: '비로그인 유저가 잘못된 접근으로, 로그인 필수 페이지에 접근한 경우')
         }
         else {  // 예외 처리 (사실상 발생하지 않음)
@@ -173,7 +183,7 @@ function HelmetGa4Component() {
       });
 
       // 로그인 필수 페이지의 통합 집계 (event)
-      if (isIncludeAuthPages === true) {
+      if (isInAuthPages === true) {
         window.gtag('event', 'page_view', {
           page_path: '/auth-pages',
           page_location: pageLocation,
@@ -190,8 +200,7 @@ function HelmetGa4Component() {
         if (prevPathName === null && pageReferrer !== "X") {
           try {
             const referrerUrl = new URL(pageReferrer);
-            const referrerOrigin = referrerUrl.origin;
-            if (referrerOrigin === window.location.origin) {
+            if (referrerUrl.origin === window.location.origin) {
               const referrerPathName = referrerUrl.pathname;
               printPrevPathName = referrerPathName;
             }
@@ -222,7 +231,8 @@ function TitleComponent() {  // 홈키
   const pathName = location?.pathname || "/";
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  useEffect(() => {  // hydration 오류(#418, #423) 해결 : 서버와 클라이언트의 렌더링 출력이 일치하도록 함.
+  useEffect(() => {
+    // hydration 오류(#418, #423) 해결 : 서버와 클라이언트의 렌더링 출력이 일치하도록 함.
     if (!location?.pathname) return;
     const isHasTokens = !!(localStorage.getItem("accessToken") && localStorage.getItem("refreshToken"));
     setIsLoggedIn(isHasTokens);
@@ -235,7 +245,9 @@ function TitleComponent() {  // 홈키
           to={
             isLoggedIn === true
               ? "/memos"
-              : (pathName === "/" || pathName === "/login" ? pathName : "/")
+              : (pathName === "/" || pathName === "/login")
+                  ? pathName
+                  : "/"
           }
           style={{ textDecoration: "none", color: "#463f3a" }}
         >
@@ -263,33 +275,58 @@ function LoadingComponent() {
 }
 
 function RouteComponent() {
-  return (
-    <Routes>
-      {/* 기본 라우트 */}
-      <Route index element={<><NoLoginNav /><LoginPage /></>} />
+  const location = useLocation();
+  const [isAdminUser, setIsAdminUser] = useState(false);
 
-      {/* 비로그인 및 로그인 사용자용 - Nav가 분리된 페이지 */}
-      <Route path="/login" element={<><NoLoginNav /><LoginPage /></>} />
-      <Route path="/signup" element={<><NoLoginNav /><SignupPage /></>} />
-      <Route path="/password" element={<><NoLoginNav /><ChangePwPage /></>} />
-      <Route path="/information" element={<><NoLoginNav /><InformationPage /></>} />
-      <Route path="/notice" element={<><NoLoginNav /><NoticePage /></>} />
-      <Route path="/download" element={<><NoLoginNav /><DownloadPage /></>} />
+  const currentRoute = useMemo(() => {
+    if (isAdminUser === true) {
+      return (
+        <Routes>
+          <Route path="/statistics" element={<StatisticPage />} />
+          <Route path="*" element={<Navigate to="/statistics" replace />} />
+        </Routes>
+      );
+    }
 
-      {/* 로그인 사용자용 - Nav가 분리된 페이지 */}
-      <Route path="/users" element={<><YesLoginNav /><UserProfilePage /></>} />
-      <Route path="/friends" element={<><YesLoginNav /><FriendListPage /></>} />
-      <Route path="/senders" element={<><YesLoginNav /><SenderListPage /></>} />
+    return (
+      <Routes>
+        {/* 기본 라우트 */}
+        <Route index element={<><NoLoginNav /><LoginPage /></>} />
 
-      {/* 로그인 사용자용 - Nav가 병합된 페이지 */}
-      <Route path="/memos" element={<MemoListPage />} />
-      <Route path="/memos/:memoId" element={<ReadAndEditMemoPage />} /> {/* 또는 path="/memos/:memoId(\d+) 정규표현식 적용할것. */}
-      <Route path="/memos/new-memo" element={<NewMemoPage />} />
+        {/* 비로그인 및 로그인 사용자용 - Nav가 분리된 페이지 */}
+        <Route path="/login" element={<><NoLoginNav /><LoginPage /></>} />
+        <Route path="/signup" element={<><NoLoginNav /><SignupPage /></>} />
+        <Route path="/password" element={<><NoLoginNav /><ChangePwPage /></>} />
+        <Route path="/information" element={<><NoLoginNav /><InformationPage /></>} />
+        <Route path="/notice" element={<><NoLoginNav /><NoticePage /></>} />
+        <Route path="/download" element={<><NoLoginNav /><DownloadPage /></>} />
 
-      {/* 404 Not Found 페이지 */}
-      <Route path="*" element={<><NoLoginNav /><NotFoundPage /></>} />
-    </Routes>
-  );
+        {/* 로그인 사용자용 - Nav가 분리된 페이지 */}
+        <Route path="/users" element={<><YesLoginNav /><UserProfilePage /></>} />
+        <Route path="/friends" element={<><YesLoginNav /><FriendListPage /></>} />
+        <Route path="/senders" element={<><YesLoginNav /><SenderListPage /></>} />
+
+        {/* 로그인 사용자용 - Nav가 병합된 페이지 */}
+        <Route path="/memos" element={<MemoListPage />} />
+        <Route path="/memos/:memoId" element={<ReadAndEditMemoPage />} /> {/* 또는 path="/memos/:memoId(\d+) 정규표현식 적용할것. */}
+        <Route path="/memos/new-memo" element={<NewMemoPage />} />
+
+        {/* 404 Not Found 페이지 - GA4 이벤트 단일 */}
+        <Route path="*" element={<><NoLoginNav /><NotFoundPage /></>} />
+
+        {/* 404 Not Found 페이지 - GA4 이벤트 중복 */}
+        {/* <Route path="/404" element={<><NoLoginNav /><NotFoundPage /></>} />
+        <Route path="*" element={<Navigate to="/404" replace />} /> */}
+      </Routes>
+    );
+  }, [isAdminUser]);
+
+  useEffect(() => {
+    if (!location?.pathname) return;
+    setIsAdminUser(ParseToken().isAdminUser);
+  }, [location?.pathname]);
+
+  return currentRoute;
 }
 
 function App(props) {

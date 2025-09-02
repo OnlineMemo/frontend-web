@@ -5,6 +5,7 @@ import '../../App.css';
 import { useNavigate } from "react-router-dom";
 import HelloWrapper from "../../components/Styled/HelloWrapper"
 import ConfirmModal from "../../components/Modal/ConfirmModal";
+import { ParseToken } from "../../utils/ParseToken";
 import Apis from "../../apis/Api";
 
 const MoreWrapper = styled(HelloWrapper)`
@@ -153,11 +154,9 @@ function ChangePwPage(props) {
     }
 
     useEffect(() => {
-        const storedAccessToken = localStorage.getItem("accessToken");
-        const storedRefreshToken = localStorage.getItem("refreshToken");
-
-        if (storedAccessToken && storedRefreshToken) {
-            navigate(`/memos`);
+        const { isLoggedIn, isAdminUser } = ParseToken();
+        if (isLoggedIn) {
+            navigate(isAdminUser ? "/statistics" : "/memos");
         }
     }, []);
 

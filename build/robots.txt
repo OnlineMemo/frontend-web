@@ -6,6 +6,7 @@ Disallow: /memos
 Disallow: /users
 Disallow: /friends
 Disallow: /senders
+Disallow: /statistics
 Sitemap: https://www.onlinememo.kr/sitemap.xml
 
 # https://www.robotstxt.org/robotstxt.html

@@ -5,6 +5,7 @@ import axios from 'axios'
 import '../../App.css';
 import HelloWrapper from "../../components/Styled/HelloWrapper";
 import ConfirmModal from "../../components/Modal/ConfirmModal";
+import { ParseToken } from "../../utils/ParseToken";
 import Apis from "../../apis/Api";
 
 const MoreWrapper = styled(HelloWrapper)`
@@ -91,10 +92,16 @@ function LoginPage(props) {
                     password: pwValue
                 })
                 .then((response) => {
-                    localStorage.setItem('accessToken', response.data.data.accessToken);
-                    localStorage.setItem('refreshToken', response.data.data.refreshToken);
+                    const accessToken = response.data.data.accessToken;
+                    const refreshToken = response.data.data.refreshToken;
+                    localStorage.setItem('accessToken', accessToken);
+                    localStorage.setItem('refreshToken', refreshToken);
                     // localStorage.setItem('expirationTime', String(response.data.data.accessTokenExpiresIn));
-                    navigate(`/memos`);
+
+                    const { isLoggedIn, isAdminUser } = ParseToken(accessToken, refreshToken);
+                    if (isLoggedIn) {
+                        navigate(isAdminUser ? "/statistics" : "/memos");
+                    }
                 })
                 .catch((error) => {
                     setLoginFailModalOn(true);
@@ -116,7 +123,10 @@ function LoginPage(props) {
             }
         }
         else {
-            navigate(`/memos`);
+            const { isLoggedIn, isAdminUser } = ParseToken(storedAccessToken, storedRefreshToken);
+            if (isLoggedIn) {
+                navigate(isAdminUser ? "/statistics" : "/memos");
+            }
         }
     }, []);
 
