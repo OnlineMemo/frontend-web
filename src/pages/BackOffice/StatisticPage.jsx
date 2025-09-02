@@ -94,7 +94,7 @@ const TitleContainer = styled.div`
 
     #userContainer {
         position: absolute;
-        right: -180px;
+        right: -175px;
         padding: 6px 10px;
         background-color: gray;
         border: none;
@@ -111,6 +111,8 @@ const TitleContainer = styled.div`
 `;
 
 function StatisticPage(props) {
+    const [signupUserCnt, setSignupUserCnt] = useState(0);
+    const [withdrawnUserCnt, setWithdrawnUserCnt] = useState(0);
     const [ga4GridCols, setGa4GridCols] = useState(null);
     const ga4GridRef = useRef(null);
 
@@ -134,6 +136,19 @@ function StatisticPage(props) {
             ]
         });
     };
+
+    async function getUserStatistics() {
+        await Apis
+            .get(`/back-office/users/statistics`)
+            .then((response) => {
+                const data = response.data.data;
+                setSignupUserCnt(data.signupUserCount);
+                setWithdrawnUserCnt(data.withdrawnUserCount);
+            })
+            .catch((error) => {
+                //console.log(error);
+            })
+    }
 
     async function getGa4CalcData() {
         await Apis
@@ -181,23 +196,11 @@ function StatisticPage(props) {
             })
     }
 
-    async function getUserStatistics() {
-        await Apis
-            .get(`/back-office/users/statistics`)
-            .then((response) => {
-                const data = response.data.data;
-                console.log(data);
-            })
-            .catch((error) => {
-                //console.log(error);
-            })
-    }
-
     useEffect(() => {
         CheckToken();
+        getUserStatistics();
         // getGa4CalcData();
         getGa4Statistics();
-        // getUserStatistics();
     }, []);
 
     useEffect(() => {
@@ -260,9 +263,9 @@ function StatisticPage(props) {
             <TitleContainer>
                 <h1>[ 온라인 메모장 - Back Office ]</h1>
                 <div id="userContainer"> {/* !!! 차후 모바일버전에 가로스크롤 생기는것 꼭 막기 !!! */}
-                    <div>가입자수위치1</div>
-                    &nbsp;
-                    <div>가입자수위치2</div>
+                    <div>가입자: {signupUserCnt}명</div>
+                    ,&nbsp;
+                    <div>탈퇴자: {withdrawnUserCnt}명</div>
                 </div>
             </TitleContainer>
 
