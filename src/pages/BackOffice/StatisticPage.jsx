@@ -33,13 +33,12 @@ const PageWrapper = styled.div`
         color: #463f3a;
     }
 
-    #dateContainer {
+    #customContainer {
         position: fixed;
         top: 10.5px;
         right: 100px;
         padding: 6px 10px;
-        background-color: gray;
-        border: none;
+        background-color: #c4b8b2;
         border-radius: 4px;
         font-size: 13px;
         font-weight: 700;
@@ -85,31 +84,36 @@ const PageWrapper = styled.div`
         background-color: #bcb8b1;
         border-radius: 4px;
     }
+
+    @media(max-width: 650px) {
+        zoom: 60%;
+        overflow: visible;
+    }
 `;
 
 const TitleContainer = styled.div`
-    position: relative;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+`;
 
-    #userContainer {
-        position: absolute;
-        right: -175px;
-        padding: 6px 10px;
-        background-color: gray;
-        border: none;
-        border-radius: 4px;
-        font-size: 13px;
-        font-weight: 700;
-        color: #463f3a;
+const UserContainer = styled.div`
+    position: absolute;
+    top: 7.5px;
+    right: 11px;
+    padding: 5px 9px;
+    background-color: #c3c3c3aa;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #463f3a;  // 333333
 
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-    }
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
 `;
 
 
@@ -279,8 +283,8 @@ function StatisticPage(props) {
 
     useEffect(() => {
         getUserStatistics();
-        getGa4CalcData("2025-08-01 15:30:00", "2025-08-29 23:59:59");
-        getGa4Statistics("2025-08-01 15:30:00", "2025-08-29 23:59:59");
+        getGa4CalcData("2025-08-01 15:30:00", "2025-08-31 23:59:59");
+        getGa4Statistics("2025-08-01 15:30:00", "2025-08-31 23:59:59");
     }, []);
 
 
@@ -429,6 +433,9 @@ function StatisticPage(props) {
                         padding: '11px 13px 11px 19.5px',
                         border: '1px solid #ccc',
                         color: '#333',
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis',
+                        overflow: 'hidden',
                         // textAlign: 'center',
                     }
                 },
@@ -441,28 +448,43 @@ function StatisticPage(props) {
 
     useEffect(() => {
         CheckToken();
-        // 백오피스 페이지는 header, footer 렌더링 X
+
+        // 백오피스 페이지는 header, footer 렌더링 X.
         const headerTag = document.querySelector("header");
         if (headerTag) headerTag.style.display = "none";
         const footerTag = document.querySelector("footer");
         if (footerTag) footerTag.style.display = "none";
         const htmlTag = document.querySelector("html");
         if (htmlTag) htmlTag.style.margin = "0px";
+
+        // 모바일의 zoom 옵션 적용을 위함.
+        const bodyTag = document.querySelector("body");
+        if (bodyTag) {
+            bodyTag.style.display = "flex";
+            bodyTag.style.flexDirection = "column";
+            bodyTag.style.justifyContent = "center";
+            bodyTag.style.alignItems = "center";
+            bodyTag.style.height = "100vh";
+        }
     }, []);
 
     return (
         <PageWrapper>
             <TitleContainer>
                 <h1>[ 온라인 메모장 - Back Office ]</h1>
-                <div id="userContainer"> {/* !!! 차후 모바일버전에 가로스크롤 생기는것 꼭 막기 !!! */}
-                    <div>가입자: {signupUserCnt}명</div>
-                    ,&nbsp;
-                    <div>탈퇴자: {withdrawnUserCnt}명</div>
-                </div>
             </TitleContainer>
             <br />
 
-            <div style={{ width: '76%', maxHeight: '500px', marginLeft: '4px', marginBottom: '2px', border: '1px solid #ccc', borderRadius: '3px' }}>
+            <div style={{
+                position: 'relative', width: '76%', maxHeight: '500px',
+                marginLeft: '4px', marginBottom: '2px',
+                border: '1px solid #ccc', borderRadius: '3px',
+            }}>
+                <UserContainer>
+                    <div>가입자: {signupUserCnt}명</div>
+                    ,&nbsp;
+                    <div>탈퇴자: {withdrawnUserCnt}명</div>
+                </UserContainer>
                 {ga4LineCols && <LineGraph columns={ga4LineCols} style={{ width: '100%', height: '100%' }} />}
             </div>
             <div ref={ga4GridRef} style={{ width: "76%" }} />
@@ -470,11 +492,11 @@ function StatisticPage(props) {
             <button id="logoutButton" onClick={handleLogoutClick}>
                 로그아웃 <i className="fa fa-sign-out" aria-hidden="true" />
             </button>
-            <div id="dateContainer">
-                <div>날짜위치1</div>
+            {/* <div id="customContainer">
+                <div>커스텀 텍스트1</div>
                 &nbsp;
-                <div>날짜위치2</div>
-            </div>
+                <div>커스텀 텍스트2</div>
+            </div> */}
         </PageWrapper>
     );
 }
