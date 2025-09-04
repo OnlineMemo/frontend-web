@@ -3,12 +3,15 @@ import styled from "styled-components";
 import '../../App.css';
 import { CheckToken } from "../../utils/CheckToken";
 import Apis from "../../apis/Api";
-import { confirmAlert } from 'react-confirm-alert';
-import 'react-confirm-alert/src/react-confirm-alert.css';
 import Highcharts from "highcharts";  // Line Graph
 import HighchartsReact from "highcharts-react-official";
 import { Grid } from "gridjs";  // Grid
 import "gridjs/dist/theme/mermaid.css";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';  // 버전 5
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
+import { da } from "date-fns/locale";
 
 const PageWrapper = styled.div`
     display: flex;
@@ -74,6 +77,22 @@ const PageWrapper = styled.div`
     .gridjs-footer {
         padding: 9px 19px !important;
     }
+
+    .react-datepicker__day--keyboard-selected {
+        background-color: #463f3a !important;
+        color: white !important;
+    }
+    .react-datepicker__day:hover {
+        background-color: #886b62a1 !important;
+    }
+    .react-datepicker__day--in-range {
+        background-color: #463f3a !important;
+        color: white !important;
+    }
+    .react-datepicker__day--in-selecting-range {
+        background-color: #886b62a1 !important;
+        color: white !important;
+    }
     
     &::-webkit-scrollbar {
         width: 5px;
@@ -92,22 +111,43 @@ const PageWrapper = styled.div`
 `;
 
 const TitleContainer = styled.div`
+    position: relative;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+
+    #userContainer {
+        position: absolute;
+        right: -185px;
+        padding: 5px 9px;
+        background-color: #c3c3c3aa;
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #463f3a;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        @media(max-width: 650px) {
+            right: -118px;
+            flex-direction: column;
+        }
+
+        .hideMobile {
+            @media(max-width: 650px) {
+                display: none;
+            }
+        }
+    }
 `;
 
-const UserContainer = styled.div`
+const DateContainer = styled.div`
     position: absolute;
     top: 7.5px;
     right: 11px;
-    padding: 5px 9px;
-    background-color: #c3c3c3aa;
-    border-radius: 4px;
-    font-size: 13px;
-    font-weight: 500;
-    color: #463f3a;  // 333333
 
     display: flex;
     flex-direction: row;
@@ -116,12 +156,46 @@ const UserContainer = styled.div`
     z-index: 999;
 `;
 
+const CustomDatePicker = styled(DatePicker)`
+    width: 135.69px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #463f3a;
+
+    background: linear-gradient(145deg, #f4f3eeaa, #e0ded7aa);
+    box-shadow: 2px 2px 4px #c0bcb6, -2px -2px 4px #ffffff;
+    transition: all 0.13s ease-in-out;
+    border: 1px solid #bcb8b1;
+    border-radius: 3px;
+    cursor: pointer;
+    caret-color: transparent;
+
+    &:hover {
+        background: linear-gradient(145deg, #f4f3ee, #e0ded7);
+        box-shadow: 2px 2px 6px #c0bcb6, -2px -2px 6px #ffffff;
+    }
+
+    &:focus {
+        box-shadow: 0 0 5px rgba(131, 122, 114, 0.6);
+        outline: none;
+        border-color: #837a72;
+    }
+`;
+
 
 function StatisticPage(props) {
+    const [dateRange, setDateRange] = useState([
+        new Date(new Date("2025-08-01").toLocaleString("en-US", { timeZone: "Asia/Seoul" })),
+        new Date(new Date("2025-08-31").toLocaleString("en-US", { timeZone: "Asia/Seoul" }))
+    ]);
+    const [startDate, endDate] = dateRange;
+
     const [signupUserCnt, setSignupUserCnt] = useState(0);  // User
     const [withdrawnUserCnt, setWithdrawnUserCnt] = useState(0);
     const [ga4LineCols, setGa4LineCols] = useState(null);  // Line Graph
     const [ga4GridCols, setGa4GridCols] = useState(null);  // Grid
+    const [ga4GridRender, setGa4GridRender] = useState(0);
     const ga4GridRef = useRef(null);
 
     const handleLogoutClick = () => {
@@ -145,6 +219,33 @@ function StatisticPage(props) {
         });
     };
 
+    const getRequestDatetime = (date, timeStr) => {
+        const dateStr = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+        const datetimeStr = `${dateStr} ${timeStr}`;
+        return datetimeStr;
+    }
+
+    const getMaxDate = () => {
+        const kstDate = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" }));  // 현재 시각
+        const hour = kstDate.getHours();
+        const minute = kstDate.getMinutes();
+
+        if (hour > 15 || (hour === 15 && minute >= 1)) {  // 오후 3시 이후라면 (데이터 정제 스케줄링 15시)
+            kstDate.setDate(kstDate.getDate() - 1);
+        }
+        else {
+            kstDate.setDate(kstDate.getDate() - 2);
+        }
+        return kstDate;
+    }
+
+    const getPrintDate = () => {
+        const startDateStr = (!startDate) ? '미선택' : `${String(startDate.getFullYear()).slice(2, 4)}.${String(startDate.getMonth() + 1).padStart(2, "0")}.${String(startDate.getDate()).padStart(2, "0")}`;
+        const endDateStr = (!endDate) ? '미선택' : `${String(endDate.getFullYear()).slice(2, 4)}.${String(endDate.getMonth() + 1).padStart(2, "0")}.${String(endDate.getDate()).padStart(2, "0")}`;
+        const printDateStr = `${startDateStr} ~ ${endDateStr}  📆`;  // 또는 🔻 사용할것.
+        return printDateStr;
+    }
+
 
     // ============ < Call API & Calculate > ============ //
 
@@ -161,7 +262,10 @@ function StatisticPage(props) {
             })
     }
 
-    async function getGa4CalcData(startDatetime, endDatetime) {
+    async function getGa4CalcData() {
+        const startDatetime = getRequestDatetime(startDate, "00:00:00");
+        const endDatetime = getRequestDatetime(endDate, "23:59:59");
+
         await Apis
             .get(`/back-office/ga4/calc-data`, {
                 params: {
@@ -252,7 +356,10 @@ function StatisticPage(props) {
             })
     }
 
-    async function getGa4Statistics(startDatetime, endDatetime) {
+    async function getGa4Statistics() {
+        const startDatetime = getRequestDatetime(startDate, "00:00:00");
+        const endDatetime = getRequestDatetime(endDate, "23:59:59");
+
         await Apis
             .get(`/back-office/ga4/statistics`, {
                 params: {
@@ -275,6 +382,7 @@ function StatisticPage(props) {
                     columnKeys.map(([key, fn]) => [key, data.map(fn)])
                 );
                 setGa4GridCols(columns);
+                setGa4GridRender(prev => prev + 1);
             })
             .catch((error) => {
                 //console.log(error);
@@ -283,9 +391,14 @@ function StatisticPage(props) {
 
     useEffect(() => {
         getUserStatistics();
-        getGa4CalcData("2025-08-01 15:30:00", "2025-08-31 23:59:59");
-        getGa4Statistics("2025-08-01 15:30:00", "2025-08-31 23:59:59");
     }, []);
+
+    useEffect(() => {
+        if (startDate && endDate) {
+            getGa4CalcData();
+            getGa4Statistics();
+        }
+    }, [startDate, endDate]);
 
 
     // ============ < Make Charts (Line Graph, Grid) > ============ //
@@ -472,22 +585,42 @@ function StatisticPage(props) {
         <PageWrapper>
             <TitleContainer>
                 <h1>[ 온라인 메모장 - Back Office ]</h1>
+                <div id="userContainer">
+                    <div>가입자: {signupUserCnt}명,</div>
+                    <div className="hideMobile">&nbsp;</div>
+                    <div>탈퇴자: {withdrawnUserCnt}명</div>
+                </div>
             </TitleContainer>
             <br />
 
+            {/* [ Line Graph ] */}
             <div style={{
                 position: 'relative', width: '76%', maxHeight: '500px',
                 marginLeft: '4px', marginBottom: '2px',
                 border: '1px solid #ccc', borderRadius: '3px',
             }}>
-                <UserContainer>
-                    <div>가입자: {signupUserCnt}명</div>
-                    ,&nbsp;
-                    <div>탈퇴자: {withdrawnUserCnt}명</div>
-                </UserContainer>
+                <DateContainer>
+                    <CustomDatePicker
+                        selectsRange
+                        shouldCloseOnSelect={true}
+                        onChange={(dateRange) => setDateRange(dateRange)}
+                        minDate={new Date(new Date("2025-08-01").toLocaleString("en-US", { timeZone: "Asia/Seoul" }))}
+                        startDate={startDate}
+                        maxDate={getMaxDate()}
+                        endDate={endDate}
+                        value={getPrintDate()}
+                    />
+                </DateContainer>
                 {ga4LineCols && <LineGraph columns={ga4LineCols} style={{ width: '100%', height: '100%' }} />}
             </div>
-            <div ref={ga4GridRef} style={{ width: "76%" }} />
+            {/* [ Grid ] */}
+            <div ref={ga4GridRef}
+                key={ga4GridRender}
+                style={{
+                    width: "76%",
+                    minHeight: "398px", backgroundColor: "#f4f3ee",
+                }}
+            />
 
             <button id="logoutButton" onClick={handleLogoutClick}>
                 로그아웃 <i className="fa fa-sign-out" aria-hidden="true" />

@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkonlinememo_react_project=self.webpackChunkonlinememo_react_project||[]).push([[61],{61:(e,o,c)=>{function n(){const e=localStorage.getItem("accessToken"),o=localStorage.getItem("refreshToken");e&&o||(window.location.href="/login")}c.r(o),c.d(o,{CheckToken:()=>n})}}]);

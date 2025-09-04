@@ -1,1 +1,0 @@
-(self.webpackChunkonlinememo_react_project=self.webpackChunkonlinememo_react_project||[]).push([[4396],{8797:(e,t,n)=>{"use strict";n.r(t);var r=n(2272),c=n(4843),s=n(6417);test("renders learn react link",(()=>{(0,r.sY)((0,s.jsx)(c.default,{}));const e=r.sp.getByText(/learn react/i);expect(e).toBeInTheDocument()}))},4654:()=>{}}]);
