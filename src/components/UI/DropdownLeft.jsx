@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import '../../App.css';
 import useDetectDropdown from "../../hooks/useDetectDropdown";
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 const DropdownContainer = styled.div`
     position: relative;
@@ -75,10 +77,25 @@ function DropdownLeft(props) {
     const { dropMain, dropItems } = props;
 
     const handleLogoutClick = () => {
-        localStorage.clear();  // 이때는 모두 비워주도록함.
-        sessionStorage.clear();
-        window.location.href = '/login';
-    }
+        confirmAlert({
+            title: '로그아웃 확인',
+            message: '정말 로그아웃 하시겠습니까?',
+            buttons: [
+            {
+                label: '예',
+                onClick: () => {
+                    localStorage.clear();  // 이때는 모두 비워주도록함.
+                    sessionStorage.clear();
+                    window.location.href = '/login';
+                }
+            },
+            {
+                label: '아니오',
+                onClick: () => {}
+            }
+            ]
+        });
+    };
 
     return (
         <DropdownContainer>

@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkonlinememo_react_project=self.webpackChunkonlinememo_react_project||[]).push([[1100],{1100:(e,c,o)=>{e.exports=o.p+"static/media/logo.6ce24c58023cc2f8fd88.svg"}}]);

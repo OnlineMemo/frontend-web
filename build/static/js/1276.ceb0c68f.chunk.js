@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkonlinememo_react_project=self.webpackChunkonlinememo_react_project||[]).push([[1276],{61276:(e,a,t)=>{e.exports=t.p+"static/media/Kalam-Regular.831aaad03890ba2d7417.ttf"}}]);

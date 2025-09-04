@@ -21,6 +21,9 @@ const metaData = {
   "/information": {
     title: "온라인 메모장 - 개발 정보",
   },
+  "/statistics": {
+    title: "온라인 메모장 - 백오피스",
+  },
 };
 
 const getTitle = (pathName) => {
