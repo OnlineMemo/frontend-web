@@ -105,7 +105,7 @@ const PageWrapper = styled.div`
     }
 
     @media(max-width: 650px) {
-        zoom: 60%;
+        zoom: 50%;
         overflow: visible;
     }
 `;
@@ -586,8 +586,8 @@ function StatisticPage(props) {
             <TitleContainer>
                 <h1>[ 온라인 메모장 - Back Office ]</h1>
                 <div id="userContainer">
-                    <div>가입자: {signupUserCnt}명,</div>
-                    <div className="hideMobile">&nbsp;</div>
+                    <div>가입자: {signupUserCnt}명</div>
+                    <div className="hideMobile">,&nbsp;</div>
                     <div>탈퇴자: {withdrawnUserCnt}명</div>
                 </div>
             </TitleContainer>
