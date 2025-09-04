@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.d747df35.css",
-    "main.js": "/static/js/main.9025d071.js",
+    "main.js": "/static/js/main.b7744f90.js",
     "static/js/4396.5dd7651a.chunk.js": "/static/js/4396.5dd7651a.chunk.js",
     "static/js/211.c7888e5f.chunk.js": "/static/js/211.c7888e5f.chunk.js",
     "static/js/9203.2ef806b2.chunk.js": "/static/js/9203.2ef806b2.chunk.js",
@@ -39,8 +39,8 @@
     "static/js/6850.86bade30.chunk.js": "/static/js/6850.86bade30.chunk.js",
     "static/js/6102.65195774.chunk.js": "/static/js/6102.65195774.chunk.js",
     "static/js/1100.4a3f1a0c.chunk.js": "/static/js/1100.4a3f1a0c.chunk.js",
-    "static/css/2819.907582f3.chunk.css": "/static/css/2819.907582f3.chunk.css",
-    "static/js/2819.21f27593.chunk.js": "/static/js/2819.21f27593.chunk.js",
+    "static/css/2819.726c50a9.chunk.css": "/static/css/2819.726c50a9.chunk.css",
+    "static/js/2819.57eb90b5.chunk.js": "/static/js/2819.57eb90b5.chunk.js",
     "static/js/680.a1d36860.chunk.js": "/static/js/680.a1d36860.chunk.js",
     "static/js/672.ded1e5ac.chunk.js": "/static/js/672.ded1e5ac.chunk.js",
     "static/js/3354.643a56c5.chunk.js": "/static/js/3354.643a56c5.chunk.js",
@@ -60,9 +60,9 @@
     "static/js/4027.99dae457.chunk.js": "/static/js/4027.99dae457.chunk.js",
     "static/js/9610.589582a2.chunk.js": "/static/js/9610.589582a2.chunk.js",
     "static/js/2674.0a9e3fd4.chunk.js": "/static/js/2674.0a9e3fd4.chunk.js",
-    "static/js/3829.cec0a12a.chunk.js": "/static/js/3829.cec0a12a.chunk.js",
+    "static/js/3829.0bfade47.chunk.js": "/static/js/3829.0bfade47.chunk.js",
     "static/js/2272.c0f27178.chunk.js": "/static/js/2272.c0f27178.chunk.js",
-    "static/js/5833.9b6ab459.chunk.js": "/static/js/5833.9b6ab459.chunk.js",
+    "static/js/6300.fc83bbde.chunk.js": "/static/js/6300.fc83bbde.chunk.js",
     "static/js/6523.affdfb68.chunk.js": "/static/js/6523.affdfb68.chunk.js",
     "static/media/BMJUA_ttf.ttf": "/static/media/BMJUA_ttf.bf12d2d886260d73277b.ttf",
     "static/media/Kalam-Bold.ttf": "/static/media/Kalam-Bold.c4671477e81c3c51ffc0.ttf",
@@ -73,6 +73,6 @@
   },
   "entrypoints": [
     "static/css/main.d747df35.css",
-    "static/js/main.9025d071.js"
+    "static/js/main.b7744f90.js"
   ]
 }

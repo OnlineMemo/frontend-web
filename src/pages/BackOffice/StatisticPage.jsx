@@ -3,10 +3,12 @@ import styled from "styled-components";
 import '../../App.css';
 import { CheckToken } from "../../utils/CheckToken";
 import Apis from "../../apis/Api";
-import { Grid } from "gridjs";
-import "gridjs/dist/theme/mermaid.css";
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import Highcharts from "highcharts";  // Line Graph
+import HighchartsReact from "highcharts-react-official";
+import { Grid } from "gridjs";  // Grid
+import "gridjs/dist/theme/mermaid.css";
 
 const PageWrapper = styled.div`
     display: flex;
@@ -110,10 +112,12 @@ const TitleContainer = styled.div`
     }
 `;
 
+
 function StatisticPage(props) {
-    const [signupUserCnt, setSignupUserCnt] = useState(0);
+    const [signupUserCnt, setSignupUserCnt] = useState(0);  // User
     const [withdrawnUserCnt, setWithdrawnUserCnt] = useState(0);
-    const [ga4GridCols, setGa4GridCols] = useState(null);
+    const [ga4LineCols, setGa4LineCols] = useState(null);  // Line Graph
+    const [ga4GridCols, setGa4GridCols] = useState(null);  // Grid
     const ga4GridRef = useRef(null);
 
     const handleLogoutClick = () => {
@@ -137,6 +141,9 @@ function StatisticPage(props) {
         });
     };
 
+
+    // ============ < Call API & Calculate > ============ //
+
     async function getUserStatistics() {
         await Apis
             .get(`/back-office/users/statistics`)
@@ -150,29 +157,103 @@ function StatisticPage(props) {
             })
     }
 
-    async function getGa4CalcData() {
+    async function getGa4CalcData(startDatetime, endDatetime) {
         await Apis
             .get(`/back-office/ga4/calc-data`, {
                 params: {
-                    startDatetime: "2025-08-01 15:30:00",
-                    endDatetime: "2025-08-29 23:59:59"
+                    startDatetime: startDatetime,
+                    endDatetime: endDatetime
                 }
             })
             .then((response) => {
-                const data = response.data.data;
-                // if (Array.isArray(data)) console.log(data.slice(0, 4));
+                const data = response.data.data;  // 이미 날짜시각 오름차순으로 정렬되어옴.
+                const dateInfoMap = new Map();
+                const loginUserIdMap = new Map();
+                const userPseudoIdMap = new Map();
+                const pageViewCountMap = new Map();
+                const pseudoIdWithLoginMap = new Map();  // 로그인한 사용자들의 pseudoId (실사용자 수 집계 시, 활성 사용자 중복 제거용)
+                const pseudoIdWithNoLoginMap = new Map();  // 로그인하지 않은 사용자들의 pseudoId
+
+                data.forEach(item => {
+                    const eventDatetime = item.eventDatetime;  // ex) "2025-08-01T16:41:25.398"
+                    const key = eventDatetime.slice(0, 10);  // "2025-08-01"
+                    const [year, month, day] = key.split("-");
+
+                    if (!dateInfoMap.has(key)) {
+                        dateInfoMap.set(key, {
+                            year,
+                            month,
+                            day,
+                            yearSuffix: year.slice(2, 4),
+                        });
+                        loginUserIdMap.set(key, new Set());
+                        userPseudoIdMap.set(key, new Set());
+                        pageViewCountMap.set(key, 0);
+                        pseudoIdWithLoginMap.set(key, new Set());
+                        pseudoIdWithNoLoginMap.set(key, new Set());
+                    }
+                    
+                    const loginUserId = item.loginUserId;
+                    const userPseudoId = item.userPseudoId;
+                    if (loginUserId > 0) {
+                        loginUserIdMap.get(key).add(loginUserId);
+                        pseudoIdWithLoginMap.get(key).add(userPseudoId);
+                    }
+                    userPseudoIdMap.get(key).add(userPseudoId);
+                    pageViewCountMap.set(key, pageViewCountMap.get(key) + 1);
+                });
+
+                data.forEach(item => {
+                    const eventDatetime = item.eventDatetime;  // ex) "2025-08-01T16:41:25.398"
+                    const key = eventDatetime.slice(0, 10);  // "2025-08-01"
+
+                    const loginUserId = item.loginUserId;
+                    const userPseudoId = item.userPseudoId;
+                    if (loginUserId === 0 && !pseudoIdWithLoginMap.get(key).has(userPseudoId)) {
+                        pseudoIdWithNoLoginMap.get(key).add(userPseudoId);
+                    }
+                });
+
+                const calcReult = [];
+                for (const key of dateInfoMap.keys()) {
+                    const dateInfo = dateInfoMap.get(key);
+                    const loginUserCount = loginUserIdMap.get(key).size;
+                    const activeUserCount = userPseudoIdMap.get(key).size;
+                    const uniqueUserCount = pseudoIdWithNoLoginMap.get(key).size + loginUserCount;
+                    const pageViewCount = pageViewCountMap.get(key);
+
+                    calcReult.push({
+                        dateInfo,
+                        uniqueUserCount,
+                        loginUserCount,
+                        activeUserCount,
+                        pageViewCount,
+                    });
+                }
+
+                const columnKeys = [
+                    ['날짜', item => `${item.dateInfo.month}/${item.dateInfo.day}`],
+                    ['실사용자 수', item => item.uniqueUserCount],
+                    ['로그인 사용자 수', item => item.loginUserCount],
+                    ['활성 사용자 수', item => item.activeUserCount],
+                    ['조회수', item => item.pageViewCount],
+                ];
+                const columns = Object.fromEntries(
+                    columnKeys.map(([key, fn]) => [key, calcReult.map(fn)])
+                );
+                setGa4LineCols(columns);
             })
             .catch((error) => {
                 //console.log(error);
             })
     }
 
-    async function getGa4Statistics() {
+    async function getGa4Statistics(startDatetime, endDatetime) {
         await Apis
             .get(`/back-office/ga4/statistics`, {
                 params: {
-                    startDatetime: "2025-08-01 15:30:00",
-                    endDatetime: "2025-08-29 23:59:59"
+                    startDatetime: startDatetime,
+                    endDatetime: endDatetime
                 }
             })
             .then((response) => {
@@ -197,21 +278,119 @@ function StatisticPage(props) {
     }
 
     useEffect(() => {
-        CheckToken();
         getUserStatistics();
-        // getGa4CalcData();
-        getGa4Statistics();
+        getGa4CalcData("2025-08-01 15:30:00", "2025-08-29 23:59:59");
+        getGa4Statistics("2025-08-01 15:30:00", "2025-08-29 23:59:59");
     }, []);
 
-    useEffect(() => {
-        // 백오피스 페이지는 header, footer 렌더링 X
-        const headerTag = document.querySelector("header");
-        if (headerTag) headerTag.style.display = "none";
-        const footerTag = document.querySelector("footer");
-        if (footerTag) footerTag.style.display = "none";
-        const htmlTag = document.querySelector("html");
-        if (htmlTag) htmlTag.style.margin = "0px";
-    }, []);
+
+    // ============ < Make Charts (Line Graph, Grid) > ============ //
+
+    const LineGraph = ({ columns }) => {
+        const options = {
+            chart: {
+                type: "line",
+            },
+            credits: {
+                enabled: false
+            },
+            title: {
+                text: "일별 사용자 통계",
+                style: {
+                    fontSize: "14px",
+                    color: "#333333",
+                },
+            },
+            subtitle: {
+                text: '<a href="https://onlinememo.kr" target="_blank">www.OnlineMemo.kr</a>',
+                style: {
+                    fontSize: "9px",
+                },
+            },
+            xAxis: {
+                categories: columns["날짜"],  // x축
+                labels: {
+                    style: {
+                        fontSize: "10px",
+                        color: "#333333",
+                    },
+                },
+            },
+            yAxis: [
+                {
+                    title: {
+                        text: "사용자 수",
+                        style: {
+                            fontSize: "10px",
+                            fontWeight: "bold",
+                            color: "#333333",
+                        },
+                    },
+                    labels: {
+                        style: {
+                            fontSize: "9px",
+                            color: "#333333",
+                        },
+                    },
+                    opposite: false,  // 왼쪽 y축
+                },
+                {
+                    title: {
+                        text: "조회수",
+                        style: {
+                            fontSize: "10px",
+                            fontWeight: "bold",
+                            color: "#333333",
+                        },
+                    },
+                    labels: {
+                        style: {
+                            fontSize: "9px",
+                            color: "#333333",
+                        },
+                    },
+                    opposite: true,  // 오른쪽 y축
+                },
+            ],
+            plotOptions: {
+                line: {
+                    dataLabels: {
+                        enabled: true,
+                    },
+                    enableMouseTracking: false,
+                    lineWidth: 2.5,
+                },
+            },
+            series: [
+                {
+                    name: "실사용자 수",
+                    data: columns["실사용자 수"],
+                    yAxis: 0,
+                    color: "#FF0000",
+                },
+                {
+                    name: "로그인 사용자 수",
+                    data: columns["로그인 사용자 수"],
+                    yAxis: 0,
+                    color: "#FF7F00",
+                },
+                {
+                    name: "활성 사용자 수",
+                    data: columns["활성 사용자 수"],
+                    yAxis: 0,
+                    color: "#FFD700",
+                },
+                {
+                    name: "조회수",
+                    data: columns["조회수"],
+                    yAxis: 1,
+                    color: "#1a75ff",
+                },
+            ],
+        };
+
+        return <HighchartsReact highcharts={Highcharts} options={options} />;
+    };
 
     useEffect(() => {
         if (ga4GridCols && ga4GridRef.current) {
@@ -258,6 +437,19 @@ function StatisticPage(props) {
     }, [ga4GridCols]);
 
 
+    // ============ < View > ============ //
+
+    useEffect(() => {
+        CheckToken();
+        // 백오피스 페이지는 header, footer 렌더링 X
+        const headerTag = document.querySelector("header");
+        if (headerTag) headerTag.style.display = "none";
+        const footerTag = document.querySelector("footer");
+        if (footerTag) footerTag.style.display = "none";
+        const htmlTag = document.querySelector("html");
+        if (htmlTag) htmlTag.style.margin = "0px";
+    }, []);
+
     return (
         <PageWrapper>
             <TitleContainer>
@@ -268,10 +460,11 @@ function StatisticPage(props) {
                     <div>탈퇴자: {withdrawnUserCnt}명</div>
                 </div>
             </TitleContainer>
-
             <br />
 
-            <div style={{ backgroundColor: 'gray', marginLeft: '4px', width: '76%', height: '500px' }}>그래프위치</div>
+            <div style={{ width: '76%', maxHeight: '500px', marginLeft: '4px', marginBottom: '2px', border: '1px solid #ccc', borderRadius: '3px' }}>
+                {ga4LineCols && <LineGraph columns={ga4LineCols} style={{ width: '100%', height: '100%' }} />}
+            </div>
             <div ref={ga4GridRef} style={{ width: "76%" }} />
 
             <button id="logoutButton" onClick={handleLogoutClick}>
