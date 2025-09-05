@@ -3,6 +3,7 @@ import styled from "styled-components";
 import '../../App.css';
 import { Link, useNavigate } from "react-router-dom";
 import BasicWrapper from "../../components/Styled/BasicWrapper";
+import { ParseToken } from "../../utils/ParseToken";
 
 const MoreWrapper = styled(BasicWrapper)`
     display: flex;
@@ -89,7 +90,7 @@ const DivWrapper = styled.div`
 function NotFoundPage(props) {
     const navigate = useNavigate();
     const contentRef = useRef(null);
-    const isLoggedIn = !!(localStorage.getItem("accessToken") && localStorage.getItem("refreshToken"));
+    const { isLoggedIn, isAdminUser } = ParseToken();
 
     const getHeightWithMargin = (elementName) => {
         const element = document.querySelector(elementName);
@@ -125,30 +126,31 @@ function NotFoundPage(props) {
     }, []);
 
     return (
-        <MoreWrapper ref={contentRef}>
-            {/* <i className="fa fa-arrow-left" aria-hidden="true" onClick={() => { navigate(-1) }}></i> */}
-            <i className="fa fa-arrow-left" aria-hidden="true" onClick={() => navigate(isLoggedIn === true ? "/memos" : "/")}></i>
-            <DivWrapper className="flex-container">
-                <div style={{ lineHeight: "140%" }}><br></br></div>
+        (isAdminUser === false) &&
+            <MoreWrapper ref={contentRef}>
+                {/* <i className="fa fa-arrow-left" aria-hidden="true" onClick={() => { navigate(-1) }}></i> */}
+                <i className="fa fa-arrow-left" aria-hidden="true" onClick={() => navigate(isLoggedIn === true ? "/memos" : "/")}></i>
+                <DivWrapper className="flex-container">
+                    <div style={{ lineHeight: "140%" }}><br></br></div>
 
-                <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
-                <div style={{ lineHeight: "30%" }}><br></br></div>
-                <h5>&lt;&nbsp;404 ERROR&nbsp;&gt;</h5>
-                <div style={{ lineHeight: "66%" }}><br></br></div>
-                <strong>페이지를 찾을 수 없습니다.</strong><br></br>
-                <div style={{ lineHeight: "12%" }}><br></br></div>
-                <span>
-                    입력하신 주소가 잘못되었거나,<br></br>
-                    새롭게 변경되었을 수 있습니다.
-                </span>
-                <div style={{ lineHeight: "51%" }}><br></br></div>
-                {/* <Link to={isLoggedIn === true ? "/memos" : "/"}><button>홈으로 이동</button></Link> */}
-                <button onClick={() => navigate(isLoggedIn === true ? "/memos" : "/")}>홈으로 이동</button>
+                    <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
+                    <div style={{ lineHeight: "30%" }}><br></br></div>
+                    <h5>&lt;&nbsp;404 ERROR&nbsp;&gt;</h5>
+                    <div style={{ lineHeight: "66%" }}><br></br></div>
+                    <strong>페이지를 찾을 수 없습니다.</strong><br></br>
+                    <div style={{ lineHeight: "12%" }}><br></br></div>
+                    <span>
+                        입력하신 주소가 잘못되었거나,<br></br>
+                        새롭게 변경되었을 수 있습니다.
+                    </span>
+                    <div style={{ lineHeight: "51%" }}><br></br></div>
+                    {/* <Link to={isLoggedIn === true ? "/memos" : "/"}><button>홈으로 이동</button></Link> */}
+                    <button onClick={() => navigate(isLoggedIn === true ? "/memos" : "/")}>홈으로 이동</button>
 
-                <br></br><br></br>
-                <div style={{ lineHeight: "140%" }}><br></br></div>
-            </DivWrapper>
-        </MoreWrapper>
+                    <br></br><br></br>
+                    <div style={{ lineHeight: "140%" }}><br></br></div>
+                </DivWrapper>
+            </MoreWrapper>
     );
 }
 

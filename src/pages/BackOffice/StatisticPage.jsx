@@ -11,7 +11,6 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';  // 버전 5
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
-import { da } from "date-fns/locale";
 
 const PageWrapper = styled.div`
     display: flex;
@@ -131,15 +130,15 @@ const TitleContainer = styled.div`
         justify-content: center;
         align-items: center;
 
-        @media(max-width: 650px) {
-            right: -118px;
-            flex-direction: column;
-        }
-
         .hideMobile {
             @media(max-width: 650px) {
                 display: none;
             }
+        }
+
+        @media(max-width: 650px) {
+            right: -135px;
+            flex-direction: column;
         }
     }
 `;
@@ -180,6 +179,10 @@ const CustomDatePicker = styled(DatePicker)`
         box-shadow: 0 0 5px rgba(131, 122, 114, 0.6);
         outline: none;
         border-color: #837a72;
+    }
+
+    @media(max-width: 650px) {
+        font-size: 8.5px;
     }
 `;
 
@@ -570,7 +573,7 @@ function StatisticPage(props) {
         const htmlTag = document.querySelector("html");
         if (htmlTag) htmlTag.style.margin = "0px";
 
-        // 모바일의 zoom 옵션 적용을 위함.
+        // 모바일의 zoom 옵션 적용을 위함. (초기 설정)
         const bodyTag = document.querySelector("body");
         if (bodyTag) {
             bodyTag.style.display = "flex";
@@ -579,6 +582,28 @@ function StatisticPage(props) {
             bodyTag.style.alignItems = "center";
             bodyTag.style.height = "100vh";
         }
+
+        // 모바일의 zoom 옵션 적용을 위함. (반응형 설정)
+        // ==> !!! 추후 useMediaQuery 감지 방식으로 최적화 예정 !!!
+        const updateLayoutMobile = () => {
+            const htmlTag = document.querySelector("html");
+            const bodyTag = document.querySelector("body");
+
+            if (window.innerWidth <= 650) {
+                if (htmlTag) htmlTag.style.overflowX = "hidden";
+                if (bodyTag) bodyTag.style.overflowX = "hidden";
+            }
+            else {
+                if (htmlTag) htmlTag.style.overflowX = "";
+                if (bodyTag) bodyTag.style.overflowX = "";
+            }
+        }
+        updateLayoutMobile();
+
+        window.addEventListener('resize', updateLayoutMobile);
+        return () => {
+            window.removeEventListener('resize', updateLayoutMobile);
+        };
     }, []);
 
     return (
@@ -613,6 +638,7 @@ function StatisticPage(props) {
                 </DateContainer>
                 {ga4LineCols && <LineGraph columns={ga4LineCols} style={{ width: '100%', height: '100%' }} />}
             </div>
+            
             {/* [ Grid ] */}
             <div ref={ga4GridRef}
                 key={ga4GridRender}
