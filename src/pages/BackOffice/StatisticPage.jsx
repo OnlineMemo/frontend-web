@@ -137,7 +137,7 @@ const TitleContainer = styled.div`
         }
 
         @media(max-width: 650px) {
-            right: -135px;
+            right: -140px;
             flex-direction: column;
         }
     }
@@ -157,6 +157,8 @@ const DateContainer = styled.div`
 
 const CustomDatePicker = styled(DatePicker)`
     width: 135.69px;
+    padding-top: 2px;
+    padding-left: 5.5px;
     text-align: center;
     font-size: 12px;
     font-weight: 600;
@@ -182,7 +184,14 @@ const CustomDatePicker = styled(DatePicker)`
     }
 
     @media(max-width: 650px) {
-        font-size: 8.5px;
+        // 모바일 iOS 화면 자동확대 방지
+        width: calc(135.69px / 0.7);
+        height: 22.4px;
+        padding-top: 1px;
+        padding-bottom: 3px;
+        font-size: 16px;  // 8.5px
+        transform: scale(0.53); 
+        transform-origin: top right;
     }
 `;
 
