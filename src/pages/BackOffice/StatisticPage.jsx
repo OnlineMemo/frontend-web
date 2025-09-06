@@ -92,6 +92,18 @@ const PageWrapper = styled.div`
         background-color: #886b62a1 !important;
         color: white !important;
     }
+    .react-datepicker__triangle {
+        display: none;
+    }
+    .react-datepicker {
+        top: 22px;
+        right: 2.6px;  // 6px
+
+        @media(max-width: 650px) {
+            top: 20.5px;
+            right: 35.5px;
+        }
+    }
     
     &::-webkit-scrollbar {
         width: 5px;
@@ -137,7 +149,7 @@ const TitleContainer = styled.div`
         }
 
         @media(max-width: 650px) {
-            right: -140px;
+            right: -142px;
             flex-direction: column;
         }
     }
@@ -185,10 +197,11 @@ const CustomDatePicker = styled(DatePicker)`
 
     @media(max-width: 650px) {
         // 모바일 iOS 화면 자동확대 방지
-        width: calc(135.69px / 0.7);
+        width: calc(135.69px / 0.53);
         height: 22.4px;
-        padding-top: 1px;
-        padding-bottom: 3px;
+        padding-top: 2px;
+        padding-right: 0px;
+        padding-bottom: 2px;
         font-size: 16px;  // 8.5px
         transform: scale(0.53); 
         transform-origin: top right;
@@ -643,6 +656,12 @@ function StatisticPage(props) {
                         maxDate={getMaxDate()}
                         endDate={endDate}
                         value={getPrintDate()}
+                        onFocus={(event) => event.target.blur()}  // 키보드 생성 방지
+                        popperPlacement="bottom-start"
+                        popperModifiers={[
+                            { name: "flip", options: { fallbackPlacements: [] } },
+                            { name: "preventOverflow", options: { tether: false } },
+                        ]}
                     />
                 </DateContainer>
                 {ga4LineCols && <LineGraph columns={ga4LineCols} style={{ width: '100%', height: '100%' }} />}
