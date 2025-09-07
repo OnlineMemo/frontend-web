@@ -1,0 +1,5 @@
+# Hide from diff
+build/** -diff
+
+# Exclude from GitHub stats
+build/** linguist-generated
