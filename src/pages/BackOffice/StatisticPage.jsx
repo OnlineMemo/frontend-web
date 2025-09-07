@@ -666,7 +666,7 @@ function StatisticPage(props) {
                         onFocus={(event) => event.target.blur()}  // 키보드 생성 방지
                         popperPlacement="bottom-start"
                         popperModifiers={[
-                            { name: "flip", options: { fallbackPlacements: [] } },
+                            { name: "flip", options: { fallbackPlacements: [] } },  // 모바일에서 드롭다운이 위로 펴짐을 방지
                             { name: "preventOverflow", options: { tether: false } },
                         ]}
                     />

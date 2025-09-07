@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkonlinememo_react_project=self.webpackChunkonlinememo_react_project||[]).push([[9301],{89301:(e,t,c)=>{e.exports=c.p+"static/media/Kalam-Light.26d8dba039c5c77b1ac3.ttf"}}]);
