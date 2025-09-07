@@ -31,7 +31,7 @@ const MoreWrapper = styled(HelloWrapper)`
     }
 
     .inputInform::placeholder {
-        font-size: 4.8px;
+        font-size: 7.5px;  // 4.8px
         font-weight: bold;
     }
 
