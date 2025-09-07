@@ -2,4 +2,4 @@
 build/** -diff
 
 # Exclude from GitHub stats
-build/** linguist-generated
+build/** linguist-generated=true
