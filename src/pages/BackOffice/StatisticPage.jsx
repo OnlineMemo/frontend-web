@@ -481,7 +481,7 @@ function StatisticPage(props) {
                             color: "#333333",
                         },
                     },
-                    opposite: false,  // 왼쪽 y축
+                    opposite: false,  // y축 (왼쪽)
                 },
                 {
                     title: {
@@ -498,7 +498,7 @@ function StatisticPage(props) {
                             color: "#333333",
                         },
                     },
-                    opposite: true,  // 오른쪽 y축
+                    opposite: true,  // y축 (오른쪽)
                 },
             ],
             plotOptions: {

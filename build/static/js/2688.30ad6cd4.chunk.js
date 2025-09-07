@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkonlinememo_react_project=self.webpackChunkonlinememo_react_project||[]).push([[2688],{82688:(e,c,t)=>{e.exports=t.p+"static/media/Kalam-Bold.c4671477e81c3c51ffc0.ttf"}}]);
