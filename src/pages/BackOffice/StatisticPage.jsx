@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import styled from "styled-components";
 import '../../App.css';
 import { CheckToken } from "../../utils/CheckToken";
+import { getKSTDate, getKSTDateFromLocal } from "../../utils/TimeUtil"
 import Apis from "../../apis/Api";
 import Highcharts from "highcharts";  // Line Graph
 import HighchartsReact from "highcharts-react-official";
@@ -217,9 +218,14 @@ const CustomDatePicker = styled(DatePicker)`
 
 
 function StatisticPage(props) {
+    const [prevDateRange, setPrevDateRange] = useState([
+        getKSTDate("2025-08-01", "00:00:00"),
+        getKSTDate("2025-08-31", "00:00:00"),
+    ]);
+    const [prevStartDate, prevEndDate] = prevDateRange;
     const [dateRange, setDateRange] = useState([
-        new Date(new Date("2025-08-01").toLocaleString("en-US", { timeZone: "Asia/Seoul" })),
-        new Date(new Date("2025-08-31").toLocaleString("en-US", { timeZone: "Asia/Seoul" }))
+        getKSTDate("2025-08-01", "00:00:00"),
+        getKSTDate("2025-08-31", "00:00:00"),
     ]);
     const [startDate, endDate] = dateRange;
 
@@ -251,14 +257,8 @@ function StatisticPage(props) {
         });
     };
 
-    const getRequestDatetime = (date, timeStr) => {
-        const dateStr = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
-        const datetimeStr = `${dateStr} ${timeStr}`;
-        return datetimeStr;
-    }
-
     const getMaxDate = () => {
-        const kstDate = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" }));  // 현재 시각
+        const kstDate = getKSTDateFromLocal(new Date());  // 현재 시각
         const hour = kstDate.getHours();
         const minute = kstDate.getMinutes();
 
@@ -271,7 +271,13 @@ function StatisticPage(props) {
         return kstDate;
     }
 
-    const getPrintDate = () => {
+    const getRequestDatetimeStr = (date, timeStr) => {
+        const dateStr = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+        const datetimeStr = `${dateStr} ${timeStr}`;
+        return datetimeStr;
+    }
+
+    const getPrintDateStr = () => {
         const startDateStr = (!startDate) ? '미선택' : `${String(startDate.getFullYear()).slice(2, 4)}.${String(startDate.getMonth() + 1).padStart(2, "0")}.${String(startDate.getDate()).padStart(2, "0")}`;
         const endDateStr = (!endDate) ? '미선택' : `${String(endDate.getFullYear()).slice(2, 4)}.${String(endDate.getMonth() + 1).padStart(2, "0")}.${String(endDate.getDate()).padStart(2, "0")}`;
         const printDateStr = `${startDateStr} ~ ${endDateStr}  📆`;  // 또는 🔻 사용할것.
@@ -295,8 +301,8 @@ function StatisticPage(props) {
     }
 
     async function getGa4CalcData() {
-        const startDatetime = getRequestDatetime(startDate, "00:00:00");
-        const endDatetime = getRequestDatetime(endDate, "23:59:59");
+        const startDatetime = getRequestDatetimeStr(startDate, "00:00:00");
+        const endDatetime = getRequestDatetimeStr(endDate, "23:59:59");
 
         await Apis
             .get(`/back-office/ga4/calc-data`, {
@@ -389,8 +395,8 @@ function StatisticPage(props) {
     }
 
     async function getGa4Statistics() {
-        const startDatetime = getRequestDatetime(startDate, "00:00:00");
-        const endDatetime = getRequestDatetime(endDate, "23:59:59");
+        const startDatetime = getRequestDatetimeStr(startDate, "00:00:00");
+        const endDatetime = getRequestDatetimeStr(endDate, "23:59:59");
 
         await Apis
             .get(`/back-office/ga4/statistics`, {
@@ -424,11 +430,15 @@ function StatisticPage(props) {
     useEffect(() => {
         getUserStatistics();
     }, []);
-
+    
     useEffect(() => {
-        if (startDate && endDate) {
-            getGa4CalcData();
-            getGa4Statistics();
+        if (startDate && endDate) {            
+            if (ga4GridRender === 0 ||  // 첫 렌더링때는 API 반드시 호출하도록 함
+                (prevStartDate.getTime() !== startDate.getTime() || prevEndDate.getTime() !== endDate.getTime())) {
+                getGa4CalcData();
+                getGa4Statistics();
+                setPrevDateRange([startDate, endDate]);
+            }
         }
     }, [startDate, endDate]);
 
@@ -659,11 +669,11 @@ function StatisticPage(props) {
                         selectsRange
                         shouldCloseOnSelect={true}
                         onChange={(dateRange) => setDateRange(dateRange)}
-                        minDate={new Date(new Date("2025-08-01").toLocaleString("en-US", { timeZone: "Asia/Seoul" }))}
-                        startDate={startDate}
+                        minDate={getKSTDate("2025-08-01", "00:00:00")}  // "15:30:00"
                         maxDate={getMaxDate()}
+                        startDate={startDate}
                         endDate={endDate}
-                        value={getPrintDate()}
+                        value={getPrintDateStr()}
                         onFocus={(event) => event.target.blur()}  // 키보드 생성 방지
                         popperPlacement="bottom-start"
                         popperModifiers={[
