@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import styled from "styled-components";
 import '../../App.css';
 import { CheckToken } from "../../utils/CheckToken";
@@ -435,7 +435,9 @@ function StatisticPage(props) {
 
     // ============ < Make Charts (Line Graph, Grid) > ============ //
 
-    const LineGraph = ({ columns }) => {
+    const lineOptions = useMemo(() => {
+        if (!ga4LineCols) return null;
+
         const options = {
             chart: {
                 type: "line",
@@ -457,7 +459,7 @@ function StatisticPage(props) {
                 },
             },
             xAxis: {
-                categories: columns["날짜"],  // x축
+                categories: ga4LineCols["날짜"],  // x축
                 labels: {
                     style: {
                         fontSize: "10px",
@@ -513,33 +515,32 @@ function StatisticPage(props) {
             series: [
                 {
                     name: "실사용자 수",
-                    data: columns["실사용자 수"],
+                    data: ga4LineCols["실사용자 수"],
                     yAxis: 0,
                     color: "#FF0000",
                 },
                 {
                     name: "로그인 사용자 수",
-                    data: columns["로그인 사용자 수"],
+                    data: ga4LineCols["로그인 사용자 수"],
                     yAxis: 0,
                     color: "#FF7F00",
                 },
                 {
                     name: "활성 사용자 수",
-                    data: columns["활성 사용자 수"],
+                    data: ga4LineCols["활성 사용자 수"],
                     yAxis: 0,
                     color: "#FFD700",
                 },
                 {
                     name: "조회수",
-                    data: columns["조회수"],
+                    data: ga4LineCols["조회수"],
                     yAxis: 1,
                     color: "#1a75ff",
                 },
             ],
         };
-
-        return <HighchartsReact highcharts={Highcharts} options={options} />;
-    };
+        return options;
+    }, [ga4LineCols]);
 
     useEffect(() => {
         if (ga4GridCols && ga4GridRef.current) {
@@ -671,7 +672,9 @@ function StatisticPage(props) {
                         ]}
                     />
                 </DateContainer>
-                {ga4LineCols && <LineGraph columns={ga4LineCols} style={{ width: '100%', height: '100%' }} />}
+                {lineOptions &&
+                     <HighchartsReact highcharts={Highcharts} options={lineOptions} style={{ width: '100%', height: '100%' }} />
+                }
             </div>
             
             {/* [ Grid ] */}
