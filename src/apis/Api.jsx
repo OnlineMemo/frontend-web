@@ -89,7 +89,10 @@ function redirectToLogin() {
 }
 
 function redirectTo404Page() {
-    window.location.href = '/404';
+    const pathname = window.location.pathname;
+    if (pathname !== '/friends' && pathname !== '/senders') {  // 친구 미발견 시, 리다이렉트 대신 모달로 알림.
+        window.location.href = '/404';
+    }
 }
 
 export default Apis;

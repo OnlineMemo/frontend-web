@@ -9,12 +9,17 @@ import { retryLazy } from "./utils/lazyUtil.js"
 import { ParseToken } from "./utils/ParseToken"
 import { getTitle, getDescription, getCanonical } from "./utils/MetaUtil"
 
+// Eager Suspense
+import NoLoginNav from "./components/Navigation/NoLoginNav"
+import LoginPage from "./pages/User/LoginPage"
+import SignupPage from "./pages/User/SignupPage"
+import NoticePage from "./pages/Etc/NoticePage"
+import DownloadPage from "./pages/Etc/DownloadPage"
+
+// Lazy Suspense
 const LazyLoad = (path) => retryLazy(() => import(`${path}`));
-const NoLoginNav = LazyLoad("./components/Navigation/NoLoginNav");
-const LoginPage = LazyLoad("./pages/User/LoginPage");
-const SignupPage = LazyLoad("./pages/User/SignupPage");
-const ChangePwPage = LazyLoad("./pages/User/ChangePwPage");
 const YesLoginNav = LazyLoad("./components/Navigation/YesLoginNav");
+const ChangePwPage = LazyLoad("./pages/User/ChangePwPage");
 const MemoListPage = LazyLoad("./pages/Memo/MemoListPage");
 const InformationPage = LazyLoad("./pages/Etc/InformationPage");
 const ReadAndEditMemoPage = LazyLoad("./pages/Memo/ReadAndEditMemoPage");
@@ -22,8 +27,6 @@ const NewMemoPage = LazyLoad("./pages/Memo/NewMemoPage");
 const UserProfilePage = LazyLoad("./pages/User/UserProfilePage");
 const FriendListPage = LazyLoad("./pages/Friend/FriendListPage");
 const SenderListPage = LazyLoad("./pages/Friend/SenderListPage");
-const NoticePage = LazyLoad("./pages/Etc/NoticePage");
-const DownloadPage = LazyLoad("./pages/Etc/DownloadPage");
 const NotFoundPage = LazyLoad("./pages/Etc/NotFoundPage");
 const StatisticPage = LazyLoad("./pages/BackOffice/StatisticPage");
 
@@ -274,6 +277,16 @@ function LoadingComponent() {
   );
 }
 
+// - hydration 오류 (#418, #423) 해결 :
+// 이는 'SEO 크롤러에 노출된 SSR 페이지'를 제외하고, 'CSR 페이지'에만 적용할것.
+// SSR 페이지는 즉시 렌더링하여, 서버와 클라이언트의 렌더링 출력이 일치하도록 해결함.
+// CSR 페이지는 이 함수로 래핑해, 기존처럼 지연 로딩을 정상적으로 적용하면 됨.
+const wrapSuspense = (children) => (  // for 'CSR 페이지'
+  <React.Suspense fallback={<LoadingComponent />}>
+    {children}
+  </React.Suspense>
+);
+
 function RouteComponent() {
   const location = useLocation();
   const [isAdminUser, setIsAdminUser] = useState(false);
@@ -282,7 +295,7 @@ function RouteComponent() {
     if (isAdminUser === true) {
       return (
         <Routes>
-          <Route path="/statistics" element={<StatisticPage />} />
+          <Route path="/statistics" element={wrapSuspense(<StatisticPage />)} />
           <Route path="*" element={<Navigate to="/statistics" replace />} />
         </Routes>
       );
@@ -296,26 +309,26 @@ function RouteComponent() {
         {/* 비로그인 및 로그인 사용자용 - Nav가 분리된 페이지 */}
         <Route path="/login" element={<><NoLoginNav /><LoginPage /></>} />
         <Route path="/signup" element={<><NoLoginNav /><SignupPage /></>} />
-        <Route path="/password" element={<><NoLoginNav /><ChangePwPage /></>} />
-        <Route path="/information" element={<><NoLoginNav /><InformationPage /></>} />
+        <Route path="/password" element={wrapSuspense(<><NoLoginNav /><ChangePwPage /></>)} />
+        <Route path="/information" element={wrapSuspense(<><NoLoginNav /><InformationPage /></>)} />
         <Route path="/notice" element={<><NoLoginNav /><NoticePage /></>} />
         <Route path="/download" element={<><NoLoginNav /><DownloadPage /></>} />
 
         {/* 로그인 사용자용 - Nav가 분리된 페이지 */}
-        <Route path="/users" element={<><YesLoginNav /><UserProfilePage /></>} />
-        <Route path="/friends" element={<><YesLoginNav /><FriendListPage /></>} />
-        <Route path="/senders" element={<><YesLoginNav /><SenderListPage /></>} />
+        <Route path="/users" element={wrapSuspense(<><YesLoginNav /><UserProfilePage /></>)} />
+        <Route path="/friends" element={wrapSuspense(<><YesLoginNav /><FriendListPage /></>)} />
+        <Route path="/senders" element={wrapSuspense(<><YesLoginNav /><SenderListPage /></>)} />
 
         {/* 로그인 사용자용 - Nav가 병합된 페이지 */}
-        <Route path="/memos" element={<MemoListPage />} />
-        <Route path="/memos/:memoId" element={<ReadAndEditMemoPage />} /> {/* 또는 path="/memos/:memoId(\d+) 정규표현식 적용할것. */}
-        <Route path="/memos/new-memo" element={<NewMemoPage />} />
+        <Route path="/memos" element={wrapSuspense(<MemoListPage />)} />
+        <Route path="/memos/:memoId" element={wrapSuspense(<ReadAndEditMemoPage />)} /> {/* 또는 path="/memos/:memoId(\d+) 정규표현식 적용할것. */}
+        <Route path="/memos/new-memo" element={wrapSuspense(<NewMemoPage />)} />
 
         {/* 404 Not Found 페이지 - GA4 이벤트 단일 */}
-        <Route path="*" element={<><NoLoginNav /><NotFoundPage /></>} />
+        <Route path="*" element={wrapSuspense(<><NoLoginNav /><NotFoundPage /></>)} />
 
         {/* 404 Not Found 페이지 - GA4 이벤트 중복 */}
-        {/* <Route path="/404" element={<><NoLoginNav /><NotFoundPage /></>} />
+        {/* <Route path="/404" element={wrapSuspense(<><NoLoginNav /><NotFoundPage /></>)} />
         <Route path="*" element={<Navigate to="/404" replace />} /> */}
       </Routes>
     );
@@ -330,10 +343,10 @@ function RouteComponent() {
 }
 
 function App(props) {
-  const [isCrawlTime, setIsCrawlTime] = useState(true);  // SSR hydration 크롤러가 첫 렌더링 중일때
+  /* const [isCrawlTime, setIsCrawlTime] = useState(true);  // SSR hydration 크롤러가 첫 렌더링 중일때 */
 
   useEffect(() => {
-    setIsCrawlTime(false);
+    /* setIsCrawlTime(false); */
 
     const applyStyle = (element) => {
       // 길게 터치해 이동 시, 나타나는 링크 미리보기 창 방지
@@ -367,14 +380,17 @@ function App(props) {
     <>
       <HelmetGa4Component />
       <TitleComponent />
-
-      {isCrawlTime === true ? (  // hydration 오류(#418, #423) 해결 : 서버와 클라이언트의 렌더링 출력이 일치하도록 함.
-        <RouteComponent />
-      ) : (
-        <React.Suspense fallback={<LoadingComponent />}>
+      
+      <RouteComponent />
+      {/*
+        {isCrawlTime === true ? (  // hydration 오류(#418, #423) 해결 : 서버와 클라이언트의 렌더링 출력이 일치하도록 함.
           <RouteComponent />
-        </React.Suspense>
-      )}
+        ) : (
+          <React.Suspense fallback={<LoadingComponent />}>
+            <RouteComponent />
+          </React.Suspense>
+        )}
+      */}
     </>
   );
 }

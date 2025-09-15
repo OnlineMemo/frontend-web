@@ -31,9 +31,11 @@ const prerenderPaths = ["/", "/signup", "/notice", "/download"];
 const curPath = window.location.pathname;
 
 if (rootElement.hasChildNodes() && prerenderPaths.includes(curPath)){  // SSR인 경우
+  // console.log('- SSR 페이지 : Pre-Rendering 적용 (hydrateRoot)');
   hydrateRoot(rootElement, element);
 }
 else {  // CSR인 경우
+  // console.log('- CSR 페이지 : Lazy-Rendering 적용 (createRoot)');
   const root = createRoot(rootElement);
   root.render(element);  // root.render(element, rootElement);
 }
