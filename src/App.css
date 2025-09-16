@@ -73,6 +73,12 @@
 }
 
 @font-face {
+  font-family: 'FontAwesome';
+  src: url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
   font-family: "jua";
   src: url("./assets/fonts/BMJUA_ttf.ttf") format("truetype");
   font-weight: 50;
