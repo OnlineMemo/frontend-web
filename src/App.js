@@ -221,7 +221,7 @@ function HelmetGa4Component() {
   }, [location?.pathname]);
 
   return (
-      <Helmet>
+      <Helmet htmlAttributes={{ lang: "ko" }}>
         <title>{getTitle(pathName)}</title>
         <meta name="description" content={getDescription(pathName)} />
         <link rel="canonical" href={getCanonical(pathName)} />
