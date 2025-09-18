@@ -11,17 +11,15 @@ import Apis from "../../apis/Api";
 import YesLoginNav from "../../components/Navigation/YesLoginNav";
 
 const DivWrapper = styled.div`
-    // flex-container 역할
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
-    align-items: baseline;
+    align-items: center;  // baseline
 
+    margin-top: 1.3px;
     margin-bottom: 11px;
 
-    // flex-item 역할
-    .flex-item {
-    }
+    /* .flex-item { } */
 `;
 
 function MemoListPage(props) {

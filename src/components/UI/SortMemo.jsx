@@ -2,18 +2,37 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import '../../App.css';
 
-const Button = styled.button`
-    background-color: #645b56;
-    color: white;
-    border-radius: 5px;
-    font-family: "jua";
-    font-size: 1.7rem;
+const SortContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 
-    padding: 1px 6px 1px 6px;
-    border-top: 2px solid #767676;
+    #sortBox {
+        /* width: 102px;  // 126.5px */
+        height: 23px;
+        border: solid 2px #645b56;
+        border-radius: 3px;
+
+        font-size: 1.5rem;
+        font-family: "jua";
+        color: #463f3a;
+
+        cursor: pointer;
+    }
+`;
+
+const Button = styled.button`
+    padding: 1.22px 6px 1.23px 6px;  // 1px 6px 1px 6px
+    background-color: #645b56;
+    border-radius: 5px;
+    border-top: 1.9px solid #767676;  // 2px solid #767676;
     border-left: 2px solid #767676;
     border-bottom: 2px solid #212121;
     border-right: 2px solid #212121;
+
+    font-size: 1.7rem;
+    font-family: "jua";
+    color: white;
 
     &:hover {
         cursor: pointer;
@@ -44,22 +63,15 @@ function SortMemo(props) {
 
 
     return (
-        <div>
-            <select
-                value={value} onChange={handleChange}
-                style={{
-                    border: "solid 2px #645b56", borderRadius: "3px",
-                    height: "23px", weight: "102px", fontSize: "1.5rem", fontFamily: "jua", color: "#463f3a",
-                    cursor: "pointer"
-                }}
-            >
+        <SortContainer>
+            <select id="sortBox" value={value} onChange={handleChange}>
                 <option value="all-memo">전체 메모</option>
                 <option value="private-memo">개인 메모</option>
                 <option value="group-memo">공동 메모</option>
                 <option value="star-memo">즐겨찾기 개인메모</option>
             </select>
             &nbsp;<Button onClick={handleSortClick}>정렬</Button>
-        </div>
+        </SortContainer>
     );
 }
 

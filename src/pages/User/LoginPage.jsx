@@ -20,12 +20,12 @@ const MoreWrapper = styled(HelloWrapper)`
 `;
 
 const DivWrapper = styled.div`
+    width: 479px;
+    margin: 0 auto;
+
     font-size: 1.5rem;
     color: #463f3a;
     line-height: 135%;
-
-    width: 479px;
-    margin: 0 auto;
 
     @media(max-width: 370px) {
         width: 320px;
@@ -37,7 +37,12 @@ const DivWrapper = styled.div`
     ol {
         margin-top: 17px;
         margin-bottom: 16.6px;
-        padding-right: 40px;
+        padding-left: 80px;
+        word-break: keep-all;
+
+        @media(max-width: 530.9px) {
+            padding-left: 55px;
+        }
 
         @media(min-height: 648.2px) {
             margin-bottom: calc(50vh - 277.249px);
@@ -168,10 +173,10 @@ function LoginPage(props) {
 
             <DivWrapper>
                 <ol>
-                    <li>간단하고 직관적인 UX/UI 디자인!</li>
-                    <li>개인정보 필요없는 10초 회원가입 절차!&nbsp;<br></br>(생성할 id, pw 만 입력하면 끝!)</li>
-                    <li>어느 기기에서든지 쉽고 빠르게 로그인 후&nbsp;<br></br>나만의 메모 관리!</li>
-                    <li>친구들끼리 그룹을 만들어 공동 메모도 작성 가능!</li>
+                    <li>간단하고 직관적인 UI/UX 디자인!</li> {/* 간단하고 직관적인 UX/UI 디자인! */}
+                    <li>개인정보 필요없는 10초 회원가입 절차!&nbsp;<br></br>(생성할 id, pw 만 입력!)</li>  {/* 개인정보 필요없는 10초 회원가입 절차!&nbsp;<br></br>(생성할 id, pw 만 입력하면 끝!) */}
+                    <li>어떤 기기에서든 빠르게 로그인 후 메모 관리!</li>  {/* 어느 기기에서든지 쉽고 빠르게 로그인 후&nbsp;<br></br>나만의 메모 관리! */}
+                    <li>친구들끼리 그룹을 만들어 공동 메모도 작성!</li> {/* 친구들끼리 그룹을 만들어 공동 메모도 작성 가능! */}
                     <li>수익창출X 광고없이 무료 이용 가능!</li>
                 </ol>
             </DivWrapper>

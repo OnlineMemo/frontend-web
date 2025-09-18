@@ -2,18 +2,37 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import '../../App.css';
 
-const Button = styled.button`
-    background-color: #645b56;
-    color: white;
-    border-radius: 5px;
-    // font-family: "jua";
-    font-size: 1.64rem;
+const SearchContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 
-    padding: 1px 6px 1px 6px;
+    #searchBox {
+        width: 91px;
+        height: 19px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        border: solid 2px #645b56;
+        border-radius: 3px;
+
+        font-size: 1.5rem;
+        font-family: "jua";
+        color: #463f3a;
+    }
+`;
+
+const Button = styled.button`
+    padding: 0px 6px 1px 6px;  // 1px 6px 1px 6px
+    background-color: #645b56;
+    border-radius: 5px;
     border-top: 2px solid #767676;
     border-left: 2px solid #767676;
     border-bottom: 2px solid #212121;
     border-right: 2px solid #212121;
+
+    font-size: 1.62rem;  // 1.64rem
+    // font-family: "jua";
+    color: white;
 
     &:hover {
         cursor: pointer;
@@ -50,16 +69,12 @@ function SearchMemo(props) {
 
 
     return (
-        <div>
-            <input 
-                type="text" value={value} placeholder="검색"
-                onChange={handleChange}
-                onKeyDown={(event) => doClickEnter(event)}
-                style={{ border:"solid 2px #645b56", borderRadius:"3px",
-                    width: "91px", height: "19px", fontSize: "1.5rem", fontFamily: "jua", color:"#463f3a", paddingTop: "0px", paddingBottom: "0px" }}
+        <SearchContainer>
+            <input type="text" id="searchBox" value={value} placeholder="검색"
+                onChange={handleChange} onKeyDown={(event) => doClickEnter(event)}
             />
             &nbsp;<Button onClick={handleSearchClick}><i className="fa fa-search" aria-hidden="true"></i></Button>
-        </div>
+        </SearchContainer>
     );
 }
 
