@@ -81,8 +81,8 @@
 
 @font-face {
   font-family: "jua";
-  /* src: url("./assets/fonts/BMJUA_ttf.ttf") format("truetype"); */
-  src: url("./assets/fonts/BMJUA_ttf.woff2") format("woff2");
+  src: url("./assets/fonts/BMJUA_ttf.ttf") format("truetype");
+  /* src: url("./assets/fonts/BMJUA_ttf.woff2") format("woff2"); */
   font-weight: 50;
   font-display: swap;
 }
