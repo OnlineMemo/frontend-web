@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkonlinememo_react_project=self.webpackChunkonlinememo_react_project||[]).push([[5079],{35079:(e,a,c)=>{e.exports=c.p+"static/media/LINESeedKR-Bd.866a16ff8afadafcbd0c.woff2"}}]);

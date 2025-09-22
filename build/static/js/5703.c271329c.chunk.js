@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkonlinememo_react_project=self.webpackChunkonlinememo_react_project||[]).push([[5703],{25703:(e,a,s)=>{e.exports=s.p+"static/media/Happiness-Sans-Title.afe43dfd063fa5fbbc48.woff2"}}]);

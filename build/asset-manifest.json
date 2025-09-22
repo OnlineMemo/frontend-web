@@ -1,12 +1,17 @@
 {
   "files": {
-    "main.css": "/static/css/main.831af2fe.css",
-    "main.js": "/static/js/main.3888e491.js",
+    "main.css": "/static/css/main.f3a51096.css",
+    "main.js": "/static/js/main.2c37a0bb.js",
     "static/js/4396.88d2f313.chunk.js": "/static/js/4396.88d2f313.chunk.js",
     "static/js/9203.8ae94c07.chunk.js": "/static/js/9203.8ae94c07.chunk.js",
+    "static/js/1693.bf64e997.chunk.js": "/static/js/1693.bf64e997.chunk.js",
+    "static/js/5703.c271329c.chunk.js": "/static/js/5703.c271329c.chunk.js",
+    "static/js/6476.1509d256.chunk.js": "/static/js/6476.1509d256.chunk.js",
     "static/js/2688.30ad6cd4.chunk.js": "/static/js/2688.30ad6cd4.chunk.js",
     "static/js/9301.6fd513d5.chunk.js": "/static/js/9301.6fd513d5.chunk.js",
     "static/js/1276.ceb0c68f.chunk.js": "/static/js/1276.ceb0c68f.chunk.js",
+    "static/js/5079.d737cd15.chunk.js": "/static/js/5079.d737cd15.chunk.js",
+    "static/js/4451.f1dfb891.chunk.js": "/static/js/4451.f1dfb891.chunk.js",
     "static/js/4353.8c166354.chunk.js": "/static/js/4353.8c166354.chunk.js",
     "static/js/193.20720b36.chunk.js": "/static/js/193.20720b36.chunk.js",
     "static/js/2425.c69aacc7.chunk.js": "/static/js/2425.c69aacc7.chunk.js",
@@ -56,14 +61,19 @@
     "static/js/6523.074b4a84.chunk.js": "/static/js/6523.074b4a84.chunk.js",
     "static/js/8118.890cb0a1.chunk.js": "/static/js/8118.890cb0a1.chunk.js",
     "static/media/BMJUA_ttf.ttf": "/static/media/BMJUA_ttf.bf12d2d886260d73277b.ttf",
+    "static/media/KOTRAHOPE.woff2": "/static/media/KOTRAHOPE.13e091dfbd431f1b69da.woff2",
+    "static/media/LINESeedKR-Bd.woff2": "/static/media/LINESeedKR-Bd.866a16ff8afadafcbd0c.woff2",
     "static/media/Kalam-Bold.ttf": "/static/media/Kalam-Bold.c4671477e81c3c51ffc0.ttf",
     "static/media/Kalam-Light.ttf": "/static/media/Kalam-Light.26d8dba039c5c77b1ac3.ttf",
     "static/media/Kalam-Regular.ttf": "/static/media/Kalam-Regular.831aaad03890ba2d7417.ttf",
+    "static/media/Happiness-Sans-Title.woff2": "/static/media/Happiness-Sans-Title.afe43dfd063fa5fbbc48.woff2",
+    "static/media/BMJUA_ttf.woff2": "/static/media/BMJUA_ttf.c16b0bff9d4b8666950b.woff2",
+    "static/media/fontawesome-webfont.woff2": "/static/media/fontawesome-webfont.20fd1704ea223900efa9.woff2",
     "static/media/logo.svg": "/static/media/logo.6ce24c58023cc2f8fd88.svg",
     "index.html": "/index.html"
   },
   "entrypoints": [
-    "static/css/main.831af2fe.css",
-    "static/js/main.3888e491.js"
+    "static/css/main.f3a51096.css",
+    "static/js/main.2c37a0bb.js"
   ]
 }

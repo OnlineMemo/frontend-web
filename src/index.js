@@ -27,10 +27,10 @@ const element = (
 );
 const rootElement = document.getElementById('root');
 
-const prerenderPaths = ["/", "/signup", "/notice", "/download"];
+const prerenderPaths = new Set(["/", "/signup", "/notice", "/download", "/login"]);  // '/login' 추가 (25.09.22)
 const curPath = window.location.pathname;
 
-if (rootElement.hasChildNodes() && prerenderPaths.includes(curPath)){  // SSR인 경우
+if (rootElement.hasChildNodes() && prerenderPaths.has(curPath)){  // SSR인 경우
   // console.log('- SSR 페이지 : Pre-Rendering 적용 (hydrateRoot)');
   hydrateRoot(rootElement, element);
 }
