@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkonlinememo_react_project=self.webpackChunkonlinememo_react_project||[]).push([[2288],{82288:(e,t,a)=>{e.exports=a.p+"static/media/Kalam-Regular_subset_footer.25a6670e57dc3d981114.ttf"}}]);

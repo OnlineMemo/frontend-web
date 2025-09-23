@@ -41,7 +41,7 @@ const PageWrapper = styled.div`
         color: #463f3a;
     }
 
-    #customContainer {
+    /* #customContainer {
         position: fixed;
         top: 10.5px;
         right: 100px;
@@ -58,7 +58,7 @@ const PageWrapper = styled.div`
         justify-content: center;
         align-items: center;
         height: 16px;
-    }
+    } */
 
     #logoutButton {
         position: fixed;

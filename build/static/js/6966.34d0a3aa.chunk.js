@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkonlinememo_react_project=self.webpackChunkonlinememo_react_project||[]).push([[6966],{36966:(e,t,s)=>{e.exports=s.p+"static/media/KOTRAHOPE_subset_header.5396b63301e32d9d51d1.ttf"}}]);

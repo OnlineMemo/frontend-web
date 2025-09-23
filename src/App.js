@@ -57,6 +57,26 @@ const LittleTitle = styled.div`
     }
 `;
 
+const FooterContainer = styled.footer`
+    text-align: center;
+    color: #463f3a;
+    margin: 9px;
+    line-height: 155%;
+    /* font-family: "Kalam-Light"; */
+
+    #footerUp {
+        color: black;
+        font-size: 1.2rem;
+        font-family: "Kalam-Regular";
+    }
+
+    /* #footerDown {
+        color: black;
+        font-size: 1.2rem;
+        font-family: "Kalam-Regular";
+    } */
+`;
+
 
 // ============ < Sub Components > ============ //
 
@@ -391,6 +411,19 @@ function App(props) {
           </React.Suspense>
         )}
       */}
+
+      <FooterContainer>
+        <span id="footerUp">
+            <br class="disablePreviewAndDrag" />
+            <br class="disablePreviewAndDrag" />
+            <strong>
+              Copyright 2023-2025. SAHYUNJIN. all rights reserved.
+            </strong>
+            <br />
+        </span>
+        {/* <span id="footerDown">
+        </span> */}
+      </FooterContainer>
     </>
   );
 }

@@ -119,7 +119,7 @@ const Notice = () => {
         <div>
             <div style={{ lineHeight: "140%" }}><br></br></div>
             <h5>&lt;&nbsp;공지사항&nbsp;&nbsp;<i className="fa fa-bullhorn" aria-hidden="true"></i>&nbsp;&gt;</h5>
-            <div style={{ lineHeight: "21%" }}><br></br></div>
+            <div style={{ lineHeight: "25%" }}><br></br></div>
             <ol>
                 {/* <li><strong>&nbsp;공동메모 동시 수정 주의할 것</strong></li>
                 공동메모는 팀원중 한 명만 접속해서 수정하시길 권장드립니다. 동시접속하여 수정 시, 마지막으로 저장을 누른 팀원의 메모로 수정됩니다.
