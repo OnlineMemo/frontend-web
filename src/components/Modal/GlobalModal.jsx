@@ -23,10 +23,10 @@ const GlobalWrapper = styled.div`
 function GlobalModal(props) {  // Global Modals Component (with Route)
     const location = useLocation();
 
-    const progressStartDateTime = "2025-08-25 00:00";  // 09-28 00:00 지정 예정
-    const middleDateTime = "2025-08-28 00:00";  // 09-30 00:00 지정 예정
-    const completeEndDateTime = "2025-08-28 06:00";  // 09-30 06:00 지정 예정
-    
+    const progressStartDateTime = "2025-09-28 00:00";
+    const middleDateTime = "2025-09-30 00:00";
+    const completeEndDateTime = "2025-09-30 06:00";
+
 
     return (
         <GlobalWrapper>

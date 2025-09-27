@@ -73,10 +73,10 @@ function LoginPage(props) {
     }
 
     const doClickEnter = (event) => {
-        if (event.key === 'Enter' && loginFailModalOn == false) {
+        if (event.key === 'Enter' && loginFailModalOn === false) {
             handleLoginClick(emailValue, pwValue);
         }
-        else if (event.key === 'Enter' && loginFailModalOn == true) {
+        else if (event.key === 'Enter' && loginFailModalOn === true) {
             setLoginFailModalOn(false);
         }
     };
@@ -166,7 +166,7 @@ function LoginPage(props) {
             )}
 
 
-            {/* ========== < Notice Modals (now: GlobalModal.jsx) > ========== */}
+            {/* ========== < Notice Modals (현재: GlobalModal.jsx) > ========== */}
             
             {/* {noticeModalOn && (
                 <ConfirmModal closeModal={() => setNoticeModalOn(!noticeModalOn)} customStyle={{ height: "220px" }}>

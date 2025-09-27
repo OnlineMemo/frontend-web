@@ -8,7 +8,7 @@ const Apis = axios.create({
 
 // API 요청시 헤더에 AccessToken 달아줌.
 Apis.interceptors.request.use(function (config) {
-    // blockUseService();  // 서비스 이용을 막음. (점검시간에 적용 예정.)
+    blockUseService();  // 서비스 이용을 막음. (점검시간에 적용 예정.)
 
     const storedAccessToken = localStorage.getItem("accessToken");
     if (storedAccessToken) {
@@ -69,8 +69,8 @@ Apis.interceptors.response.use(
 );
 
 function blockUseService() {  // 서비스 이용을 막음. (점검시간에 적용 예정.)
-    const startDateTime = "2025-08-28 00:00";  // 09-30 00:00 지정 예정
-    const endDateTime = "2025-08-28 06:00";  // 09-30 06:00 지정 예정
+    const startDateTime = "2025-09-30 00:00";
+    const endDateTime = "2025-09-30 06:00";
 
     const currentDate = new Date();
     const startDate = new Date(getFullDatetimeStr(startDateTime));

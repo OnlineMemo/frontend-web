@@ -3,7 +3,6 @@ import styled from "styled-components";
 import '../../App.css';
 
 const OneMemoWrapper = styled.div`
-
     background-color: #bcb8b1;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
@@ -24,8 +23,9 @@ const OneMemoWrapper = styled.div`
     }
     .memoContent {
         text-decoration: none;
-        
         white-space: pre-wrap;
+
+        word-break: break-all;
     }
 
     hr {

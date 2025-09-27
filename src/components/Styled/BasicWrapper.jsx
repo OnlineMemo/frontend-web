@@ -3,7 +3,6 @@ import styled from "styled-components";
 import '../../App.css';
 
 const BasicWrapper = styled.div`
-
     background-color: #bcb8b1;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
