@@ -124,7 +124,7 @@ const DivWrapper = styled.div`
 const Inform = () => {
     return (
         <div>
-            <div style={{ lineHeight: "150%" }}><br></br></div>
+            <div style={{ lineHeight: "167%" }}><br></br></div>
             <h5>&lt;&nbsp;개발자 정보&nbsp;&nbsp;<i className="fa fa-id-badge" aria-hidden="true"></i>&nbsp;&gt;</h5>
             <ul>
                 <li><strong>이름 :</strong>&nbsp;&nbsp;사현진 (Hyunjin Sa)</li>

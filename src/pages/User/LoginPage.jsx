@@ -36,11 +36,11 @@ const DivWrapper = styled.div`
     ol {
         margin-top: 17px;
         margin-bottom: 16.6px;
-        padding-left: 80px;
+        padding-left: 87px;
         word-break: keep-all;
 
         @media(max-width: 530.9px) {
-            padding-left: 55px;
+            padding-left: 57px;
         }
 
         @media(min-height: 648.2px) {

@@ -124,7 +124,7 @@ function ConfirmModal(props) {
     }
 
     return (
-        <ModalWrapper onClick={handleCloseModalClick}>
+        <ModalWrapper id={props.globalModalId || undefined} onClick={handleCloseModalClick}>
             <div className="modalBody" onClick={(e) => e.stopPropagation()} style={props.customStyle}>
                 <button id="modalCloseButton" onClick={handleCloseModalClick}>
                     X

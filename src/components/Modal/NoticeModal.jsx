@@ -10,6 +10,9 @@ function NoticeModal(props) {
         modalStyle = {},
         iconStyle = {}, contentStyle = {} 
     } = props;
+    
+    const noticeStateKey = isProgressOrComplete ? 'noticeProgressState' : 'noticeCompleteState';
+    const maxNoticeCnt = 3;  // 최대 3회(하루에 1회씩)까지만 보게하기.
 
     const [noticeModalOn, setNoticeModalOn] = useState(false);
 
@@ -20,9 +23,6 @@ function NoticeModal(props) {
     }
 
     useEffect(() => {
-        const noticeStateKey = isProgressOrComplete ? 'noticeProgressState' : 'noticeCompleteState';
-        const maxNoticeCnt = 3;  // 최대 3회(하루에 1회씩)까지만 보게하기.
-
         const currentDate = new Date();
         const startDate = new Date(getFullDatetimeStr(startDateTime));
         const endDate = new Date(getFullDatetimeStr(endDateTime));
@@ -45,7 +45,7 @@ function NoticeModal(props) {
                     noticeStateKey,
                     (noticeStateArr.length === 0) ? kstDateStr : `${noticeStateValue},${kstDateStr}`
                 );
-            }, 300); // 0.3초 딜레이 후에 공지모달 생성.
+            }, 300);  // 0.3초 딜레이 후에 공지모달 생성.
         }
         else {
             localStorage.removeItem(noticeStateKey);
@@ -53,6 +53,14 @@ function NoticeModal(props) {
     }, []);
 
     useEffect(() => {
+        const globalModalElement = document.getElementById(noticeStateKey);
+        if (globalModalElement) {
+            globalModalElement.style.opacity = noticeModalOn ? 1 : 0;
+            globalModalElement.style.pointerEvents = noticeModalOn ? "auto" : "none";
+            globalModalElement.style.transition = "opacity 0.1s ease-in-out";
+            globalModalElement.style.visibility = noticeModalOn ? 'visible' : 'hidden';
+        }
+
         const handleEnterKeyDown = (event) => {  // 엔터키로 공지 모달 닫기.
             if (event.key === "Enter" && noticeModalOn === true) {
                 setNoticeModalOn(false);
@@ -67,15 +75,13 @@ function NoticeModal(props) {
 
 
     return (
-        noticeModalOn && (
-            <ConfirmModal closeModal={() => setNoticeModalOn(!noticeModalOn)} customStyle={modalStyle}>
-                <i className={isProgressOrComplete ? "fa fa-exclamation-circle" : "fa fa-thumbs-o-up"} aria-hidden="true" style={iconStyle}></i>
-                <h2 className="successSignupModalTitle" style={contentStyle}>
-                    {props.children}
-                </h2>
-                <button className="cancelButton" onClick={() => setNoticeModalOn(false)}>확인</button>
-            </ConfirmModal>
-        )
+        <ConfirmModal globalModalId={noticeStateKey} closeModal={() => setNoticeModalOn(!noticeModalOn)} customStyle={modalStyle}>
+            <i className={isProgressOrComplete ? "fa fa-exclamation-circle" : "fa fa-thumbs-o-up"} aria-hidden="true" style={iconStyle}></i>
+            <h2 className="successSignupModalTitle" style={contentStyle}>
+                {props.children}
+            </h2>
+            <button className="cancelButton" onClick={() => setNoticeModalOn(false)}>확인</button>
+        </ConfirmModal>
     );
 }
 
