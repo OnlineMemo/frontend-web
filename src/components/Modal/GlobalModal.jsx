@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import '../../App.css';
@@ -26,9 +26,10 @@ function GlobalModal(props) {  // Global Modals Component (with Route)
     const progressStartDateTime = "2025-08-25 00:00";  // 09-28 00:00 지정 예정
     const middleDateTime = "2025-08-28 00:00";  // 09-30 00:00 지정 예정
     const completeEndDateTime = "2025-08-28 06:00";  // 09-30 06:00 지정 예정
+    
 
-    const progressModal = useMemo(() => {
-        return (
+    return (
+        <GlobalWrapper>
             <NoticeModal
                 key={`progressModal-${location?.pathname}`}
                 isProgressOrComplete={true}
@@ -46,13 +47,9 @@ function GlobalModal(props) {  // Global Modals Component (with Route)
                 내용만 작성하면, 고민없이<br></br>
                 제목을 대신 지어드려요.
             </NoticeModal>
-        );
-    }, [location?.pathname]);
 
-    const completeModal = useMemo(() => {
-        return (
             <NoticeModal
-                key={`progressModal-${location?.pathname}`}
+                key={`completeModal-${location?.pathname}`}
                 isProgressOrComplete={false}
                 startDateTime={middleDateTime} endDateTime={completeEndDateTime}
                 modalStyle={{ height: "220px", paddingTop: "36.5px", paddingBottom: "50px" }}
@@ -71,14 +68,6 @@ function GlobalModal(props) {  // Global Modals Component (with Route)
                     * 작성 중인 내용을 토대로 제목 생성
                 </div>
             </NoticeModal>
-        );
-    }, [location?.pathname]);
-
-
-    return (
-        <GlobalWrapper>
-            {progressModal}
-            {completeModal}
         </GlobalWrapper>
     );
 }
