@@ -42,7 +42,7 @@ function GlobalModal(props) {  // Global Modals Component (with Route)
                 9월 30일(화) 00시~06시
                 <br></br><br></br>
 
-                [ 메모 제목 AI 생성 ]<br></br>
+                [ 메모 제목 AI<i className="fa fa-magic fa-flip-horizontal" aria-hidden="true" style={{ marginLeft: '6.5px', fontSize: '17.1px' }}></i> ]<br></br>
                 <div style={{ lineHeight: "12%" }}><br></br></div>
                 내용만 작성하면, 고민없이<br></br>
                 제목을 대신 지어드려요.
@@ -52,14 +52,14 @@ function GlobalModal(props) {  // Global Modals Component (with Route)
                 key={`completeModal-${location?.pathname}`}
                 isProgressOrComplete={false}
                 startDateTime={middleDateTime} endDateTime={completeEndDateTime}
-                modalStyle={{ height: "220px", paddingTop: "36.5px", paddingBottom: "50px" }}
+                modalStyle={{ height: "223.5px", paddingTop: "36.5px", paddingBottom: "50px" }}
                 iconStyle={{ fontSize: "4rem" }} contentStyle={{ lineHeight: "115%" }}
             >
                 [ v 2.2.0 신규 기능 ]
                 <div style={{ lineHeight: "90%" }}><br></br></div>
                 
-                - 메모 제목 AI 생성 -<br></br>
-                <div style={{ lineHeight: "12%" }}><br></br></div>
+                -&nbsp;&nbsp;메모 제목 AI<i className="fa fa-magic fa-flip-horizontal" aria-hidden="true" style={{ marginLeft: '6.5px', fontSize: '17.1px' }}></i> -<br></br>
+                <div style={{ lineHeight: "17%" }}><br></br></div>
                 내용만 작성하면, 고민없이<br></br>
                 제목을 대신 지어드려요.
                 <div style={{ lineHeight: "50%" }}><br></br></div>
