@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import '../../App.css';
@@ -6,7 +6,7 @@ import BasicWrapper from "../../components/Styled/BasicWrapper";
 import SortMemo from "../../components/UI/SortMemo";
 import SearchMemo from "../../components/UI/SearchMemo";
 import MemoList from "../../components/List/MemoList";
-import { CheckToken } from "../../utils/CheckToken";
+import { checkToken } from "../../utils/TokenUtil";
 import Apis from "../../apis/Api";
 import YesLoginNav from "../../components/Navigation/YesLoginNav";
 
@@ -78,7 +78,7 @@ function MemoListPage(props) {
     }
 
     useEffect(() => {
-        CheckToken();
+        checkToken();
         getMemos();
         getFriends();
     }, [filter, search]);

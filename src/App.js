@@ -6,7 +6,7 @@ import './App.css';
 import LoadingNav from "./components/Navigation/LoadingNav";
 import BasicWrapper from "./components/Styled/BasicWrapper";
 import { retryLazy } from "./utils/lazyUtil.js"
-import { ParseToken } from "./utils/ParseToken"
+import { parseToken } from "./utils/TokenUtil"
 import { getTitle, getDescription, getCanonical } from "./utils/MetaUtil"
 
 // Eager Suspense
@@ -15,6 +15,7 @@ import LoginPage from "./pages/User/LoginPage"
 import SignupPage from "./pages/User/SignupPage"
 import NoticePage from "./pages/Etc/NoticePage"
 import DownloadPage from "./pages/Etc/DownloadPage"
+import GlobalModal from "./components/Modal/GlobalModal";
 
 // Lazy Suspense
 const LazyLoad = (path) => retryLazy(() => import(`${path}`));
@@ -134,7 +135,7 @@ function HelmetGa4Component() {
     if (!location?.pathname || pathName === prevPathName) return;
     setPrevPathName(pathName);  // 이는 다음 렌더링에서 반영됨.
     // Admin 유저의 이벤트 전송 방지 (ex. 백오피스 페이지)
-    const { decodedId, isLoggedIn, isAdminUser } = ParseToken();
+    const { decodedId, isLoggedIn, isAdminUser } = parseToken();
     if (isAdminUser) return;
     if (securedPages.has(pathName) || securedPages.has(prevPathName)) return;
     // 새로고침 시 재전송 방지
@@ -356,7 +357,7 @@ function RouteComponent() {
 
   useEffect(() => {
     if (!location?.pathname) return;
-    setIsAdminUser(ParseToken().isAdminUser);
+    setIsAdminUser(parseToken().isAdminUser);
   }, [location?.pathname]);
 
   return currentRoute;
@@ -414,8 +415,8 @@ function App(props) {
 
       <FooterContainer>
         <span id="footerUp">
-            <br class="disablePreviewAndDrag" />
-            <br class="disablePreviewAndDrag" />
+            <br className="disablePreviewAndDrag" />
+            <br className="disablePreviewAndDrag" />
             <strong>
               Copyright 2023-2025. SAHYUNJIN. all rights reserved.
             </strong>
@@ -424,6 +425,8 @@ function App(props) {
         {/* <span id="footerDown">
         </span> */}
       </FooterContainer>
+
+      <GlobalModal />
     </>
   );
 }

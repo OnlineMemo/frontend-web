@@ -3,9 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import '../../App.css';
 import NavWrapper from "../Styled/NavWrapper";
-import axios from 'axios'
 import ConfirmModal from "../Modal/ConfirmModal";
-import { CheckToken } from "../../utils/CheckToken";
 import Apis from "../../apis/Api";
 
 const Wrapper = styled(NavWrapper)`

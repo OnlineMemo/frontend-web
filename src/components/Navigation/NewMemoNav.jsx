@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import '../../App.css';
 import NavWrapper from "../Styled/NavWrapper";
-import axios from 'axios'
-import { CheckToken } from "../../utils/CheckToken";
+import { checkToken } from "../../utils/TokenUtil"
 import Apis from "../../apis/Api";
 
 const Wrapper = styled(NavWrapper)`
@@ -168,7 +167,7 @@ function NewMemoNav(props) {
     }
 
     useEffect(() => {
-        CheckToken();
+        checkToken();
     }, []);
 
     const newNavItems = [  // 메모 작성 용도

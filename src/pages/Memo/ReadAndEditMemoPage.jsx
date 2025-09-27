@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Helmet } from 'react-helmet-async';
-import axios from 'axios'
 import OneMemoWrapper from "../../components/Styled/OneMemoWrapper";
 import ReadAndEditMemoNav from "../../components/Navigation/ReadAndEditMemoNav";
-import { CheckToken } from "../../utils/CheckToken";
+import { checkToken } from "../../utils/TokenUtil";
 import Apis from "../../apis/Api";
 
 function ReadAndEditMemoPage(props) {
@@ -139,7 +138,7 @@ function ReadAndEditMemoPage(props) {
     }
 
     useEffect(() => {
-        CheckToken();
+        checkToken();
         getMemo();
     }, [purpose]);
 

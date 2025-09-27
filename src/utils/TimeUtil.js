@@ -10,4 +10,15 @@ const getKSTDateFromLocal = (date) => {
     return new Date(date.toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
 };
 
-export { getKSTDate, getKSTDateFromLocal };
+// ex-1) "2025-06-26 00:00" -> "2025-06-26T00:00:00+09:00" (한국 시각 기준으로 2025.06.26 00시)
+// ex-2) "2025-06-26 00:00:27" -> "2025-06-26T00:00:27+09:00" (한국 시각 기준으로 2025.06.26 00시27초)
+const getFullDatetimeStr = (dateTimeStr) => {
+    let [datePart, timePart] = dateTimeStr.split(' ');
+    if (timePart.split(':').length === 2) {  // 초가 없으면 추가
+        timePart += ':00';
+    }
+    const fullDatetimeStr = `${datePart}T${timePart}+09:00`;
+    return fullDatetimeStr;
+}
+
+export { getKSTDate, getKSTDateFromLocal, getFullDatetimeStr };

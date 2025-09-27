@@ -5,7 +5,7 @@ import '../../App.css';
 import NavWrapper from "../Styled/NavWrapper";
 import DropdownLeft from "../UI/DropdownLeft";
 import NewMemoOptionDropdownRight from "../UI/NewMemoOptionDropdownRight";
-import { CheckToken } from "../../utils/CheckToken";
+import { checkToken } from "../../utils/TokenUtil"
 
 const Wrapper = styled(NavWrapper)`
 
@@ -108,7 +108,7 @@ function YesLoginNav(props) {
     ]
 
     useEffect(() => {
-        CheckToken();
+        checkToken();
     }, []);
 
 

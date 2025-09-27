@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import BasicWrapper from "../../components/Styled/BasicWrapper";
 import FriendOptionDropdownCenter from "../../components/UI/FriendOptionDropdownCenter";
 import SenderList from "../../components/List/SenderList";
-import { CheckToken } from "../../utils/CheckToken";
+import { checkToken } from "../../utils/TokenUtil"
 import Apis from "../../apis/Api";
 
 const MoreWrapper = styled(BasicWrapper)`
@@ -110,7 +110,7 @@ function SenderListPage(props) {
     }
 
     useEffect(() => {
-        CheckToken();
+        checkToken();
         getSenders();
     }, []);
 

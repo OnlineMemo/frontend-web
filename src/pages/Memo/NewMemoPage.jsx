@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import OneMemoWrapper from "../../components/Styled/OneMemoWrapper";
 import NewMemoNav from "../../components/Navigation/NewMemoNav";
-import { CheckToken } from "../../utils/CheckToken";
+import { checkToken } from "../../utils/TokenUtil";
 
 function NewMemoPage(props) {
     const location = useLocation();
@@ -77,7 +77,7 @@ function NewMemoPage(props) {
     }
 
     useEffect(() => {
-        CheckToken();
+        checkToken();
         startNewMemo();  // 출생시점에 startNewMemo 한번 실행.
     }, []);
 

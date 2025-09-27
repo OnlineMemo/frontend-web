@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import axios from 'axios'
 import ConfirmModal from "../Modal/ConfirmModal";
-import { CheckToken } from "../../utils/CheckToken";
 import Apis from "../../apis/Api";
 
 const FriendsWrapper = styled.div`

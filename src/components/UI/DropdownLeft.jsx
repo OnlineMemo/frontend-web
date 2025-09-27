@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import '../../App.css';
+import { clearToken } from "../../utils/TokenUtil"
 import useDetectDropdown from "../../hooks/useDetectDropdown";
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
@@ -84,8 +85,7 @@ function DropdownLeft(props) {
             {
                 label: '예',
                 onClick: () => {
-                    localStorage.clear();  // 이때는 모두 비워주도록함.
-                    sessionStorage.clear();
+                    clearToken();
                     window.location.href = '/login';
                 }
             },

@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import '../../App.css';
 import useDetectDropdown from "../../hooks/useDetectDropdown";
-import axios from 'axios'
 import FriendGroupModal from "../Modal/FriendGroupModal";
 import InviteFriendList from "../List/InviteFriendList";
 import ConfirmModal from "../Modal/ConfirmModal";

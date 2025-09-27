@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import axios from 'axios'
 import '../../App.css';
 import HelloWrapper from "../../components/Styled/HelloWrapper";
 import ConfirmModal from "../../components/Modal/ConfirmModal";
-import { ParseToken } from "../../utils/ParseToken";
+import { parseToken } from "../../utils/TokenUtil"
 import Apis from "../../apis/Api";
 
 const MoreWrapper = styled(HelloWrapper)`
@@ -60,8 +59,6 @@ function LoginPage(props) {
     const navigate = useNavigate();
 
     const [loginFailModalOn, setLoginFailModalOn] = useState(false);
-    const [noticeModalOn, setNoticeModalOn] = useState(false);
-
     const [emailValue, setEmailValue] = useState("");
     const [pwValue, setPwValue] = useState("");
     const [isWrongEmail, setIsWrongEmail] = useState(false);
@@ -103,7 +100,7 @@ function LoginPage(props) {
                     localStorage.setItem('refreshToken', refreshToken);
                     // localStorage.setItem('expirationTime', String(response.data.data.accessTokenExpiresIn));
 
-                    const { isLoggedIn, isAdminUser } = ParseToken(accessToken, refreshToken);
+                    const { isLoggedIn, isAdminUser } = parseToken(accessToken, refreshToken);
                     if (isLoggedIn) {
                         navigate(isAdminUser ? "/statistics" : "/memos");
                     }
@@ -117,36 +114,13 @@ function LoginPage(props) {
     useEffect(() => {
         const storedAccessToken = localStorage.getItem("accessToken");
         const storedRefreshToken = localStorage.getItem("refreshToken");
-
-        if (!storedAccessToken || !storedRefreshToken) {
-            const currentDate = new Date();
-            const noticeLimitDate = new Date('2025-06-26T00:00:00+09:00');  // 한국 시각 기준으로 2025.06.26 00시
-            if (currentDate < noticeLimitDate) {  // 6월26일이 되기전까지는 공지모달 띄움.
-                setTimeout(() => {
-                    setNoticeModalOn(true);
-                }, 300); // 0.3초 딜레이 후에 공지 모달 생성.
-            }
-        }
-        else {
-            const { isLoggedIn, isAdminUser } = ParseToken(storedAccessToken, storedRefreshToken);
+        if (storedAccessToken && storedRefreshToken) {
+            const { isLoggedIn, isAdminUser } = parseToken(storedAccessToken, storedRefreshToken);
             if (isLoggedIn) {
                 navigate(isAdminUser ? "/statistics" : "/memos");
             }
         }
     }, []);
-
-    useEffect(() => {
-        const handleEnterKeyDown = (event) => {  // 엔터키로 공지 모달 닫기.
-            if (event.key === "Enter" && noticeModalOn == true) {
-                setNoticeModalOn(false);
-            }
-        };
-        if (noticeModalOn) window.addEventListener("keydown", handleEnterKeyDown);
-
-        return () => {
-            window.removeEventListener("keydown", handleEnterKeyDown);
-        };
-    }, [noticeModalOn]);
 
 
     return (
@@ -191,29 +165,8 @@ function LoginPage(props) {
                 </ConfirmModal>
             )}
 
-            {/* {noticeModalOn && (
-                <ConfirmModal closeModal={() => setNoticeModalOn(!noticeModalOn)}>
-                    <i className="fa fa-thumbs-o-up" aria-hidden="true"></i>
-                    <h2 className="successSignupModalTitle">
-                        서버 대규모 패치 완료.<br></br>
-                        속도 60배, 직접 실감하세요!
-                    </h2>
-                    <button className="cancelButton" onClick={() => setNoticeModalOn(false)}>확인</button>
-                </ConfirmModal>
-            )} */}
-            {noticeModalOn && (
-                <ConfirmModal closeModal={() => setNoticeModalOn(!noticeModalOn)} customStyle={{ height: "204px" }}>
-                    <i className="fa fa-thumbs-o-up" aria-hidden="true" style={{ fontSize: "4rem" }}></i>
-                    <h2 className="successSignupModalTitle">
-                        [ v 2.1.0 업데이트 완료 ]<br></br><br></br>
-                        * 공동메모 읽기/편집 모드<br></br>
-                        * 메모 동시편집 충돌 해결<br></br>
-                        * 현재 수정 중인 사용자 알림<br></br>
-                        * 검색 시 대소문자 구분 제거
-                    </h2>
-                    <button className="cancelButton" onClick={() => setNoticeModalOn(false)}>확인</button>
-                </ConfirmModal>
-            )}
+
+            {/* ========== < Notice Modals (now: GlobalModal.jsx) > ========== */}
             
             {/* {noticeModalOn && (
                 <ConfirmModal closeModal={() => setNoticeModalOn(!noticeModalOn)} customStyle={{ height: "220px" }}>
@@ -229,6 +182,99 @@ function LoginPage(props) {
                     <button className="cancelButton" onClick={() => setNoticeModalOn(false)}>확인</button>
                 </ConfirmModal>
             )} */}
+            {/* {noticeModalOn && (
+                <ConfirmModal closeModal={() => setNoticeModalOn(!noticeModalOn)} customStyle={{ height: "218px", paddingTop: "36px", paddingBottom: "41px" }}>
+                    <i className="fa fa-exclamation-circle" aria-hidden="true" style={{ fontSize: "4rem" }}></i>
+                    <h2 className="successSignupModalTitle" style={{ lineHeight: "115%" }}>
+                        - 업데이트 점검 -<br></br>
+                        <div style={{ lineHeight: "12%" }}><br></br></div>
+                        9월 30일(화) 00시~06시<br></br><br></br>
+                        [ 메모 제목 AI 생성 ]<br></br>
+                        <div style={{ lineHeight: "12%" }}><br></br></div>
+                        내용만 작성하면, 고민없이<br></br>
+                        제목을 대신 지어드려요.
+                    </h2>
+                    <button className="cancelButton" onClick={() => setNoticeModalOn(false)}>확인</button>
+                </ConfirmModal>
+            )} */}
+            {/* <NoticeModal
+                isProgressOrComplete={true}
+                startDateTime={"2025-09-27 21:00"} endDateTime={"2025-09-27 21:05"}
+                modalStyle={{ height: "218px", paddingTop: "36px", paddingBottom: "41px" }}
+                iconStyle={{ fontSize: "4rem" }} contentStyle={{ lineHeight: "115%" }}
+            >
+                - 업데이트 점검 -<br></br>
+                <div style={{ lineHeight: "12%" }}><br></br></div>
+                9월 30일(화) 00시~06시
+                <br></br><br></br>
+
+                [ 메모 제목 AI 생성 ]<br></br>
+                <div style={{ lineHeight: "12%" }}><br></br></div>
+                내용만 작성하면, 고민없이<br></br>
+                제목을 대신 지어드려요.
+            </NoticeModal> */}
+
+            {/* {noticeModalOn && (
+                <ConfirmModal closeModal={() => setNoticeModalOn(!noticeModalOn)}>
+                    <i className="fa fa-thumbs-o-up" aria-hidden="true"></i>
+                    <h2 className="successSignupModalTitle">
+                        서버 대규모 패치 완료.<br></br>
+                        속도 60배, 직접 실감하세요!
+                    </h2>
+                    <button className="cancelButton" onClick={() => setNoticeModalOn(false)}>확인</button>
+                </ConfirmModal>
+            )} */}
+            {/* {noticeModalOn && (
+                <ConfirmModal closeModal={() => setNoticeModalOn(!noticeModalOn)} customStyle={{ height: "204px" }}>
+                    <i className="fa fa-thumbs-o-up" aria-hidden="true" style={{ fontSize: "4rem" }}></i>
+                    <h2 className="successSignupModalTitle">
+                        [ v 2.1.0 업데이트 완료 ]<br></br><br></br>
+                        * 공동메모 읽기/편집 모드<br></br>
+                        * 메모 동시편집 충돌 해결<br></br>
+                        * 현재 수정 중인 사용자 알림<br></br>
+                        * 검색 시 대소문자 구분 제거
+                    </h2>
+                    <button className="cancelButton" onClick={() => setNoticeModalOn(false)}>확인</button>
+                </ConfirmModal>
+            )} */}
+            {/* {noticeModalOn && (
+                <ConfirmModal closeModal={() => setNoticeModalOn(!noticeModalOn)} customStyle={{ height: "220px", paddingTop: "36.5px", paddingBottom: "50px" }}>
+                    <i className="fa fa-thumbs-o-up" aria-hidden="true" style={{ fontSize: "4rem" }}></i>
+                    <h2 className="successSignupModalTitle" style={{ lineHeight: "115%" }}>
+                        [ v 2.2.0 신규 기능 ]
+                        <div style={{ lineHeight: "90%" }}><br></br></div>
+                        - 메모 제목 AI 생성 -<br></br>
+                        <div style={{ lineHeight: "12%" }}><br></br></div>
+                        내용만 작성하면, 고민없이<br></br>
+                        제목을 대신 지어드려요.
+                        <div style={{ lineHeight: "50%" }}><br></br></div>
+                        <div style={{ fontSize: "15px", lineHeight: "118%" }}>
+                            * 메모 생성/편집 시 AI 버튼 활성화<br></br>
+                            * 작성 중인 내용을 토대로 제목 생성
+                        </div>
+                    </h2>
+                    <button className="cancelButton" onClick={() => setNoticeModalOn(false)}>확인</button>
+                </ConfirmModal>
+            )} */}
+            {/* <NoticeModal
+                isProgressOrComplete={false}
+                startDateTime={"2025-09-27 21:10"} endDateTime={"2025-09-27 21:15"}
+                modalStyle={{ height: "220px", paddingTop: "36.5px", paddingBottom: "50px" }}
+                iconStyle={{ fontSize: "4rem" }} contentStyle={{ lineHeight: "115%" }}
+            >
+                [ v 2.2.0 신규 기능 ]
+                <div style={{ lineHeight: "90%" }}><br></br></div>
+                
+                - 메모 제목 AI 생성 -<br></br>
+                <div style={{ lineHeight: "12%" }}><br></br></div>
+                내용만 작성하면, 고민없이<br></br>
+                제목을 대신 지어드려요.
+                <div style={{ lineHeight: "50%" }}><br></br></div>
+                <div style={{ fontSize: "15px", lineHeight: "118%" }}>
+                    * 메모 생성/편집 시 AI 버튼 활성화<br></br>
+                    * 작성 중인 내용을 토대로 제목 생성
+                </div>
+            </NoticeModal> */}
         </MoreWrapper>
     );
 }

@@ -4,8 +4,6 @@ import styled from "styled-components";
 import '../../App.css';
 import useDetectDropdown from "../../hooks/useDetectDropdown";
 import SendFriendshipModal from "../Modal/SendFriendshipModal";
-import axios from 'axios'
-import { CheckToken } from "../../utils/CheckToken";
 import Apis from "../../apis/Api";
 
 const DropdownContainer = styled.span`

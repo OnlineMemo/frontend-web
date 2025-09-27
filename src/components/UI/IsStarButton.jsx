@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
 import Apis from "../../apis/Api";
 
 function IsStarButton(props) {

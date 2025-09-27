@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import styled from "styled-components";
 import '../../App.css';
-import { CheckToken } from "../../utils/CheckToken";
+import { checkToken, clearToken } from "../../utils/TokenUtil"
 import { getKSTDate, getKSTDateFromLocal } from "../../utils/TimeUtil"
 import Apis from "../../apis/Api";
 import Highcharts from "highcharts";  // Line Graph
@@ -244,8 +244,7 @@ function StatisticPage(props) {
             {
                 label: '예',
                 onClick: () => {
-                    localStorage.clear();  // 이때는 모두 비워주도록함.
-                    sessionStorage.clear();
+                    clearToken();
                     window.location.href = '/login';
                 }
             },
@@ -603,7 +602,7 @@ function StatisticPage(props) {
     // ============ < View > ============ //
 
     useEffect(() => {
-        CheckToken();
+        checkToken();
 
         // 백오피스 페이지는 header, footer 렌더링 X.
         const headerTag = document.querySelector("header");

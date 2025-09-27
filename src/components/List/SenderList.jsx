@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import axios from 'axios'
-import { CheckToken } from "../../utils/CheckToken";
 import Apis from "../../apis/Api";
 
 const SendersWrapper = styled.div`

@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import '../../App.css';
-import axios from 'axios'
 import HelloWrapper from "../../components/Styled/HelloWrapper"
 import ConfirmModal from "../../components/Modal/ConfirmModal";
-import { CheckToken } from "../../utils/CheckToken";
+import { checkToken, clearToken } from "../../utils/TokenUtil";
 import Apis from "../../apis/Api";
 
 const MoreWrapper = styled(HelloWrapper)`
@@ -172,7 +171,7 @@ function UserProfilePage(props) {
         await Apis
             .delete(`/users`)
             .then((response) => {
-                localStorage.clear();  // 이때는 모두 비워주도록함.
+                clearToken(true);  // 회원탈퇴이므로, 제외키들을 함께 제거해도 무관.
                 navigate('/login');
             })
             .catch((error) => {
@@ -181,7 +180,7 @@ function UserProfilePage(props) {
     }
 
     useEffect(() => {
-        CheckToken();
+        checkToken();
         getUser();
     }, [purpose]);
 

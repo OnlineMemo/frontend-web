@@ -3,7 +3,7 @@ import styled from "styled-components";
 import '../../App.css';
 import { Link, useNavigate } from "react-router-dom";
 import BasicWrapper from "../../components/Styled/BasicWrapper";
-import { ParseToken } from "../../utils/ParseToken";
+import { parseToken } from "../../utils/TokenUtil"
 
 const MoreWrapper = styled(BasicWrapper)`
     display: flex;
@@ -90,7 +90,7 @@ const DivWrapper = styled.div`
 function NotFoundPage(props) {
     const navigate = useNavigate();
     const contentRef = useRef(null);
-    const { isLoggedIn, isAdminUser } = ParseToken();
+    const { isLoggedIn, isAdminUser } = parseToken();
 
     const getHeightWithMargin = (elementName) => {
         const element = document.querySelector(elementName);

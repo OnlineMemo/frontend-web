@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { clearToken } from "../utils/TokenUtil"
+import { getFullDatetimeStr } from "../utils/TimeUtil"
 
 const Apis = axios.create({
     baseURL: process.env.REACT_APP_DB_HOST,
@@ -48,16 +50,14 @@ Apis.interceptors.response.use(
                     }
                 } catch (err) {
                     console.error(err);
-                    localStorage.clear();
-                    sessionStorage.clear();
+                    clearToken();
                     redirectToLogin(); // 토큰 재발급 실패 시 로그인 화면으로 이동
                 }
             return Promise.reject(err);
         }
         // 기타 401 에러 처리
         else if (err.response?.data?.status === 401) {
-            localStorage.clear();  // 이때는 모두 비워주도록함.
-            sessionStorage.clear();
+            clearToken();
             redirectToLogin(); // 로그인 화면으로 이동
         }
         else if (err.response?.data?.status === 404) {
@@ -69,13 +69,16 @@ Apis.interceptors.response.use(
 );
 
 function blockUseService() {  // 서비스 이용을 막음. (점검시간에 적용 예정.)
+    const startDateTime = "2025-08-28 00:00";  // 09-30 00:00 지정 예정
+    const endDateTime = "2025-08-28 06:00";  // 09-30 06:00 지정 예정
+
     const currentDate = new Date();
-    const checkStartDate = new Date('2025-06-19T00:00:00+09:00');  // 한국 시각 기준으로 2025.06.19 00시
-    if (currentDate >= checkStartDate) {
+    const startDate = new Date(getFullDatetimeStr(startDateTime));
+    const endDate = new Date(getFullDatetimeStr(endDateTime));
+    if (startDate <= currentDate && currentDate <= endDate) {
         const isTest = localStorage.getItem("isTest");
         if (!(isTest && isTest === 'true')) {
-            localStorage.clear();
-            sessionStorage.clear();
+            clearToken();
             redirectToLogin();
         }
     }

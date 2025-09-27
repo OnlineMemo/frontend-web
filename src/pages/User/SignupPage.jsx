@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import axios from 'axios'
 import '../../App.css';
 import { useNavigate } from "react-router-dom";
 import HelloWrapper from "../../components/Styled/HelloWrapper"
 import ConfirmModal from "../../components/Modal/ConfirmModal";
-import { ParseToken } from "../../utils/ParseToken";
+import { parseToken } from "../../utils/TokenUtil"
 import Apis from "../../apis/Api";
 
 const MoreWrapper = styled(HelloWrapper)`
@@ -134,7 +133,7 @@ function SignupPage(props) {
     }
 
     useEffect(() => {
-        const { isLoggedIn, isAdminUser } = ParseToken();
+        const { isLoggedIn, isAdminUser } = parseToken();
         if (isLoggedIn) {
             navigate(isAdminUser ? "/statistics" : "/memos");
         }

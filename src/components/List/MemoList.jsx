@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import axios from 'axios'
 import MemoListItem from "./MemoListItem";
 import IsStarButton from "../UI/IsStarButton";
 import MemoOptionButton from "../UI/MemoOptionButton";

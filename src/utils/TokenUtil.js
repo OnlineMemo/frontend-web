@@ -1,6 +1,16 @@
 import { jwtDecode } from "jwt-decode";
 
-function ParseToken(accessToken, refreshToken) {
+const checkToken = () => {
+    // const isLoggedIn = !!(localStorage.getItem("accessToken") && localStorage.getItem("refreshToken"));
+    const storedAccessToken = localStorage.getItem("accessToken");
+    const storedRefreshToken = localStorage.getItem("refreshToken");
+
+    if (!storedAccessToken || !storedRefreshToken) {
+        window.location.href = "/login";
+    }
+};
+
+const parseToken = (accessToken, refreshToken) => {
     const parseResult = { decodedId: null, decodedRole: null, isLoggedIn: false, isAdminUser: false };
 
     const storedAccessToken = accessToken || localStorage.getItem("accessToken");
@@ -25,6 +35,21 @@ function ParseToken(accessToken, refreshToken) {
     } catch (error) {
          return parseResult;
     }
+};
+
+const excludeKeysSet = new Set(['noticeProgressState', 'noticeCompleteState']);
+const clearToken = (isAllclear = false) => {
+    if (isAllclear === false) {
+        for (const key of Object.keys(localStorage)) {
+            if (!excludeKeysSet.has(key)) {
+                localStorage.removeItem(key);
+            }
+        }
+    }
+    else {
+        localStorage.clear();
+    }
+    sessionStorage.clear();
 }
 
-export { ParseToken };
+export { checkToken, parseToken, clearToken };
