@@ -25,6 +25,15 @@
 .fa-font-awesome:before {
   content: "\f2b4";
 }
+.fa-flip-horizontal {
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1)";
+  -webkit-transform: scale(-1, 1);
+  -ms-transform: scale(-1, 1);
+  transform: scale(-1, 1);
+}
+:root .fa-flip-horizontal {
+  filter: none;
+}
 .sr-only {
   position: absolute;
   width: 1px;
@@ -65,6 +74,7 @@
 .fa-id-badge:before { content: "\f2c1"; }
 .fa-instagram:before { content: "\f16d"; }
 .fa-lock:before { content: "\f023"; }
+.fa-magic:before { content: "\f0d0"; }
 .fa-mobile:before { content: "\f10b"; }
 .fa-mouse-pointer:before { content: "\f245"; }
 .fa-paper-plane-o:before { content: "\f1d9"; }

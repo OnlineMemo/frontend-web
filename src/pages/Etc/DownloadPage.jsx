@@ -121,7 +121,7 @@ const Download = () => {
             <div style={{ lineHeight: "70%" }}><br></br></div>
             <QRimage />
             <div className="notCenter">
-                <ul id="androidUl">
+                <ul>
                     <li>방법 1: Play Store 다운로드:&nbsp;&nbsp;<a href={playStoreUrl} aria-label="Play Store에서 온라인 메모장 앱 다운로드"><i className="fa fa-download" aria-hidden="true"></i></a></li>
                     <li>방법 2: iOS와 동일한 방법으로 설치</li>
                 </ul>
@@ -134,7 +134,7 @@ const Download = () => {
             밑의 과정으로 앱 설치가 가능합니다.
             <div style={{ lineHeight: "20%" }}><br></br></div>
             <div className="notCenter">
-                <ul id="iosUl">
+                <ul>
                     <li>과정 1: Chrome 또는 Safari 앱 접속</li>
                     <li>과정 2: 'www.OnlineMemo.kr' 이동</li>
                     <li>과정 3: 옵션의 '홈 화면에 추가' 클릭</li>
