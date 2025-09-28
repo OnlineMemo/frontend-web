@@ -45,7 +45,7 @@ const OneMemoWrapper = styled.div`
         
         background-color: #463f3a;
         font-family: "jua";
-        font-size: 16.2px;
+        font-size: 15.6px;
         color: white;
         padding: 0px 4px 1px 4px;
         border-radius: 5px;
@@ -74,7 +74,7 @@ const OneMemoWrapper = styled.div`
             color: rgba(255, 255, 255, 0.4);
             opacity: 1;
             z-index: -1;
-            text-shadow: 0 0 3px rgba(255, 217, 0, 0.723);
+            text-shadow: 0 0 3px darkgray;  // 0 0 3px rgba(255, 217, 0, 0.723)
         }
     }
 
