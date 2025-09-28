@@ -10,6 +10,8 @@ const Wrapper = styled(NavWrapper)`
 
     position: sticky;
     top: 0px;
+    isolation: isolate;
+    z-index: 999;
 
     ul {
         display: flex;
