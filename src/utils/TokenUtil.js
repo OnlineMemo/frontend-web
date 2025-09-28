@@ -37,7 +37,7 @@ const parseToken = (accessToken, refreshToken) => {
     }
 };
 
-const excludeKeysSet = new Set(['noticeProgressState', 'noticeCompleteState']);
+const excludeKeysSet = new Set(['noticeProgressState', 'noticeCompleteState', 'isMaxDailyAIUsage']);
 const clearToken = (isAllclear = false) => {
     if (isAllclear === false) {
         for (const key of Object.keys(localStorage)) {
