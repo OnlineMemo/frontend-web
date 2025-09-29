@@ -47,7 +47,7 @@ const OneMemoWrapper = styled.div`
         font-family: "jua";
         font-size: 15.6px;
         color: white;
-        padding: 0px 4px 1px 4px;
+        padding: 0px 4.1px 1px 4.1px;
         border-radius: 5px;
         border-top: 2px solid #767676;
         border-left: 2px solid #767676;
@@ -57,7 +57,7 @@ const OneMemoWrapper = styled.div`
         @media(max-width: 570px) {
             // 아이콘 단일버전
             left: calc(19vw + 3px + 50% + 7.8px);  // 38vw/2 + 6px/2 + 50%
-            padding: 1px 3.4px 1.2px 3.4px;
+            padding: 1px 3.5px 1.2px 3.5px;
 
             // 글자 + 아이콘 겹침버전
             /* left: calc(19vw + 3px + 50% + 7.6px);  // 38vw/2 + 6px/2 + 50%
@@ -72,7 +72,7 @@ const OneMemoWrapper = styled.div`
         // 아이콘 단일버전
         .fa-magic {
             display: 'inline-block';
-            transform: scaleX(-1) translateX(13.5px);
+            transform: scaleX(-1) translateX(13.1px);
             margin-right: -14.5px;
             margin-top: 2.7px;
             z-index: -1;
@@ -82,7 +82,7 @@ const OneMemoWrapper = styled.div`
             text-shadow: 0 0 3px lightgray;  // 0 0 3px rgba(255, 217, 0, 0.723)
 
             @media(max-width: 570px) {
-                transform: scaleX(-1) translateX(13.4px);
+                transform: scaleX(-1) translateX(13px);
                 font-size: 14.7px;
                 text-shadow: 0 0 3px darkgray;  // 0 0 3px rgba(255, 217, 0, 0.723)
             }

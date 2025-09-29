@@ -5,6 +5,7 @@ import NewMemoNav from "../../components/Navigation/NewMemoNav";
 import { checkToken } from "../../utils/TokenUtil";
 import Apis from "../../apis/Api";
 import { debounce } from 'lodash';
+import { ToastContainer, toast, Bounce } from 'react-toastify';
 
 function NewMemoPage(props) {
     const location = useLocation();
@@ -13,6 +14,7 @@ function NewMemoPage(props) {
     const [prevTitleValue, setPrevTitleValue] = useState(null);
     const [titleValue, setTitleValue] = useState("");
     const [contentValue, setContentValue] = useState("");
+    const [isAIDisabled, setIsAIDisabled] = useState(false);
 
     const handleChangeTitle = (event) => {
         setTitleValue(event.target.value);
@@ -81,6 +83,7 @@ function NewMemoPage(props) {
 
     const handleAITitleClick = async (event) => {
         if (contentValue.length > 15) {  // 내용이 15자 초과일때만 '제목 AI 생성' API 호출 (불필요한 리소스 낭비 방지.)
+            showInfoToast("제목 AI : 내용을 분석하는 중 ...")
             const prevTitle = (prevTitleValue === null && titleValue) ? titleValue : prevTitleValue;
 
             await Apis
@@ -90,32 +93,56 @@ function NewMemoPage(props) {
                 })
                 .then((response) => {
                     // console.log(response.data.data.dailyAIUsage);
-                    // console.log(response.data.data.isMaxDailyAIUsage);
                     const aiTitleValue = response.data.data.title;
+                    const isMaxDailyAIUsage = response.data.data.isMaxDailyAIUsage;
+                    if (isMaxDailyAIUsage === true) setIsAIDisabled(true);
                     setTitleValue(aiTitleValue);
                     setPrevTitleValue(aiTitleValue);
+                    showSuccessToast("내용에 어울리는 제목을 만들어드렸어요!");
                 })
                 .catch((error) => {
                     const httpStatus = error.response?.status;
                     if (httpStatus === 400) {
-                        setTitleValue("일일 사용량 횟수 초과");  // !!! 임시 코드 !!!
+                        showErrorToast("오늘 AI 사용 횟수를 초과했습니다. (10회)");
                     }
                     else if (httpStatus === 429) {
-                        setTitleValue("현재 이용자가 많음");  // !!! 임시 코드 !!!
+                        showErrorToast("현재 이용자가 많아, 잠시 후 시도해주세요.");
                     }
-                    else if (httpStatus === 500) {
-                        setTitleValue("AI 서버에서 오류 발생");  // !!! 임시 코드 !!!
+                    else {  // else if (httpStatus === 500)
+                        showErrorToast("문제가 발생했어요. 잠시 후 시도해주세요.");
                     }
                 })
         }
         else {
-            setTitleValue(contentValue);
+            // setTitleValue(contentValue);
+            showWarnToast("제목 AI : 내용을 16자 이상 작성해주세요.");
         }
     }
     const debounceAITitleClick = useCallback(
         debounce(handleAITitleClick, 300),
         [handleAITitleClick]
     );
+
+    const showSuccessToast = (toastText) => {
+        toast.success(toastText, {
+            // style: { ... }
+        });
+    };
+    const showErrorToast = (toastText) => {
+        toast.error(toastText, {
+            // style: { ... }
+        });
+    };
+    const showWarnToast = (toastText) => {
+        toast.warn(toastText, {
+            // style: { ... }
+        });
+    };
+    const showInfoToast = (toastText) => {
+        toast.info(toastText, {
+            // style: { ... }
+        });
+    };
 
     useEffect(() => {
         checkToken();
@@ -128,7 +155,7 @@ function NewMemoPage(props) {
             <div className="memoTitle">
                 <input className="memoTitleInput" type="text" value={titleValue} onChange={handleChangeTitle} placeholder="제목 입력 (1~15자)" maxLength="15"
                     style={{ width: "38vw", textAlign: "center", paddingTop: "4px", paddingBottom: "4px", border: "1px solid #463f3a", borderRadius: "5px", backgroundColor: "#f4f3ee" }} />
-                <button id="aiTitleButton" onClick={debounceAITitleClick}>
+                <button id="aiTitleButton" onClick={debounceAITitleClick} disabled={isAIDisabled}>
                     {/* <span style={{ WebkitTextStroke: "0.35px #463f3a" }}>AI</span> */}
                     <span style={{ WebkitTextStroke: "0.35px #463f3a", width: "13px" }}></span>
                     <i className="fa fa-magic" aria-hidden="true"></i>
@@ -148,6 +175,27 @@ function NewMemoPage(props) {
             <OneMemoWrapper>
                 {purposeComponent}
             </OneMemoWrapper>
+
+            <ToastContainer
+                position={'bottom-center'}
+                autoClose={1500}  // 1.5초 뒤 자동 닫힘
+                hideProgressBar={false}  // 타임 진행바 숨김
+                closeOnClick={false}  // 클릭해도 닫히지 않음
+                pauseOnHover={false}  // 마우스 올리면 멈춤
+                draggable={false}  // 스와이프 제거 가능
+                transition={Bounce}
+                toastStyle={{
+                    // width: "500px",
+                    padding: "5px 25px 5px 18px",
+                    backgroundColor: "#f4f3ee",  // white
+                    color: "#463f3a",
+                    fontFamily: "jua",
+                    fontSize: "14.5px",
+                    border: "1.3px solid #bdb8b1",
+                    borderRadius: "8px",
+                    whiteSpace: "pre-line"
+                }}
+            />
         </div>
     );
 }
