@@ -151,7 +151,7 @@ function LoginPage(props) {
         }
         else if (storedAlertValue === "maintenance") {  // 점검 시간으로 인한 리다이렉트인 경우
             setConfirmAlertOn(true);
-            handleConfirmAlert("점검 안내", "죄송합니다, 서비스 점검 중입니다.");
+            handleConfirmAlert("점검 안내", "죄송합니다. 서비스 점검 중입니다.");
             sessionStorage.removeItem("alert");
             return;
         }

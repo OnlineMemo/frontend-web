@@ -129,7 +129,9 @@ function NewMemoPage(props) {
                 <input className="memoTitleInput" type="text" value={titleValue} onChange={handleChangeTitle} placeholder="제목 입력 (1~15자)" maxLength="15"
                     style={{ width: "38vw", textAlign: "center", paddingTop: "4px", paddingBottom: "4px", border: "1px solid #463f3a", borderRadius: "5px", backgroundColor: "#f4f3ee" }} />
                 <button id="aiTitleButton" onClick={debounceAITitleClick}>
-                    <span style={{ WebkitTextStroke: "0.35px #463f3a" }}>AI</span> <i className="fa fa-magic" aria-hidden="true"></i>
+                    {/* <span style={{ WebkitTextStroke: "0.35px #463f3a" }}>AI</span> */}
+                    <span style={{ WebkitTextStroke: "0.35px #463f3a", width: "13px" }}></span>
+                    <i className="fa fa-magic" aria-hidden="true"></i>
                 </button>
             </div>
             <hr></hr>

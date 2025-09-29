@@ -39,7 +39,7 @@ const OneMemoWrapper = styled.div`
         height: calc(100% - 2px);
         
         position: absolute;
-        left: calc(19vw + 3px + 50% + 9px);  // 38vw/2 + 6px/2 + 50%
+        left: calc(19vw + 3px + 50% + 8.5px);  // 38vw/2 + 6px/2 + 50%
         top: calc(50% - 0.5px);
         transform: translateY(-50%);
         
@@ -55,8 +55,13 @@ const OneMemoWrapper = styled.div`
         border-right: 2px solid #212121;
 
         @media(max-width: 570px) {
-            left: calc(19vw + 3px + 50% + 7.6px);  // 38vw/2 + 6px/2 + 50%
-            padding: 1px 4px 1px 4px;
+            // 아이콘 단일버전
+            left: calc(19vw + 3px + 50% + 7.8px);  // 38vw/2 + 6px/2 + 50%
+            padding: 1px 3.4px 1.2px 3.4px;
+
+            // 글자 + 아이콘 겹침버전
+            /* left: calc(19vw + 3px + 50% + 7.6px);  // 38vw/2 + 6px/2 + 50%
+            padding: 1px 4px 1px 4px; */
         }
 
         &:hover {
@@ -64,7 +69,27 @@ const OneMemoWrapper = styled.div`
             background-color: #463f3aa4;
         }
 
+        // 아이콘 단일버전
         .fa-magic {
+            display: 'inline-block';
+            transform: scaleX(-1) translateX(13.5px);
+            margin-right: -14.5px;
+            margin-top: 2.7px;
+            z-index: -1;
+
+            font-size: 15.5px;
+            color: #f4f3ee;
+            text-shadow: 0 0 3px lightgray;  // 0 0 3px rgba(255, 217, 0, 0.723)
+
+            @media(max-width: 570px) {
+                transform: scaleX(-1) translateX(13.4px);
+                font-size: 14.7px;
+                text-shadow: 0 0 3px darkgray;  // 0 0 3px rgba(255, 217, 0, 0.723)
+            }
+        }
+
+        // 글자 + 아이콘 겹침버전
+        /* .fa-magic {
             display: 'inline-block';
             transform: scaleX(-1) translateX(15px);
             margin-right: -14.5px;
@@ -74,7 +99,7 @@ const OneMemoWrapper = styled.div`
             font-size: 16px;
             color: rgba(255, 255, 255, 0.4);
             text-shadow: 0 0 3px darkgray;  // 0 0 3px rgba(255, 217, 0, 0.723)
-        }
+        } */
     }
 
     hr {
