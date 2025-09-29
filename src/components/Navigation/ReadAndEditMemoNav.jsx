@@ -10,6 +10,8 @@ const Wrapper = styled(NavWrapper)`
 
     position: sticky;
     top: 0px;
+    isolation: isolate;
+    z-index: 999;
 
     ul {
         display: flex;
@@ -229,7 +231,7 @@ function ReadAndEditMemoNav(props) {
                 })
                 .catch((error) => {
                     const httpStatus = error.response?.status;
-                    if (httpStatus == 423) {
+                    if (httpStatus === 423) {
                         const lockUserInfo = error.response?.data?.data;
                         handleLockModalOn(lockUserInfo);  // userNickname
                     }
@@ -238,6 +240,7 @@ function ReadAndEditMemoNav(props) {
         else {
             props.propPurposeFunction("edit");  // 하위 컴포넌트 함수
         }
+        props.setPrevTitleValue(null);
     }
 
     const handleUpdateSaveClick = async (titleValue, contentValue, e) => {
@@ -262,10 +265,10 @@ function ReadAndEditMemoNav(props) {
                 })
                 .catch((error) => {
                     const httpStatus = error.response?.status;
-                    if (httpStatus == 409) {
+                    if (httpStatus === 409) {
                         handleConflictModalOn("이미 수정된 메모입니다.");
                     }
-                    else if (httpStatus == 423) {
+                    else if (httpStatus === 423) {
                         handleConflictModalOn("다른 사용자가 수정 중입니다.");
                     }
                 })

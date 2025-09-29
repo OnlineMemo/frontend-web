@@ -1,15 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import OneMemoWrapper from "../../components/Styled/OneMemoWrapper";
 import NewMemoNav from "../../components/Navigation/NewMemoNav";
 import { checkToken } from "../../utils/TokenUtil";
+import Apis from "../../apis/Api";
+import { debounce } from 'lodash';
+import { ToastContainer, toast, Bounce } from 'react-toastify';
 
 function NewMemoPage(props) {
     const location = useLocation();
     const { isGroup, friendList } = location.state;
 
+    const [prevTitleValue, setPrevTitleValue] = useState(null);
     const [titleValue, setTitleValue] = useState("");
     const [contentValue, setContentValue] = useState("");
+    const [isAIDisabled, setIsAIDisabled] = useState(false);
 
     const handleChangeTitle = (event) => {
         setTitleValue(event.target.value);
@@ -76,6 +81,69 @@ function NewMemoPage(props) {
         }  // textarea 초기 높이 지정
     }
 
+    const handleAITitleClick = async (event) => {
+        if (contentValue.length > 15) {  // 내용이 15자 초과일때만 '제목 AI 생성' API 호출 (불필요한 리소스 낭비 방지.)
+            showInfoToast("제목 AI : 내용을 분석하는 중 ...")
+            const prevTitle = (prevTitleValue === null && titleValue) ? titleValue : prevTitleValue;
+
+            await Apis
+                .post(`/memos/ai/title`, {
+                    prevTitle: prevTitle,
+                    content: contentValue
+                })
+                .then((response) => {
+                    // console.log(response.data.data.dailyAIUsage);
+                    const aiTitleValue = response.data.data.title;
+                    const isMaxDailyAIUsage = response.data.data.isMaxDailyAIUsage;
+                    if (isMaxDailyAIUsage === true) setIsAIDisabled(true);
+                    setTitleValue(aiTitleValue);
+                    setPrevTitleValue(aiTitleValue);
+                    showSuccessToast("내용에 어울리는 제목을 만들어드렸어요!");
+                })
+                .catch((error) => {
+                    const httpStatus = error.response?.status;
+                    if (httpStatus === 400) {
+                        showErrorToast("오늘 AI 사용 횟수를 초과했습니다. (10회)");
+                    }
+                    else if (httpStatus === 429) {
+                        showErrorToast("현재 이용자가 많아, 잠시 후 시도해주세요.");
+                    }
+                    else {  // else if (httpStatus === 500)
+                        showErrorToast("문제가 발생했어요. 잠시 후 시도해주세요.");
+                    }
+                })
+        }
+        else {
+            // setTitleValue(contentValue);
+            showWarnToast("제목 AI : 내용을 16자 이상 작성해주세요.");
+        }
+    }
+    const debounceAITitleClick = useCallback(
+        debounce(handleAITitleClick, 300),
+        [handleAITitleClick]
+    );
+
+    const showSuccessToast = (toastText) => {
+        toast.success(toastText, {
+            // style: { ... }
+        });
+    };
+    const showErrorToast = (toastText) => {
+        toast.error(toastText, {
+            // style: { ... }
+        });
+    };
+    const showWarnToast = (toastText) => {
+        toast.warn(toastText, {
+            // style: { ... }
+        });
+    };
+    const showInfoToast = (toastText) => {
+        toast.info(toastText, {
+            // style: { ... }
+        });
+    };
+
     useEffect(() => {
         checkToken();
         startNewMemo();  // 출생시점에 startNewMemo 한번 실행.
@@ -83,14 +151,19 @@ function NewMemoPage(props) {
 
     // new는 다른 용도와는 다르게, 애초에 빈값이므로 value 속성을 삭제해주어야 인풋으로 값이 적혀진다. 예시로 useState("") 로 시작해버리면 값이 안적혀진다.
     let purposeComponent =
-        <div>
+        <div>   
             <div className="memoTitle">
-                <input className="memoTitleInput" type="text" onChange={handleChangeTitle} placeholder="제목 입력 (1~15자)" maxLength="15"
+                <input className="memoTitleInput" type="text" value={titleValue} onChange={handleChangeTitle} placeholder="제목 입력 (1~15자)" maxLength="15"
                     style={{ width: "38vw", textAlign: "center", paddingTop: "4px", paddingBottom: "4px", border: "1px solid #463f3a", borderRadius: "5px", backgroundColor: "#f4f3ee" }} />
+                <button id="aiTitleButton" onClick={debounceAITitleClick} disabled={isAIDisabled}>
+                    {/* <span style={{ WebkitTextStroke: "0.35px #463f3a" }}>AI</span> */}
+                    <span style={{ WebkitTextStroke: "0.35px #463f3a", width: "13px" }}></span>
+                    <i className="fa fa-magic" aria-hidden="true"></i>
+                </button>
             </div>
             <hr></hr>
             <div className="memoContent">
-                <textarea className="autoTextarea" onChange={handleChangeContent} placeholder="내용을 입력해주세요."
+                <textarea className="autoTextarea" value={contentValue} onChange={handleChangeContent} placeholder="내용을 입력해주세요."
                     style={{ width: "99.2%", resize: "none", minHeight: "calc(100vh - 271px - 38px)", paddingTop: "5px", paddingBottom: "5px", border: "1px solid #463f3a", borderRadius: "5px", backgroundColor: "#f4f3ee" }}
                     onKeyDown={(event) => autoResizeAndTapkeyTextarea(event)} onKeyUp={autoResizeTextarea} />
             </div>
@@ -102,6 +175,27 @@ function NewMemoPage(props) {
             <OneMemoWrapper>
                 {purposeComponent}
             </OneMemoWrapper>
+
+            <ToastContainer
+                position={'bottom-center'}
+                autoClose={1500}  // 1.5초 뒤 자동 닫힘
+                hideProgressBar={false}  // 타임 진행바 숨김
+                closeOnClick={false}  // 클릭해도 닫히지 않음
+                pauseOnHover={false}  // 마우스 올리면 멈춤
+                draggable={false}  // 스와이프 제거 가능
+                transition={Bounce}
+                toastStyle={{
+                    // width: "500px",
+                    padding: "5px 25px 5px 18px",
+                    backgroundColor: "#f4f3ee",  // white
+                    color: "#463f3a",
+                    fontFamily: "jua",
+                    fontSize: "14.5px",
+                    border: "1.3px solid #bdb8b1",
+                    borderRadius: "8px",
+                    whiteSpace: "pre-line"
+                }}
+            />
         </div>
     );
 }

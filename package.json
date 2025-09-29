@@ -13,6 +13,7 @@
     "highcharts": "^12.3.0",
     "highcharts-react-official": "^3.2.2",
     "jwt-decode": "^4.0.0",
+    "lodash": "^4.17.21",
     "qrcode.react": "^4.2.0",
     "react": "^18.2.0",
     "react-confirm-alert": "^3.0.6",
@@ -22,6 +23,7 @@
     "react-hydratable-shj": "^1.0.0",
     "react-router-dom": "^6.6.2",
     "react-scripts": "^5.0.1",
+    "react-toastify": "^11.0.5",
     "styled-components": "^5.3.6",
     "web-vitals": "^2.1.4"
   },

@@ -37,19 +37,25 @@ const parseToken = (accessToken, refreshToken) => {
     }
 };
 
-const excludeKeysSet = new Set(['noticeProgressState', 'noticeCompleteState']);
+const excludeLocalStorageKeys = new Set(['isTest', 'noticeProgressState', 'noticeCompleteState', 'isMaxDailyAIUsage']);
+const excludeSessionStorageKeys = new Set(['alert']);
 const clearToken = (isAllclear = false) => {
     if (isAllclear === false) {
         for (const key of Object.keys(localStorage)) {
-            if (!excludeKeysSet.has(key)) {
+            if (!excludeLocalStorageKeys.has(key)) {
                 localStorage.removeItem(key);
+            }
+        }
+        for (const key of Object.keys(sessionStorage)) {
+            if (!excludeSessionStorageKeys.has(key)) {
+                sessionStorage.removeItem(key);
             }
         }
     }
     else {
         localStorage.clear();
+        sessionStorage.clear();
     }
-    sessionStorage.clear();
 }
 
 export { checkToken, parseToken, clearToken };

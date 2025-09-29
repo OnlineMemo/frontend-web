@@ -8,7 +8,10 @@ const Apis = axios.create({
 
 // API 요청시 헤더에 AccessToken 달아줌.
 Apis.interceptors.request.use(function (config) {
-    blockUseService();  // 서비스 이용을 막음. (점검시간에 적용 예정.)
+    const isBlocked = blockUseService();  // 서비스 이용을 막음. (점검시간에 적용 예정.)
+    if (isBlocked) {
+        return Promise.reject({ message: "maintenance" });
+    }
 
     const storedAccessToken = localStorage.getItem("accessToken");
     if (storedAccessToken) {
@@ -50,6 +53,7 @@ Apis.interceptors.response.use(
                     }
                 } catch (err) {
                     console.error(err);
+                    sessionStorage.setItem("alert", "loginExpired");
                     clearToken();
                     redirectToLogin(); // 토큰 재발급 실패 시 로그인 화면으로 이동
                 }
@@ -78,10 +82,13 @@ function blockUseService() {  // 서비스 이용을 막음. (점검시간에 �
     if (startDate <= currentDate && currentDate <= endDate) {
         const isTest = localStorage.getItem("isTest");
         if (!(isTest && isTest === 'true')) {
+            sessionStorage.setItem("alert", "maintenance");
             clearToken();
             redirectToLogin();
+            return true;  // axios 요청 막음
         }
     }
+    return false;  // axios 요청 허용
 }
 
 function redirectToLogin() {
