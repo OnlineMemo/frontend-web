@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Helmet } from 'react-helmet-async';
 import OneMemoWrapper from "../../components/Styled/OneMemoWrapper";
 import ReadAndEditMemoNav from "../../components/Navigation/ReadAndEditMemoNav";
 import { checkToken } from "../../utils/TokenUtil";
 import Apis from "../../apis/Api";
+import { debounce } from 'lodash';
 
 function ReadAndEditMemoPage(props) {
     const navigate = useNavigate();
@@ -171,6 +172,10 @@ function ReadAndEditMemoPage(props) {
             setTitleValue(contentValue);
         }
     }
+    const debounceAITitleClick = useCallback(
+        debounce(handleAITitleClick, 300),
+        [handleAITitleClick]
+    );
 
     useEffect(() => {
         checkToken();
@@ -215,7 +220,7 @@ function ReadAndEditMemoPage(props) {
                 <div className="memoTitle">
                     <input className="memoTitleInput" type="text" value={memo && titleValue} onChange={handleChangeTitle} placeholder="제목 입력 (1~15자)" maxLength="15"
                         style={{ width: "38vw", textAlign: "center", paddingTop: "4px", paddingBottom: "4px", border: "1px solid #463f3a", borderRadius: "5px", backgroundColor: "#f4f3ee" }} />
-                    <button id="aiTitleButton" onClick={handleAITitleClick}>
+                    <button id="aiTitleButton" onClick={debounceAITitleClick}>
                         <span style={{ WebkitTextStroke: "0.35px #463f3a" }}>AI</span> <i className="fa fa-magic" aria-hidden="true"></i>
                     </button>
                 </div>
