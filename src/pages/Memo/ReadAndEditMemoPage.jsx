@@ -4,9 +4,11 @@ import { Helmet } from 'react-helmet-async';
 import OneMemoWrapper from "../../components/Styled/OneMemoWrapper";
 import ReadAndEditMemoNav from "../../components/Navigation/ReadAndEditMemoNav";
 import { checkToken } from "../../utils/TokenUtil";
+import { getDateStr } from "../../utils/TimeUtil"
+import { showSuccessToast, showErrorToast, showWarnToast, showInfoToast } from "../../utils/ToastUtil"
+import { ToastContainer, Bounce, Slide } from 'react-toastify';
 import Apis from "../../apis/Api";
 import { debounce } from 'lodash';
-import { ToastContainer, toast, Bounce } from 'react-toastify';
 
 function ReadAndEditMemoPage(props) {
     const navigate = useNavigate();
@@ -17,7 +19,6 @@ function ReadAndEditMemoPage(props) {
     const [titleValue, setTitleValue] = useState("");
     const [contentValue, setContentValue] = useState("");
     const [purpose, setPurpose] = useState("read");
-    const [isAIDisabled, setIsAIDisabled] = useState(false);
 
     const extendLockGap = (1000 * 60 * 10) - (1000 * 15);  // 10분 - 15초 (밀리초 단위)
     const extendLockTimerRef = useRef(null);
@@ -142,6 +143,16 @@ function ReadAndEditMemoPage(props) {
     }
 
     const handleAITitleClick = async (event) => {
+        const storedMaxAIUsageDate = localStorage.getItem("maxAIUsageDate");
+        const todayStr = getDateStr(new Date());
+        if (storedMaxAIUsageDate) {
+            if (storedMaxAIUsageDate >= todayStr) {
+                showErrorToast("일일 AI 사용 횟수를 초과했습니다. (10회)");
+                return;
+            }
+            else localStorage.removeItem("maxAIUsageDate");
+        }
+
         if (contentValue.length > 15) {  // 내용이 15자 초과일때만 '제목 AI 생성' API 호출 (불필요한 리소스 낭비 방지.)
             showInfoToast("제목 AI : 내용을 분석하는 중 ...")
             const prevTitle = (prevTitleValue === null && titleValue) ? titleValue : prevTitleValue;
@@ -155,15 +166,17 @@ function ReadAndEditMemoPage(props) {
                     // console.log(response.data.data.dailyAIUsage);
                     const aiTitleValue = response.data.data.title;
                     const isMaxDailyAIUsage = response.data.data.isMaxDailyAIUsage;
-                    if (isMaxDailyAIUsage === true) setIsAIDisabled(true);
+                    if (isMaxDailyAIUsage === true) {
+                        localStorage.setItem("maxAIUsageDate", todayStr);
+                    }
                     setTitleValue(aiTitleValue);
                     setPrevTitleValue(aiTitleValue);
-                    showSuccessToast("내용에 어울리는 제목을 만들어드렸어요!");
+                    showSuccessToast("내용에 어울리는 제목을 만들었어요!");
                 })
                 .catch((error) => {
                     const httpStatus = error.response?.status;
                     if (httpStatus === 400) {
-                        showErrorToast("오늘 AI 사용 횟수를 초과했습니다. (10회)");
+                        showErrorToast("일일 AI 사용 횟수를 초과했습니다. (10회)");
                     }
                     else if (httpStatus === 429) {
                         showErrorToast("현재 이용자가 많아, 잠시 후 시도해주세요.");
@@ -182,27 +195,6 @@ function ReadAndEditMemoPage(props) {
         debounce(handleAITitleClick, 300),
         [handleAITitleClick]
     );
-
-    const showSuccessToast = (toastText) => {
-        toast.success(toastText, {
-            // style: { ... }
-        });
-    };
-    const showErrorToast = (toastText) => {
-        toast.error(toastText, {
-            // style: { ... }
-        });
-    };
-    const showWarnToast = (toastText) => {
-        toast.warn(toastText, {
-            // style: { ... }
-        });
-    };
-    const showInfoToast = (toastText) => {
-        toast.info(toastText, {
-            // style: { ... }
-        });
-    };
 
     useEffect(() => {
         checkToken();
@@ -247,7 +239,7 @@ function ReadAndEditMemoPage(props) {
                 <div className="memoTitle">
                     <input className="memoTitleInput" type="text" value={memo && titleValue} onChange={handleChangeTitle} placeholder="제목 입력 (1~15자)" maxLength="15"
                         style={{ width: "38vw", textAlign: "center", paddingTop: "4px", paddingBottom: "4px", border: "1px solid #463f3a", borderRadius: "5px", backgroundColor: "#f4f3ee" }} />
-                    <button id="aiTitleButton" onClick={debounceAITitleClick} disabled={isAIDisabled}>
+                    <button id="aiTitleButton" onClick={debounceAITitleClick}>
                     {/* <span style={{ WebkitTextStroke: "0.35px #463f3a" }}>AI</span> */}
                     <span style={{ WebkitTextStroke: "0.35px #463f3a", width: "13px" }}></span>
                     <i className="fa fa-magic" aria-hidden="true"></i>
@@ -308,7 +300,7 @@ function ReadAndEditMemoPage(props) {
 
             <ToastContainer
                 position={'bottom-center'}
-                autoClose={1500}  // 1.5초 뒤 자동 닫힘
+                autoClose={1100}  // 1.1초 뒤 자동 닫힘
                 hideProgressBar={false}  // 타임 진행바 숨김
                 closeOnClick={false}  // 클릭해도 닫히지 않음
                 pauseOnHover={false}  // 마우스 올리면 멈춤

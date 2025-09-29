@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { getKSTDateFromLocal, getFullDatetimeStr } from "../../utils/TimeUtil"
+import { getDateStr, getFullDatetimeStr } from "../../utils/TimeUtil"
 import ConfirmModal from "./ConfirmModal";
 
 function NoticeModal(props) {
@@ -16,12 +16,6 @@ function NoticeModal(props) {
 
     const [noticeModalOn, setNoticeModalOn] = useState(false);
 
-    const getNoticeStateKey = (date) => {
-        const kstDate = getKSTDateFromLocal(date);  // 한국 시각 기준
-        const dateStr = `${kstDate.getFullYear()}-${String(kstDate.getMonth()+1).padStart(2,'0')}-${String(kstDate.getDate()).padStart(2,'0')}`;
-        return dateStr;  // ex) "2025-06-26"
-    }
-
     useEffect(() => {
         const currentDate = new Date();
         const startDate = new Date(getFullDatetimeStr(startDateTime));
@@ -35,7 +29,7 @@ function NoticeModal(props) {
             const isMaxView = noticeStateLen >= maxNoticeCnt;
             if (isMaxView) return;
             // 오늘 공지를 확인하였는가?
-            const kstDateStr = getNoticeStateKey(currentDate);  // 현재 시각 (한국 기준)
+            const kstDateStr = getDateStr(currentDate);  // 현재 시각 (한국 기준)
             const isTodayView = (noticeStateLen > 0) && (noticeStateArr[noticeStateLen-1] === kstDateStr);
             if (isTodayView) return;
 
