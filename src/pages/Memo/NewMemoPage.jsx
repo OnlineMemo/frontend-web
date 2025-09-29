@@ -177,7 +177,6 @@ function NewMemoPage(props) {
                 draggable={false}  // 스와이프 제거 가능
                 transition={Bounce}
                 toastStyle={{
-                    // width: "500px",
                     padding: "5px 25px 5px 18px",
                     backgroundColor: "#f4f3ee",  // white
                     color: "#463f3a",

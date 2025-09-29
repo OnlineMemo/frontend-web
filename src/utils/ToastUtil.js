@@ -31,7 +31,7 @@ const showInfoToast = (toastText) => {
     toast.dismiss();
     setTimeout(() => {
         toast.info(toastText, {
-            autoClose: 5000
+            autoClose: 10000
         });
     }, 100);
 };

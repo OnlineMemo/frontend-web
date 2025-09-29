@@ -104,6 +104,15 @@ code {
   color: white;
 }
 
+@media only screen and (max-width: 570px) {
+  .Toastify__toast-container--bottom-center {
+    left: 50% !important;
+    bottom: 30px;
+    transform: translateX(-50%) !important;
+    max-width: 85%;
+  }
+}
+
 @font-face {
   font-family: 'FontAwesome';
   /* src: url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0') format('woff2'); */
