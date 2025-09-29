@@ -3,11 +3,13 @@ import { useLocation } from "react-router-dom";
 import OneMemoWrapper from "../../components/Styled/OneMemoWrapper";
 import NewMemoNav from "../../components/Navigation/NewMemoNav";
 import { checkToken } from "../../utils/TokenUtil";
+import Apis from "../../apis/Api";
 
 function NewMemoPage(props) {
     const location = useLocation();
     const { isGroup, friendList } = location.state;
 
+    const [prevTitleValue, setPrevTitleValue] = useState(null);
     const [titleValue, setTitleValue] = useState("");
     const [contentValue, setContentValue] = useState("");
 
@@ -76,6 +78,40 @@ function NewMemoPage(props) {
         }  // textarea 초기 높이 지정
     }
 
+    const handleAITitleClick = async (event) => {
+        if (contentValue.length > 15) {  // 내용이 15자 초과일때만 '제목 AI 생성' API 호출 (불필요한 리소스 낭비 방지.)
+            const prevTitle = (prevTitleValue === null && titleValue) ? titleValue : prevTitleValue;
+
+            await Apis
+                .post(`/memos/ai/title`, {
+                    prevTitle: prevTitle,
+                    content: contentValue
+                })
+                .then((response) => {
+                    // console.log(response.data.data.dailyAIUsage);
+                    // console.log(response.data.data.isMaxDailyAIUsage);
+                    const aiTitleValue = response.data.data.title;
+                    setTitleValue(aiTitleValue);
+                    setPrevTitleValue(aiTitleValue);
+                })
+                .catch((error) => {
+                    const httpStatus = error.response?.status;
+                    if (httpStatus === 400) {
+                        setTitleValue("일일 사용량 횟수 초과");  // !!! 임시 코드 !!!
+                    }
+                    else if (httpStatus === 429) {
+                        setTitleValue("현재 이용자가 많음");  // !!! 임시 코드 !!!
+                    }
+                    else if (httpStatus === 500) {
+                        setTitleValue("AI 서버에서 오류 발생");  // !!! 임시 코드 !!!
+                    }
+                })
+        }
+        else {
+            setTitleValue(contentValue);
+        }
+    }
+
     useEffect(() => {
         checkToken();
         startNewMemo();  // 출생시점에 startNewMemo 한번 실행.
@@ -85,15 +121,15 @@ function NewMemoPage(props) {
     let purposeComponent =
         <div>   
             <div className="memoTitle">
-                <input className="memoTitleInput" type="text" onChange={handleChangeTitle} placeholder="제목 입력 (1~15자)" maxLength="15"
+                <input className="memoTitleInput" type="text" value={titleValue} onChange={handleChangeTitle} placeholder="제목 입력 (1~15자)" maxLength="15"
                     style={{ width: "38vw", textAlign: "center", paddingTop: "4px", paddingBottom: "4px", border: "1px solid #463f3a", borderRadius: "5px", backgroundColor: "#f4f3ee" }} />
-                <button id="aiTitleButton">
+                <button id="aiTitleButton" onClick={handleAITitleClick}>
                     <span style={{ WebkitTextStroke: "0.35px #463f3a" }}>AI</span> <i className="fa fa-magic" aria-hidden="true"></i>
                 </button>
             </div>
             <hr></hr>
             <div className="memoContent">
-                <textarea className="autoTextarea" onChange={handleChangeContent} placeholder="내용을 입력해주세요."
+                <textarea className="autoTextarea" value={contentValue} onChange={handleChangeContent} placeholder="내용을 입력해주세요."
                     style={{ width: "99.2%", resize: "none", minHeight: "calc(100vh - 271px - 38px)", paddingTop: "5px", paddingBottom: "5px", border: "1px solid #463f3a", borderRadius: "5px", backgroundColor: "#f4f3ee" }}
                     onKeyDown={(event) => autoResizeAndTapkeyTextarea(event)} onKeyUp={autoResizeTextarea} />
             </div>

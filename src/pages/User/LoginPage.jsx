@@ -6,6 +6,8 @@ import HelloWrapper from "../../components/Styled/HelloWrapper";
 import ConfirmModal from "../../components/Modal/ConfirmModal";
 import { parseToken } from "../../utils/TokenUtil"
 import Apis from "../../apis/Api";
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 const MoreWrapper = styled(HelloWrapper)`
     .loginInput {
@@ -58,11 +60,29 @@ const DivWrapper = styled.div`
 function LoginPage(props) {
     const navigate = useNavigate();
 
+    const [confirmAlertOn, setConfirmAlertOn] = useState(false);
     const [loginFailModalOn, setLoginFailModalOn] = useState(false);
     const [emailValue, setEmailValue] = useState("");
     const [pwValue, setPwValue] = useState("");
     const [isWrongEmail, setIsWrongEmail] = useState(false);
     const [isWrongPw, setIsWrongPw] = useState(false);
+
+    const handleConfirmAlert = (title, message) => {
+        confirmAlert({
+            title: title,
+            message: message,
+            buttons: [
+                {
+                    label: '확인',
+                    onClick: () => {
+                        setConfirmAlertOn(false);
+                    }
+                }
+            ],
+            closeOnEscape: false,  // ESC로 닫기 방지
+            closeOnClickOutside: false,  // 모달 외부 클릭 방지
+        });
+    };
 
     const handleChangeLoginId = (event) => {
         setEmailValue(event.target.value);
@@ -73,10 +93,13 @@ function LoginPage(props) {
     }
 
     const doClickEnter = (event) => {
-        if (event.key === 'Enter' && loginFailModalOn === false) {
+        if (event.key !== 'Enter' || confirmAlertOn === true) {
+            return;
+        }
+        if (loginFailModalOn === false) {
             handleLoginClick(emailValue, pwValue);
         }
-        else if (event.key === 'Enter' && loginFailModalOn === true) {
+        else if (loginFailModalOn === true) {
             setLoginFailModalOn(false);
         }
     };
@@ -106,12 +129,33 @@ function LoginPage(props) {
                     }
                 })
                 .catch((error) => {
-                    setLoginFailModalOn(true);
+                    if (error.message === "maintenance") {
+                        setConfirmAlertOn(true);
+                        handleConfirmAlert("점검 안내", "죄송합니다. 서비스 점검 중입니다.");
+                        sessionStorage.removeItem("alert");
+                    }
+                    else {
+                        setLoginFailModalOn(true);
+                    }
                 })
         }
     }
 
     useEffect(() => {
+        const storedAlertValue = sessionStorage.getItem("alert");
+        if (storedAlertValue === "loginExpired") {  // 토큰 만료로 인한 리다이렉트인 경우
+            setConfirmAlertOn(true);
+            handleConfirmAlert("로그인 만료", "로그인 유지 기간이 만료되었습니다.");
+            sessionStorage.removeItem("alert");
+            return;
+        }
+        else if (storedAlertValue === "maintenance") {  // 점검 시간으로 인한 리다이렉트인 경우
+            setConfirmAlertOn(true);
+            handleConfirmAlert("점검 안내", "죄송합니다, 서비스 점검 중입니다.");
+            sessionStorage.removeItem("alert");
+            return;
+        }
+
         const storedAccessToken = localStorage.getItem("accessToken");
         const storedRefreshToken = localStorage.getItem("refreshToken");
         if (storedAccessToken && storedRefreshToken) {

@@ -17,13 +17,13 @@ import reportWebVitals from './reportWebVitals';
 
 // < CSR + SSR + Helmet - SEO Ver. >
 const element = (
-  // <React.StrictMode>
+  <React.StrictMode>
     <BrowserRouter>
       <HelmetProvider>
         <App />
       </HelmetProvider>
     </BrowserRouter>
-  // </React.StrictMode>
+  </React.StrictMode>
 );
 const rootElement = document.getElementById('root');
 

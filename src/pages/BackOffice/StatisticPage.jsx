@@ -241,18 +241,20 @@ function StatisticPage(props) {
             title: '로그아웃 확인',
             message: '정말 로그아웃 하시겠습니까?',
             buttons: [
-            {
-                label: '예',
-                onClick: () => {
-                    clearToken();
-                    window.location.href = '/login';
+                {
+                    label: '예',
+                    onClick: () => {
+                        clearToken();
+                        window.location.href = '/login';
+                    }
+                },
+                {
+                    label: '아니오',
+                    onClick: () => {}
                 }
-            },
-            {
-                label: '아니오',
-                onClick: () => {}
-            }
-            ]
+            ],
+            // closeOnEscape: false,  // ESC로 닫기 방지
+            // closeOnClickOutside: false,  // 모달 외부 클릭 방지
         });
     };
 

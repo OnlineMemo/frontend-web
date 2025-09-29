@@ -69,11 +69,10 @@ const OneMemoWrapper = styled.div`
             transform: scaleX(-1) translateX(15px);
             margin-right: -14.5px;
             margin-top: 2.7px;
+            z-index: -1;
 
             font-size: 16px;
             color: rgba(255, 255, 255, 0.4);
-            opacity: 1;
-            z-index: -1;
             text-shadow: 0 0 3px darkgray;  // 0 0 3px rgba(255, 217, 0, 0.723)
         }
     }
