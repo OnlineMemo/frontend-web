@@ -8,7 +8,9 @@ import BasicWrapper from "./components/Styled/BasicWrapper";
 import { retryLazy } from "./utils/lazyUtil.js"
 import { parseToken } from "./utils/TokenUtil"
 import { getTitle, getDescription, getCanonical } from "./utils/MetaUtil"
-import BMJUAFont from './assets/fonts/BMJUA_ttf.woff2';
+import MainFont from './assets/fonts/BMJUA_ttf.woff2';
+import HeaderFont from './assets/fonts/KOTRAHOPE_subset_header.woff2';
+import FooterFont from './assets/fonts/Kalam-Regular_subset_footer.woff2';
 
 // Eager Suspense
 import NoLoginNav from "./components/Navigation/NoLoginNav"
@@ -38,7 +40,7 @@ const StatisticPage = LazyLoad("./pages/BackOffice/StatisticPage");
 const MainTitleText = styled.header`
     font-size: 3rem;
     text-align: center;
-    font-family: "KOTRAHOPE";
+    font-family: "KOTRAHOPE";  // HeaderFont
     margin: 9px 0px;
     color: #463f3a;
 
@@ -51,7 +53,7 @@ const MainTitleText = styled.header`
 const LittleTitle = styled.div`
     font-size: 1.25rem;
     text-align: center;
-    font-family: "KOTRAHOPE";
+    font-family: "KOTRAHOPE";  // HeaderFont
     color: #463f3a;
 
     @media(min-width: 1365px) {
@@ -69,13 +71,13 @@ const FooterContainer = styled.footer`
     #footerUp {
         color: black;
         font-size: 1.2rem;
-        font-family: "Kalam-Regular";
+        font-family: "Kalam-Regular";  // FooterFont
     }
 
     /* #footerDown {
         color: black;
         font-size: 1.2rem;
-        font-family: "Kalam-Regular";
+        font-family: "Kalam-Regular";  // FooterFont
     } */
 `;
 
@@ -247,7 +249,10 @@ function HelmetGa4Component() {
         <title>{getTitle(pathName)}</title>
         <meta name="description" content={getDescription(pathName)} />
         <link rel="canonical" href={getCanonical(pathName)} />
-        <link rel="preload" href={BMJUAFont} as="font" type="font/woff2" crossorigin="anonymous" />
+
+        <link rel="preload" href={MainFont} as="font" type="font/woff2" crossorigin="anonymous" />
+        <link rel="preload" href={HeaderFont} as="font" type="font/woff2" crossorigin="anonymous" />
+        <link rel="preload" href={FooterFont} as="font" type="font/woff2" crossorigin="anonymous" />
       </Helmet>
   );
 }
