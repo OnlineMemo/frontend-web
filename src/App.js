@@ -8,6 +8,7 @@ import BasicWrapper from "./components/Styled/BasicWrapper";
 import { retryLazy } from "./utils/lazyUtil.js"
 import { parseToken } from "./utils/TokenUtil"
 import { getTitle, getDescription, getCanonical } from "./utils/MetaUtil"
+import BMJUAFont from './assets/fonts/BMJUA_ttf.woff2';
 
 // Eager Suspense
 import NoLoginNav from "./components/Navigation/NoLoginNav"
@@ -246,6 +247,7 @@ function HelmetGa4Component() {
         <title>{getTitle(pathName)}</title>
         <meta name="description" content={getDescription(pathName)} />
         <link rel="canonical" href={getCanonical(pathName)} />
+        <link rel="preload" href={BMJUAFont} as="font" type="font/woff2" crossorigin="anonymous" />
       </Helmet>
   );
 }
