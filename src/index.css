@@ -184,5 +184,6 @@ code {
   src: url('./assets/fonts/LINESeedKR-Bd.woff2') format('woff2'), url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/LINESeedKR-Bd.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
-  font-display: swap;
+  /* font-display: swap; */
+  font-display: block;
 }
