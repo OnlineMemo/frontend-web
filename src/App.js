@@ -9,7 +9,7 @@ import { retryLazy } from "./utils/lazyUtil.js"
 import { parseToken } from "./utils/TokenUtil"
 import { getTitle, getDescription, getCanonical } from "./utils/MetaUtil"
 
-// Preload Style
+// Preload Font
 import HeaderFont from './assets/fonts/KOTRAHOPE_subset_header.woff2';
 import FooterFont from './assets/fonts/Kalam-Regular_subset_footer.woff2';
 import MainFont from './assets/fonts/BMJUA_ttf.woff2';

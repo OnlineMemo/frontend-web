@@ -143,7 +143,7 @@ function NewMemoPage(props) {
 
     // new는 다른 용도와는 다르게, 애초에 빈값이므로 value 속성을 삭제해주어야 인풋으로 값이 적혀진다. 예시로 useState("") 로 시작해버리면 값이 안적혀진다.
     let purposeComponent =
-        <div>   
+        <div>
             <div className="memoTitle">
                 <input className="memoTitleInput" type="text" value={titleValue} onChange={handleChangeTitle} placeholder="제목 입력 (1~15자)" maxLength="15"
                     style={{ width: "38vw", textAlign: "center", paddingTop: "4px", paddingBottom: "4px", border: "1px solid #463f3a", borderRadius: "5px", backgroundColor: "#f4f3ee" }} />

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { Helmet } from 'react-helmet-async';
 import styled from "styled-components";
 import '../../App.css';
 import BasicWrapper from "../../components/Styled/BasicWrapper";
@@ -9,6 +10,7 @@ import MemoList from "../../components/List/MemoList";
 import { checkToken } from "../../utils/TokenUtil";
 import Apis from "../../apis/Api";
 import YesLoginNav from "../../components/Navigation/YesLoginNav";
+import OneMemoFont from '../../assets/fonts/LINESeedKR-Bd.woff2';  // Prefetch Font (!= Preload)
 
 const DivWrapper = styled.div`
     display: flex;
@@ -111,6 +113,10 @@ function MemoListPage(props) {
 
     return (
         <>
+            <Helmet>
+                <link rel="prefetch" href={OneMemoFont} as="font" type="font/woff2" crossOrigin="anonymous" />
+            </Helmet>
+
             <YesLoginNav memoListPageFriends={allFriends} />
             <BasicWrapper style={{ overflowX: "hidden" }}>
                 <DivWrapper className="flex-container">
