@@ -8,9 +8,12 @@ import BasicWrapper from "./components/Styled/BasicWrapper";
 import { retryLazy } from "./utils/lazyUtil.js"
 import { parseToken } from "./utils/TokenUtil"
 import { getTitle, getDescription, getCanonical } from "./utils/MetaUtil"
-import MainFont from './assets/fonts/BMJUA_ttf.woff2';
+
+// Preload Style
 import HeaderFont from './assets/fonts/KOTRAHOPE_subset_header.woff2';
 import FooterFont from './assets/fonts/Kalam-Regular_subset_footer.woff2';
+import MainFont from './assets/fonts/BMJUA_ttf.woff2';
+import FontAwesomeFont from './assets/fonts/fontawesome-webfont.woff2';
 
 // Eager Suspense
 import NoLoginNav from "./components/Navigation/NoLoginNav"
@@ -250,9 +253,10 @@ function HelmetGa4Component() {
         <meta name="description" content={getDescription(pathName)} />
         <link rel="canonical" href={getCanonical(pathName)} />
 
-        <link rel="preload" href={MainFont} as="font" type="font/woff2" crossorigin="anonymous" />
-        <link rel="preload" href={HeaderFont} as="font" type="font/woff2" crossorigin="anonymous" />
-        <link rel="preload" href={FooterFont} as="font" type="font/woff2" crossorigin="anonymous" />
+        <link rel="preload" href={HeaderFont} as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href={FooterFont} as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href={MainFont} as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href={FontAwesomeFont} as="font" type="font/woff2" crossOrigin="anonymous" />
       </Helmet>
   );
 }
