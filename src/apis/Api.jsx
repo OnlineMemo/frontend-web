@@ -53,6 +53,20 @@ Apis.interceptors.response.use(
                     }
                 } catch (err) {
                     console.error(err);
+
+                    const { url, method, data } = originalConfig;
+                    const isMemoSave = (url === '/memos') && (method?.toLowerCase() === 'post');
+                    const isMemoUpdate = /^\/memos\/\d+$/.test(url) && (method?.toLowerCase() === 'put')
+                    if (isMemoSave || isMemoUpdate) {
+                        try {
+                            const parsedData = data && (typeof data === 'string' ? JSON.parse(data) : data);
+                            const memoContent = parsedData?.content;
+                            memoContent && sessionStorage.setItem("memoContent", memoContent);  // 메모 내용 임시저장
+                        } catch (parseErr) {
+                            // console.error(parseErr);
+                        }
+                    }
+                    
                     sessionStorage.setItem("alert", "loginExpired");
                     clearToken();
                     redirectToLogin(); // 토큰 재발급 실패 시 로그인 화면으로 이동

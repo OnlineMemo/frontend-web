@@ -5,6 +5,8 @@ import '../../App.css';
 import HelloWrapper from "../../components/Styled/HelloWrapper";
 import ConfirmModal from "../../components/Modal/ConfirmModal";
 import { parseToken } from "../../utils/TokenUtil"
+import { showSuccessToast, showErrorToast } from "../../utils/ToastUtil"
+import { ToastContainer, Bounce, Slide } from 'react-toastify';
 import Apis from "../../apis/Api";
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
@@ -67,18 +69,35 @@ function LoginPage(props) {
     const [isWrongEmail, setIsWrongEmail] = useState(false);
     const [isWrongPw, setIsWrongPw] = useState(false);
 
-    const handleConfirmAlert = (title, message) => {
+    const handleConfirmAlert = (title, message, storedMemoContent = null) => {
+        const buttons = [];
+        if (storedMemoContent) {
+            buttons.push({
+                label: '작성 내용 복사',
+                onClick: () => {
+                    window.navigator.clipboard.writeText(storedMemoContent)
+                        .then(() => {
+                            showSuccessToast("작성 중이던 내용을 복사했어요!");
+                        })
+                        .catch(() => {
+                            showErrorToast("문제가 발생해, 내용 복사에 실패했습니다.");
+                        });
+                    window.ReactNativeWebView && window.ReactNativeWebView.postMessage(storedMemoContent)  // 리액트 네이티브에 복사한 텍스트 전송 (모바일 웹뷰앱을 위한 코드)
+                    setConfirmAlertOn(false);
+                }
+            });
+        }
+        buttons.push({
+            label: storedMemoContent ? '닫기' : '확인',
+            onClick: () => {
+                setConfirmAlertOn(false);
+            }
+        });
+
         confirmAlert({
             title: title,
             message: message,
-            buttons: [
-                {
-                    label: '확인',
-                    onClick: () => {
-                        setConfirmAlertOn(false);
-                    }
-                }
-            ],
+            buttons: buttons,
             closeOnEscape: false,  // ESC로 닫기 방지
             closeOnClickOutside: false,  // 모달 외부 클릭 방지
         });
@@ -144,9 +163,11 @@ function LoginPage(props) {
     useEffect(() => {
         const storedAlertValue = sessionStorage.getItem("alert");
         if (storedAlertValue === "loginExpired") {  // 토큰 만료로 인한 리다이렉트인 경우
+            const storedMemoContent = sessionStorage.getItem("memoContent") || null;
             setConfirmAlertOn(true);
-            handleConfirmAlert("로그인 만료", "로그인 유지 기간이 만료되었습니다.");
+            handleConfirmAlert("로그인 만료", "로그인 기간이 만료되었습니다. (2주)", storedMemoContent)  // 또는 "로그인 유지 기간이 만료되었습니다."
             sessionStorage.removeItem("alert");
+            storedMemoContent && sessionStorage.removeItem("memoContent");  // 작성중인 메모 내용이 있던 경우
             return;
         }
         else if (storedAlertValue === "maintenance") {  // 점검 시간으로 인한 리다이렉트인 경우
@@ -208,6 +229,26 @@ function LoginPage(props) {
                     <button className="cancelButton" onClick={() => setLoginFailModalOn(false)}>확인</button>
                 </ConfirmModal>
             )}
+
+            <ToastContainer
+                position={'bottom-center'}
+                autoClose={1100}  // 1.1초 뒤 자동 닫힘
+                hideProgressBar={false}  // 타임 진행바 숨김
+                closeOnClick={false}  // 클릭해도 닫히지 않음
+                pauseOnHover={false}  // 마우스 올리면 멈춤
+                draggable={false}  // 스와이프 제거 가능
+                transition={Bounce}
+                toastStyle={{
+                    padding: "5px 25px 5px 18px",
+                    backgroundColor: "#f4f3ee",  // white
+                    color: "#463f3a",
+                    fontFamily: "jua",
+                    fontSize: "14.5px",
+                    border: "1.3px solid #bdb8b1",
+                    borderRadius: "8px",
+                    whiteSpace: "pre-line"
+                }}
+            />
 
 
             {/* ========== < Notice Modals (현재: GlobalModal.jsx) > ========== */}
