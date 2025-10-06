@@ -3,6 +3,8 @@ import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
 import { Helmet } from 'react-helmet-async';
 import styled from "styled-components";
 import './App.css';
+import { ToastContainer, Bounce, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import LoadingNav from "./components/Navigation/LoadingNav";
 import BasicWrapper from "./components/Styled/BasicWrapper";
 import { retryLazy } from "./utils/lazyUtil.js"
@@ -69,18 +71,30 @@ const FooterContainer = styled.footer`
     color: #463f3a;
     margin: 9px;
     line-height: 155%;
-    /* font-family: "Kalam-Light"; */
+
+    @media(min-width: 1365px) {
+        margin-top: 18px;
+        margin-bottom: 18px;
+    }
 
     #footerUp {
-        color: black;
-        font-size: 1.2rem;
-        font-family: "Kalam-Regular";  // FooterFont
+      color: black;
+      font-size: 1.2rem;
+      font-family: "Kalam-Regular";  // FooterFont
+
+      @media(min-width: 1365px) {
+          font-size: 1.35rem;
+      }
     }
 
     /* #footerDown {
-        color: black;
-        font-size: 1.2rem;
-        font-family: "Kalam-Regular";  // FooterFont
+      color: black;
+      font-size: 1.2rem;
+      font-family: "Kalam-Regular";  // FooterFont
+
+      @media(min-width: 1365px) {
+          font-size: 1.35rem;
+      }
     } */
 `;
 
@@ -437,6 +451,25 @@ function App(props) {
         </span> */}
       </FooterContainer>
 
+      <ToastContainer
+          position={'bottom-center'}
+          autoClose={1100}  // 1.1초 뒤 자동 닫힘
+          hideProgressBar={false}  // 타임 진행바 숨김
+          closeOnClick={false}  // 클릭해도 닫히지 않음
+          pauseOnHover={false}  // 마우스 올리면 멈춤
+          draggable={false}  // 스와이프 제거 가능
+          transition={Bounce}
+          toastStyle={{
+              padding: "5px 25px 5px 18px",
+              backgroundColor: "#f4f3ee",  // white
+              color: "#463f3a",
+              fontFamily: "jua",
+              fontSize: "14.5px",
+              border: "1.3px solid #bdb8b1",
+              borderRadius: "8px",
+              whiteSpace: "pre-line"
+          }}
+      />
       <GlobalModal />
     </>
   );

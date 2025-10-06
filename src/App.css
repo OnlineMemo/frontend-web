@@ -36,3 +36,55 @@
     transform: rotate(360deg);
   }
 }
+
+.disablePreviewAndDrag {
+  /* disable Preview */
+  -webkit-touch-callout: none;
+  /* disable Drag */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.react-confirm-alert-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 245px !important;
+  height: 145px !important;
+  padding: 21px 18px 18px 18px !important;
+
+  /* font-family: 'LINESeedKR-Bd' !important; */
+  color: black !important;
+  font-size: 12px !important;
+  z-index: 999 !important;
+}
+
+.react-confirm-alert-button-group {
+  display: flex;
+  flex-direction: row;
+  justify-content: center !important;
+  gap: 12px;
+}
+
+.react-confirm-alert-button-group button {
+  margin-right: 0px !important;
+  padding: 6px 15px !important;
+  background-color: #463f3a !important;
+  font-size: 12.5px !important;
+}
+
+.react-confirm-alert-button-group button:hover {
+  background-color: #7a7169 !important;
+  color: white;
+}
+
+@media only screen and (max-width: 570px) {
+  .Toastify__toast-container--bottom-center {
+    left: 50% !important;
+    bottom: 30px !important;
+    transform: translateX(-50%) !important;
+    max-width: 85% !important;
+  }
+}
