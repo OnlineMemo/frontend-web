@@ -57,7 +57,8 @@ Apis.interceptors.response.use(
                     const { url, method, data } = originalConfig;
                     const isMemoSave = (url === '/memos') && (method?.toLowerCase() === 'post');
                     const isMemoUpdate = /^\/memos\/\d+$/.test(url) && (method?.toLowerCase() === 'put')
-                    if (isMemoSave || isMemoUpdate) {
+                    const isMemoAITitle = (url === '/memos/ai/title') && (method?.toLowerCase() === 'post');
+                    if (isMemoSave || isMemoUpdate || isMemoAITitle) {
                         try {
                             const parsedData = data && (typeof data === 'string' ? JSON.parse(data) : data);
                             const memoContent = parsedData?.content;
