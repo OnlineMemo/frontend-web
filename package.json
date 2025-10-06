@@ -30,7 +30,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "GENERATE_SOURCEMAP=false react-scripts build",
-    "postbuild": "react-hydratable",
+    "postbuild": "react-hydratable && node fix-head.js",
     "preview": "react-hydratable --preview",
     "build-preview": "npm run build && npm run preview",
     "test": "react-scripts test",
