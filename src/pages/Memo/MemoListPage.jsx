@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { Helmet } from 'react-helmet-async';
 import styled from "styled-components";
@@ -27,16 +27,25 @@ const DivWrapper = styled.div`
 function MemoListPage(props) {
     const location = useLocation();
 
-    const [isMounted, setIsMounted] = useState(false);
+    const isMemosMounted = useRef(false);  // 상태값 즉시반영
+    const [isFirstGetMemos, setIsFirstGetMemos] = useState(false);
     const [memos, setMemos] = useState([]);
     const [allFriends, setAllFriends] = useState([]);
 
     // API 재호출용
     const [filter, setFilter] = useState(null);
     const [search, setSearch] = useState(null);
+    // 시각화 변수 첫렌더링용
+    const [firstSortValue, setFirstSortValue] = useState(null);
+    const [firstSearchValue, setFirstSearchValue] = useState(null);
     // 시각화 변수 초기화용
     const [toggleSortClick, setToggleSortClick] = useState(false);  // 정렬 시, 검색텍스트 초기화를 위함.
     const [toggleSearchClick, setToggleSearchClick] = useState(false);  // 검색 시, 정렬기준 초기화를 위함.
+
+    const setFirstValues = (sortValue, searchValue) => {
+        setFirstSortValue(sortValue);
+        setFirstSearchValue(searchValue);
+    }
 
     const setParam = (nextParam, isClickSortOrSearch) => {
         if (isClickSortOrSearch === true) {  // Sort Click
@@ -61,6 +70,7 @@ function MemoListPage(props) {
             .get(`/memos` + queryParams)
             .then((response) => {
                 setMemos(response.data.data);
+                setIsFirstGetMemos(true);
             })
             .catch((error) => {
                 //console.log(error);
@@ -91,24 +101,41 @@ function MemoListPage(props) {
 
     
     useEffect(() => {
-        // 동기
+        // - 동기
         checkToken();
 
-        // 비동기 (checkToken 검사 후 API 병렬호출)
-        getMemos();
+        // - 비동기 (checkToken 검사 후 API 병렬호출)
+        // API 1.
+        const storedFilter = sessionStorage.getItem("filter");
+        const storedSearch = sessionStorage.getItem("search");
+        if (['private-memo', 'group-memo', 'star-memo'].includes(storedFilter)) {
+            setFirstValues(storedFilter, '');
+            setParam(storedFilter, true);  // useEffect[filter, search]에 처리를 위임.
+        }
+        else if (storedSearch) {
+            setFirstValues('all-memo', storedSearch);
+            setParam(storedSearch, false);  // useEffect[filter, search]에 처리를 위임.
+        }
+        else {
+            setFirstValues('all-memo', '');
+            getMemos();  // API 처리 위임없이 직접 호출.
+        }
+        ["filter", "search"].forEach(key => sessionStorage.removeItem(key));  // 안전하게 모두 제거.
+        // API 2.
         getFriends();
+        // API 3.
         const prevEditGroupMemoId = sessionStorage.getItem('editGroupMemoId');
         if(prevEditGroupMemoId) {
             deleteLock(prevEditGroupMemoId);
         }
-
-        setIsMounted(true);
     }, []);
 
     useEffect(() => {
-        if (isMounted === true) {
-            getMemos();
+        if (!(isMemosMounted.current === true)) {
+            isMemosMounted.current = true;  // filter,search 변경 감지 & API 호출 허용
+            return;
         }
+        getMemos();
     }, [filter, search]);  // 실제 API 호출은 toggleClick 변경에 영향받지 않도록함.
 
     useEffect(() => {
@@ -118,6 +145,14 @@ function MemoListPage(props) {
                 if (pathName === "/memos") {
                     setParam(null, true);
                     setParam(null, false);
+                    
+                    const memoListElement = document.getElementById("memoListContainer");
+                    if (memoListElement) {
+                        memoListElement.scrollTo({
+                            top: 0,
+                            behavior: "smooth" // 여기서 부드러운 스크롤 적용
+                        });
+                    }
                 }
             }
         };
@@ -128,6 +163,19 @@ function MemoListPage(props) {
         };
     }, [location]);
 
+    useEffect(() => {
+        if (isFirstGetMemos === false) return;
+
+        const storedScroll = sessionStorage.getItem("scroll");
+        if (storedScroll !== null) {
+            const memoListElement = document.getElementById("memoListContainer");
+            if (memoListElement) {
+                memoListElement.scrollTop = parseInt(storedScroll, 10);  // 스크롤 위치 복원
+            }
+            sessionStorage.removeItem("scroll");
+        }
+    }, [isFirstGetMemos])
+
 
     return (
         <>
@@ -136,10 +184,10 @@ function MemoListPage(props) {
             </Helmet>
 
             <YesLoginNav memoListPageFriends={allFriends} />
-            <BasicWrapper style={{ overflowX: "hidden" }}>
+            <BasicWrapper id="memoListContainer" style={{ overflowX: "hidden" }}>
                 <DivWrapper className="flex-container">
-                    <SortMemo className="flex-item" setParam={setParam} toggleSearchClick={toggleSearchClick} />
-                    <SearchMemo className="flex-item" setParam={setParam} toggleSortClick={toggleSortClick} />
+                    {firstSortValue !== null && <SortMemo className="flex-item" setParam={setParam} firstSortValue={firstSortValue} toggleSearchClick={toggleSearchClick} />}
+                    {firstSearchValue !== null && <SearchMemo className="flex-item" setParam={setParam} firstSearchValue={firstSearchValue} toggleSortClick={toggleSortClick} />}
                 </DivWrapper>
                 <MemoList memos={memos} filter={filter} search={search} allFriends={allFriends} getMemos={getMemos} />
             </BasicWrapper>

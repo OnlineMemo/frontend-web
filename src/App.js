@@ -298,6 +298,9 @@ function TitleComponent() {  // 홈키
                   ? pathName
                   : "/"
           }
+          onClick={() => {
+            ["filter", "search", "scroll"].forEach(key => sessionStorage.removeItem(key));
+          }}
           style={{ textDecoration: "none", color: "#463f3a" }}
         >
           온라인 메모장 <i className="fa fa-pencil-square-o" aria-hidden="true"></i>

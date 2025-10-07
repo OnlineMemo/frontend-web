@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import '../../App.css';
 
@@ -41,9 +41,10 @@ const Button = styled.button`
 `;
 
 function SortMemo(props) {
-    const { setParam, toggleSearchClick } = props;
+    const { setParam, firstSortValue, toggleSearchClick } = props;
 
-    const [value, setValue] = useState('all-memo');  // 시각화 용도의 변수값
+    const isMounted = useRef(false);  // 상태값 즉시반영
+    const [value, setValue] = useState(firstSortValue);  // 시각화 용도의 변수값
 
     const handleChange = (event) => {
         setValue(event.target.value);
@@ -55,7 +56,12 @@ function SortMemo(props) {
     }
 
     useEffect(() => {
-        setValue('all-memo');
+        if (isMounted.current === true) {
+            setValue('all-memo');
+        }
+        else {
+            isMounted.current = true;
+        }
     }, [toggleSearchClick]);
 
 

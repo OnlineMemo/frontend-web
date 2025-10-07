@@ -97,6 +97,24 @@ function MemoList(props) {
         return filterNames[filter] ?? "전체 메모";  // 후자는 에러의 경우이나, 사용자에게 별도로 알리지 않기 위함.
     }
 
+    const storeFilterSearchScroll = () => {
+        // Filter & Search
+        const currentSortValue = document.getElementById('sortBox')?.value;
+        const currentSearchValue = document.getElementById('searchBox')?.value;
+        if (['private-memo', 'group-memo', 'star-memo'].includes(currentSortValue)) {
+            sessionStorage.setItem("filter", currentSortValue);
+        }
+        else if (currentSearchValue) {
+            sessionStorage.setItem("search", currentSearchValue);
+        }
+
+        // Scroll
+        const memoListElement = document.getElementById("memoListContainer");
+        if (memoListElement) {
+            sessionStorage.setItem("scroll", memoListElement.scrollTop);
+        }
+    }
+
 
     return (
         <MemosWrapper>
@@ -121,7 +139,7 @@ function MemoList(props) {
                     <MemoItemsWrapper key={memo.memoId}>
                         <IsStarButton style={{ flexGrow: "4" }} memoId={memo.memoId} isStar={memo.isStar} memoHasUsersCount={memo.memoHasUsersCount} />
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <Link style={{ textDecoration: "none", flexGrow: "8" }} to={`/memos/${memo.memoId}`} >
+                        <Link style={{ textDecoration: "none", flexGrow: "8" }} to={`/memos/${memo.memoId}`} onClick={storeFilterSearchScroll} >
                             <MemoListItem title={memo.title} modifiedTime={memo.modifiedTime} userResponseDtoList={memo.userResponseDtoList} memoHasUsersCount={memo.memoHasUsersCount} /> 
                         </Link>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
