@@ -41,18 +41,17 @@ const Button = styled.button`
 `;
 
 function SearchMemo(props) {
-    const { setParams, isSortClick } = props;
+    const { setParam, toggleSortClick } = props;
 
-    const [value, setValue] = useState('');
+    const [value, setValue] = useState('');  // 시각화 용도의 변수값
 
     const handleChange = (event) => {
         setValue(event.target.value);
     }
 
     const handleSearchClick = (event) => {
-        const filter = null;
-        const search = (value === "") ? null : value;
-        setParams(filter, search);
+        const nextSearch = (value === "") ? null : value;
+        setParam(nextSearch, false);
     }
 
     const doClickEnter = (event) => {
@@ -62,10 +61,8 @@ function SearchMemo(props) {
     };
 
     useEffect(() => {
-        if (isSortClick === true) {
-            setValue('');
-        }
-    }, [isSortClick]);
+        setValue('');
+    }, [toggleSortClick]);
 
 
     return (

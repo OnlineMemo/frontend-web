@@ -41,25 +41,22 @@ const Button = styled.button`
 `;
 
 function SortMemo(props) {
-    const { setParams, isSearchClick } = props;
+    const { setParam, toggleSearchClick } = props;
 
-    const [value, setValue] = useState('all-memo');
+    const [value, setValue] = useState('all-memo');  // 시각화 용도의 변수값
 
     const handleChange = (event) => {
         setValue(event.target.value);
     }
 
     const handleSortClick = (event) => {
-        const filter = (value === 'all-memo') ? null : value;
-        const search = null;
-        setParams(filter, search);
+        const nextFilter = (value === 'all-memo') ? null : value;
+        setParam(nextFilter, true);
     }
 
     useEffect(() => {
-        if (isSearchClick === true) {
-            setValue('all-memo');
-        }
-    }, [isSearchClick]);
+        setValue('all-memo');
+    }, [toggleSearchClick]);
 
 
     return (

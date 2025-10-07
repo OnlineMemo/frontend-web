@@ -327,7 +327,7 @@ function ReadAndEditMemoNav(props) {
 
     const readPrivateNavItems = [  // 개인메모 보기 용도
         <span className="flex-left">
-            &nbsp;<i className="fa fa-arrow-left" aria-hidden="true" onClick={() => { navigate(`/memos`) }}></i>
+            &nbsp;<i className="fa fa-arrow-left" aria-hidden="true" onClick={() => { navigate(-1) }}></i>
             &nbsp;&nbsp;
             <span className="flex-copy" onClick={handleClickCopy}>
                 <i className={copyClassName} aria-hidden="true"></i>

@@ -27,18 +27,30 @@ const DivWrapper = styled.div`
 function MemoListPage(props) {
     const location = useLocation();
 
-    const [filter, setFilter] = useState(null);
-    const [search, setSearch] = useState(null);
+    const [isMounted, setIsMounted] = useState(false);
     const [memos, setMemos] = useState([]);
     const [allFriends, setAllFriends] = useState([]);
 
-    const [isSortClick, setIsSortClick] = useState(false);  // 정렬 시, 검색텍스트 초기화를 위함.
-    const [isSearchClick, setIsSearchClick] = useState(false);  // 검색 시, 정렬기준 초기화를 위함.
+    // API 재호출용
+    const [filter, setFilter] = useState(null);
+    const [search, setSearch] = useState(null);
+    // 시각화 변수 초기화용
+    const [toggleSortClick, setToggleSortClick] = useState(false);  // 정렬 시, 검색텍스트 초기화를 위함.
+    const [toggleSearchClick, setToggleSearchClick] = useState(false);  // 검색 시, 정렬기준 초기화를 위함.
 
-    const setParams = (filter, search) => {
-        setFilter(filter);
-        setSearch(search);
+    const setParam = (nextParam, isClickSortOrSearch) => {
+        if (isClickSortOrSearch === true) {  // Sort Click
+            setToggleSortClick(prev => !prev);
+            setFilter(nextParam);
+            setSearch(null);
+        }
+        else {  // Search Click
+            setToggleSearchClick(prev => !prev);
+            setFilter(null);
+            setSearch(nextParam);
+        }
     }
+
 
     const getMemos = async (e) => {  // 해당 사용자의 모든 메모 리스트 조회 (초기 메인 화면)
         let queryParams = '';
@@ -49,8 +61,6 @@ function MemoListPage(props) {
             .get(`/memos` + queryParams)
             .then((response) => {
                 setMemos(response.data.data);
-                setIsSortClick(search === null);
-                setIsSearchClick(filter === null);
             })
             .catch((error) => {
                 //console.log(error);
@@ -79,27 +89,35 @@ function MemoListPage(props) {
             })
     }
 
+    
     useEffect(() => {
+        // 동기
         checkToken();
+
+        // 비동기 (checkToken 검사 후 API 병렬호출)
         getMemos();
         getFriends();
-    }, [filter, search]);
-
-    useEffect(() => {
         const prevEditGroupMemoId = sessionStorage.getItem('editGroupMemoId');
         if(prevEditGroupMemoId) {
             deleteLock(prevEditGroupMemoId);
         }
+
+        setIsMounted(true);
     }, []);
+
+    useEffect(() => {
+        if (isMounted === true) {
+            getMemos();
+        }
+    }, [filter, search]);  // 실제 API 호출은 toggleClick 변경에 영향받지 않도록함.
 
     useEffect(() => {
         const handleBeforeHomeClick = (event) => {
             if (event.target.closest("#mainTitleLink")) {
                 const pathName = location.pathname || "/";
-                if (pathName === "/memos" && !(filter === null && search === null)) {
-                    setIsSortClick(true);
-                    setIsSearchClick(true);
-                    setParams(null, null);
+                if (pathName === "/memos") {
+                    setParam(null, true);
+                    setParam(null, false);
                 }
             }
         };
@@ -120,8 +138,8 @@ function MemoListPage(props) {
             <YesLoginNav memoListPageFriends={allFriends} />
             <BasicWrapper style={{ overflowX: "hidden" }}>
                 <DivWrapper className="flex-container">
-                    <SortMemo className="flex-item" setParams={setParams} isSearchClick={isSearchClick} />
-                    <SearchMemo className="flex-item" setParams={setParams} isSortClick={isSortClick} />
+                    <SortMemo className="flex-item" setParam={setParam} toggleSearchClick={toggleSearchClick} />
+                    <SearchMemo className="flex-item" setParam={setParam} toggleSortClick={toggleSortClick} />
                 </DivWrapper>
                 <MemoList memos={memos} filter={filter} search={search} allFriends={allFriends} getMemos={getMemos} />
             </BasicWrapper>

@@ -83,15 +83,18 @@ const NoneResult = styled.div`
     }
 `;
 
+const filterNames = {
+    null: "전체 메모",  // "all-memo"
+    "private-memo": "개인 메모",
+    "group-memo": "공동 메모",
+    "star-memo": "즐겨찾기 메모"
+};
+
 function MemoList(props) {
     const { filter, search, memos, allFriends, getMemos } = props;
 
-    const filterName = () => {
-        if (filter === null) return "전체 메모";  // "all-memo"
-        else if (filter === "private-memo") return "개인 메모";
-        else if (filter === "group-memo") return "공동 메모";
-        else if (filter === "star-memo") return "즐겨찾기 메모";
-        return "전체 메모";  // 이는 에러의 경우이나, 사용자에게 별도로 알리지 않기 위함.
+    const getFilterName = () => {
+        return filterNames[filter] ?? "전체 메모";  // 후자는 에러의 경우이나, 사용자에게 별도로 알리지 않기 위함.
     }
 
 
@@ -101,7 +104,7 @@ function MemoList(props) {
                 {(filter !== null && search === null && memos.length === 0) &&  // 전체메모 외 정렬 결과가 0개일 경우
                     <NoneResult>
                         <span><i className="fa fa-times-circle" aria-hidden="true"></i></span><div style={{ lineHeight: "45%" }}><br></br></div>
-                        정렬하신 <strong>&#39;{filterName()}&#39;</strong> 기준의 <span>메모가 존재하지 않습니다.</span><br></br>
+                        정렬하신 <strong>&#39;{getFilterName()}&#39;</strong> 기준의 <span>메모가 존재하지 않습니다.</span><br></br>
                         새로 생성하거나 다른 기준으로 <span>다시 정렬해주십시오.</span>
                     </NoneResult>
                 }

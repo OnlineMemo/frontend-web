@@ -26,5 +26,6 @@ uniqueFiles.forEach(file => {
   html = html.replace(/<head[^>]*>/i, match => `${match}\n<meta charset="UTF-8" />`);
 
   fs.writeFileSync(file, html, 'utf8');
-  console.log(`✅ fix-head.js 실행 완료!`);
 });
+
+console.log(`✅ fix-head.js 실행 완료!`);
