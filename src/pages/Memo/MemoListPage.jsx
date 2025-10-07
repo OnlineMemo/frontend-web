@@ -150,7 +150,7 @@ function MemoListPage(props) {
                     if (memoListElement) {
                         memoListElement.scrollTo({
                             top: 0,
-                            behavior: "smooth" // 여기서 부드러운 스크롤 적용
+                            behavior: "smooth"  // 부드러운 스크롤 이동 적용
                         });
                     }
                 }
@@ -189,7 +189,7 @@ function MemoListPage(props) {
                     {firstSortValue !== null && <SortMemo className="flex-item" setParam={setParam} firstSortValue={firstSortValue} toggleSearchClick={toggleSearchClick} />}
                     {firstSearchValue !== null && <SearchMemo className="flex-item" setParam={setParam} firstSearchValue={firstSearchValue} toggleSortClick={toggleSortClick} />}
                 </DivWrapper>
-                <MemoList memos={memos} filter={filter} search={search} allFriends={allFriends} getMemos={getMemos} />
+                <MemoList memos={memos} filter={filter} search={search} allFriends={allFriends} getMemos={getMemos} isFirstGetMemos={isFirstGetMemos} />
             </BasicWrapper>
         </>
     );

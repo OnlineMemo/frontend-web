@@ -91,7 +91,7 @@ const filterNames = {
 };
 
 function MemoList(props) {
-    const { filter, search, memos, allFriends, getMemos } = props;
+    const { filter, search, memos, allFriends, getMemos, isFirstGetMemos } = props;
 
     const getFilterName = () => {
         return filterNames[filter] ?? "전체 메모";  // 후자는 에러의 경우이나, 사용자에게 별도로 알리지 않기 위함.
@@ -118,22 +118,25 @@ function MemoList(props) {
 
     return (
         <MemosWrapper>
-            <div>
-                {(filter !== null && search === null && memos.length === 0) &&  // 전체메모 외 정렬 결과가 0개일 경우
-                    <NoneResult>
-                        <span><i className="fa fa-times-circle" aria-hidden="true"></i></span><div style={{ lineHeight: "45%" }}><br></br></div>
-                        정렬하신 <strong>&#39;{getFilterName()}&#39;</strong> 기준의 <span>메모가 존재하지 않습니다.</span><br></br>
-                        새로 생성하거나 다른 기준으로 <span>다시 정렬해주십시오.</span>
-                    </NoneResult>
-                }
-                {(filter === null && search !== null && memos.length === 0) &&  // 검색 결과가 0개일 경우
-                    <NoneResult>
-                        <span><i className="fa fa-times-circle" aria-hidden="true"></i></span><div style={{ lineHeight: "45%" }}><br></br></div>
-                        검색하신 <strong>&#39;{search}&#39;</strong>을 포함하는 <span>메모가 존재하지 않습니다.</span><br></br>
-                        제목 또는 내용에 포함된 키워드로 <span>다시 검색해주십시오.</span>
-                    </NoneResult>
-                }
-            </div>
+            {isFirstGetMemos &&
+                <div>
+                    {(filter !== null && search === null && memos.length === 0) &&  // 전체메모 외 정렬 결과가 0개일 경우
+                        <NoneResult>
+                            <span><i className="fa fa-times-circle" aria-hidden="true"></i></span><div style={{ lineHeight: "45%" }}><br></br></div>
+                            정렬하신 <strong>&#39;{getFilterName()}&#39;</strong> 기준의 <span>메모가 존재하지 않습니다.</span><br></br>
+                            새로 생성하거나 다른 기준으로 <span>다시 정렬해주십시오.</span>
+                        </NoneResult>
+                    }
+                    {(filter === null && search !== null && memos.length === 0) &&  // 검색 결과가 0개일 경우
+                        <NoneResult>
+                            <span><i className="fa fa-times-circle" aria-hidden="true"></i></span><div style={{ lineHeight: "45%" }}><br></br></div>
+                            검색하신 <strong>&#39;{search}&#39;</strong>을 포함하는 <span>메모가 존재하지 않습니다.</span><br></br>
+                            제목 또는 내용에 포함된 키워드로 <span>다시 검색해주십시오.</span>
+                        </NoneResult>
+                    }
+                </div>
+            }
+
             {memos && memos.map((memo) => {
                 return (
                     <MemoItemsWrapper key={memo.memoId}>
