@@ -36,6 +36,22 @@ const OneMemoWrapper = styled.div`
         word-break: break-all;
     }
 
+    .autoTextarea {
+        resize: none;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        border: 1px solid #463f3a;
+        border-radius: 5px;
+        background-color: #f4f3ee;
+
+        min-height: calc(100vh - 271px - 38px);
+        width: 99.2%;
+
+        @media(min-height: 648.2px) and (min-width: 1365px) {
+            min-height: calc(100vh - 271px - 81.5px);  // - {(OneMemoWrapper +43.5px) - (autoTextarea -38px)} = -81.5px
+        }
+    }
+
     #aiTitleButton {
         display: flex;
         justify-content: center;
