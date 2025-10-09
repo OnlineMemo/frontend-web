@@ -230,7 +230,7 @@ function LoginPage(props) {
             )}
 
 
-            {/* ========== < Notice Modals (현재: GlobalModal.jsx) > ========== */}
+            {/* ========== < Notice Modals (현재 위치: GlobalModal.jsx 이동) > ========== */}
             
             {/* {noticeModalOn && (
                 <ConfirmModal closeModal={() => setNoticeModalOn(!noticeModalOn)} customStyle={{ height: "220px" }}>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
 import { Helmet } from 'react-helmet-async';
-import styled from "styled-components";
+import styled, { StyleSheetManager } from "styled-components";
 import './App.css';
 import { ToastContainer, Bounce, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -327,7 +327,7 @@ function LoadingComponent() {
 }
 
 // - hydration 오류 (#418, #423) 해결 :
-// 이는 'SEO 크롤러에 노출된 SSR 페이지'를 제외하고, 'CSR 페이지'에만 적용할것.
+// !!! 이는 'SEO 크롤러에 노출된 SSR 페이지'를 제외하고, 'CSR 페이지'에만 적용할것. !!!
 // SSR 페이지는 즉시 렌더링하여, 서버와 클라이언트의 렌더링 출력이 일치하도록 해결함.
 // CSR 페이지는 이 함수로 래핑해, 기존처럼 지연 로딩을 정상적으로 적용하면 됨.
 const wrapSuspense = (children) => (  // for 'CSR 페이지'
@@ -335,6 +335,25 @@ const wrapSuspense = (children) => (  // for 'CSR 페이지'
     {children}
   </React.Suspense>
 );
+
+// !!! 이는 'CSR 페이지'를 제외하고, 'SEO 크롤러에 노출된 SSR 페이지 및 컴포넌트'에만 적용할것. !!!
+// 기존 Styled Components 스타일은 JS로 CSS가 추가되는 방식이므로, prerender 크롤링 시
+// 빌드된 index.html에 CSS 옵션이 적용되지 않아, Layout Shift 발생하며 CLS 수치가 안좋아짐.
+// 따라서 SSR 페이지 및 컴포넌트를 이 함수로 래핑해, head의 <style> 태그에 포함시켜 최적화하면 됨.
+const wrapWithStyleTag = (children) => (
+  <StyleSheetManager disableCSSOMInjection>
+    {children}
+  </StyleSheetManager>
+);
+
+const wrapComponent = (children, isSSR = false) => {
+  if (isSSR === false) {
+    return wrapSuspense(children);  // CSR (Lazy Loading)
+  }
+  else {
+    return wrapWithStyleTag(children);  // SSR (Disable CSSOM)
+  }
+}
 
 function RouteComponent() {
   const location = useLocation();
@@ -344,7 +363,7 @@ function RouteComponent() {
     if (isAdminUser === true) {
       return (
         <Routes>
-          <Route path="/statistics" element={wrapSuspense(<StatisticPage />)} />
+          <Route path="/statistics" element={wrapComponent(<StatisticPage />)} />
           <Route path="*" element={<Navigate to="/statistics" replace />} />
         </Routes>
       );
@@ -353,31 +372,31 @@ function RouteComponent() {
     return (
       <Routes>
         {/* 기본 라우트 */}
-        <Route index element={<><NoLoginNav /><LoginPage /></>} />
+        <Route index element={wrapComponent(<><NoLoginNav /><LoginPage /></>, true)} />
 
         {/* 비로그인 및 로그인 사용자용 - Nav가 분리된 페이지 */}
-        <Route path="/login" element={<><NoLoginNav /><LoginPage /></>} />
-        <Route path="/signup" element={<><NoLoginNav /><SignupPage /></>} />
-        <Route path="/password" element={wrapSuspense(<><NoLoginNav /><ChangePwPage /></>)} />
-        <Route path="/information" element={wrapSuspense(<><NoLoginNav /><InformationPage /></>)} />
-        <Route path="/notice" element={<><NoLoginNav /><NoticePage /></>} />
-        <Route path="/download" element={<><NoLoginNav /><DownloadPage /></>} />
+        <Route path="/login" element={wrapComponent(<><NoLoginNav /><LoginPage /></>, true)} />
+        <Route path="/signup" element={wrapComponent(<><NoLoginNav /><SignupPage /></>, true)} />
+        <Route path="/password" element={wrapComponent(<><NoLoginNav /><ChangePwPage /></>)} />
+        <Route path="/information" element={wrapComponent(<><NoLoginNav /><InformationPage /></>)} />
+        <Route path="/notice" element={wrapComponent(<><NoLoginNav /><NoticePage /></>, true)} />
+        <Route path="/download" element={wrapComponent(<><NoLoginNav /><DownloadPage /></>, true)} />
 
         {/* 로그인 사용자용 - Nav가 분리된 페이지 */}
-        <Route path="/users" element={wrapSuspense(<><YesLoginNav /><UserProfilePage /></>)} />
-        <Route path="/friends" element={wrapSuspense(<><YesLoginNav /><FriendListPage /></>)} />
-        <Route path="/senders" element={wrapSuspense(<><YesLoginNav /><SenderListPage /></>)} />
+        <Route path="/users" element={wrapComponent(<><YesLoginNav /><UserProfilePage /></>)} />
+        <Route path="/friends" element={wrapComponent(<><YesLoginNav /><FriendListPage /></>)} />
+        <Route path="/senders" element={wrapComponent(<><YesLoginNav /><SenderListPage /></>)} />
 
         {/* 로그인 사용자용 - Nav가 병합된 페이지 */}
-        <Route path="/memos" element={wrapSuspense(<MemoListPage />)} />
-        <Route path="/memos/:memoId" element={wrapSuspense(<ReadAndEditMemoPage />)} /> {/* 또는 path="/memos/:memoId(\d+) 정규표현식 적용할것. */}
-        <Route path="/memos/new-memo" element={wrapSuspense(<NewMemoPage />)} />
+        <Route path="/memos" element={wrapComponent(<MemoListPage />)} />
+        <Route path="/memos/:memoId" element={wrapComponent(<ReadAndEditMemoPage />)} /> {/* 또는 path="/memos/:memoId(\d+) 정규표현식 적용할것. */}
+        <Route path="/memos/new-memo" element={wrapComponent(<NewMemoPage />)} />
 
         {/* 404 Not Found 페이지 - GA4 이벤트 단일 */}
-        <Route path="*" element={wrapSuspense(<><NoLoginNav /><NotFoundPage /></>)} />
+        <Route path="*" element={wrapComponent(<><NoLoginNav /><NotFoundPage /></>)} />
 
         {/* 404 Not Found 페이지 - GA4 이벤트 중복 */}
-        {/* <Route path="/404" element={wrapSuspense(<><NoLoginNav /><NotFoundPage /></>)} />
+        {/* <Route path="/404" element={wrapComponent(<><NoLoginNav /><NotFoundPage /></>)} />
         <Route path="*" element={<Navigate to="/404" replace />} /> */}
       </Routes>
     );
@@ -427,9 +446,14 @@ function App(props) {
 
   return (
     <>
+      {/* [ Header ] */}
       <HelmetGa4Component />
-      <TitleComponent />
+      {wrapComponent(
+        <TitleComponent />,
+        true
+      )}
       
+      {/* [ Content ] */}
       <RouteComponent />
       {/*
         {isCrawlTime === true ? (  // hydration 오류(#418, #423) 해결 : 서버와 클라이언트의 렌더링 출력이 일치하도록 함.
@@ -441,19 +465,24 @@ function App(props) {
         )}
       */}
 
-      <FooterContainer>
-        <span id="footerUp">
-            <br className="disablePreviewAndDrag" />
-            <br className="disablePreviewAndDrag" />
-            <strong>
-              Copyright 2023-2025. SAHYUNJIN. all rights reserved.
-            </strong>
-            <br />
-        </span>
-        {/* <span id="footerDown">
-        </span> */}
-      </FooterContainer>
+      {/* [ Footer ] */}
+      {wrapComponent(
+        <FooterContainer>
+          <span id="footerUp">
+              <br className="disablePreviewAndDrag" />
+              <br className="disablePreviewAndDrag" />
+              <strong>
+                Copyright 2023-2025. SAHYUNJIN. all rights reserved.
+              </strong>
+              <br />
+          </span>
+          {/* <span id="footerDown">
+          </span> */}
+        </FooterContainer>,
+        true
+      )}
 
+      {/* [ Global ] */}
       <ToastContainer
           position={'bottom-center'}
           autoClose={1100}  // 1.1초 뒤 자동 닫힘
@@ -473,7 +502,10 @@ function App(props) {
               whiteSpace: "pre-line"
           }}
       />
-      <GlobalModal />
+      {wrapComponent(
+        <GlobalModal />,  // 테스트 결과, 높이에 영향을 주므로 SSR 스타일 적용 필요.
+        true
+      )}
     </>
   );
 }
