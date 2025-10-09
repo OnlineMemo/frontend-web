@@ -8,13 +8,17 @@ const OneMemoWrapper = styled.div`
     border-bottom-right-radius: 5px;
     padding: 12px 18.3px;
 
-    min-height: calc(100vh - 271px + 43.5px);
-    height: auto;
-
     font-size: 1.4rem;
     font-family: "LINESeedKR-Bd";
     word-spacing: 2.23px;
     line-height: 150%;
+
+    min-height: calc(100vh - 271px + 43.5px);
+    height: auto;
+
+    @media(min-height: 648.2px) and (min-width: 1365px) {
+        min-height: calc(100vh - 271px);
+    }
 
     .memoTitle {
         font-size: 1.55rem;
