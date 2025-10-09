@@ -1,13 +1,24 @@
 const fs = require('fs');
 const glob = require('glob');
 
-const files = [
+
+// ================ < Get Files > ================ //
+
+const htmlFiles = [
   ...glob.sync('build/index.html'),
   ...glob.sync('build/**/*.html'),
 ];
-const uniqueFiles = [...new Set(files)];
+const uniqueHtmlFiles = [...new Set(htmlFiles)];
 
-uniqueFiles.forEach(file => {
+const cssFiles = [
+  ...glob.sync('build/fontawesome/font-awesome.shj.css'),
+];
+const uniqueCssFiles = [...new Set(cssFiles)];
+
+
+// ================ < Fix Head > ================ //
+
+uniqueHtmlFiles.forEach(file => {
   let html = fs.readFileSync(file, 'utf8');
 
   const toastStyleRegex = /<style[^>]*>[\s\S]*?:root\{--toastify-color-light[\s\S]*?<\/style>/gi;
@@ -36,11 +47,23 @@ uniqueFiles.forEach(file => {
     }
   });
 
-  // meta charset을 맨 위로 이동
+  // - meta charset을 맨 위로 이동
   html = html.replace(/<meta[^>]*charset[^>]*>/gi, '');
-  html = html.replace(/<head[^>]*>/i, match => `${match}\n<meta charset="UTF-8" />`);
+  html = html.replace(/<head[^>]*>/i, match => `${match}<meta charset="UTF-8" />`);
+
+  // - head 태그의 맨 뒤에 <style>fontawesome.css<style> 스타일 삽입
+  if (uniqueCssFiles.length > 0) {
+    let css = fs.readFileSync(uniqueCssFiles[0], 'utf8');
+    css = css.replace(/\/\*[\s\S]*?\*\//g, '');  // CSS 주석 제거 ('/* */' 형태)
+    css = css.replace(/\s+/g, ' ').trim();  // 공백 최소화 (minify 최적화)
+    const styleTagWithCss = `<style>${css}</style>`;
+    html = html.replace(/<\/head>/i, `${styleTagWithCss}</head>`);  // 스타일 삽입
+  }
 
   fs.writeFileSync(file, html, 'utf8');
 });
+
+
+// =============================================== //
 
 console.log(`✅ fix-head.js 실행 완료!`);
