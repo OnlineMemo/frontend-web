@@ -1,4 +1,6 @@
-# OnlineMemo - Frontend Refactor
+# OnlineMemo - Frontend Refactor (24.08.17)
+
+#### "대규모 리팩토링 - props 간 데이터 처리 · API 다중호출 개선"
 유저로부터 메모페이지 속도 지연 피드백을 받음.<br>
 성능 측정 결과 문제가 확인되어, 서버와 함께 Frontend 대규모 리팩토링을 진행.<br>
 props 간의 API 호출 구조를 재설계하는 등 여러 최적화를 수행.<br>
