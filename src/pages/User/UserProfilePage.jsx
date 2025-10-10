@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import '../../App.css';
 import HelloWrapper from "../../components/Styled/HelloWrapper"
 import ConfirmModal from "../../components/Modal/ConfirmModal";
 import { checkToken, clearToken } from "../../utils/TokenUtil";

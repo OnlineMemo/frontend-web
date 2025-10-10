@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import '../../App.css';
 import NavWrapper from "../Styled/NavWrapper";
 import ConfirmModal from "../Modal/ConfirmModal";
 import Apis from "../../apis/Api";

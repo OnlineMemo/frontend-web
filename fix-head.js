@@ -74,7 +74,7 @@ uniqueHtmlFiles.forEach(file => {
   html = html.replace(/<head[^>]*>/i, match => `${match}<meta charset="UTF-8" />`);
 
   if (uniqueCssFiles.length > 0) {
-    // - head 태그의 맨 뒤에 <style>fontawesome.css<style> 스타일 교체
+    // - head 태그의 맨 뒤에 <style>fontawesome.css<style> 스타일 삽입
     let css = fs.readFileSync(uniqueCssFiles[0], 'utf8');
     css = css.replace(/\/\*[\s\S]*?\*\//g, '');  // CSS 주석 제거 ('/* */' 형태)
     css = css.replace(/\s+/g, ' ').trim();  // 연속공백 1칸으로 최소화 (minify 최적화)

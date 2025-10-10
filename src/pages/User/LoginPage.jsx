@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import '../../App.css';
 import HelloWrapper from "../../components/Styled/HelloWrapper";
 import ConfirmModal from "../../components/Modal/ConfirmModal";
 import { parseToken } from "../../utils/TokenUtil"
 import { showSuccessToast, showErrorToast } from "../../utils/ToastUtil"
+import { showConfirmAlert } from "../../utils/AlertUtil"
 import Apis from "../../apis/Api";
-import { confirmAlert } from 'react-confirm-alert';
-import 'react-confirm-alert/src/react-confirm-alert.css';
 
 const MoreWrapper = styled(HelloWrapper)`
     .loginInput {
@@ -93,7 +91,7 @@ function LoginPage(props) {
             }
         });
 
-        confirmAlert({
+        showConfirmAlert({
             title: title,
             message: message,
             buttons: buttons,

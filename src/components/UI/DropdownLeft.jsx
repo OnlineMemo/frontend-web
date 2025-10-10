@@ -1,11 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import '../../App.css';
 import { clearToken } from "../../utils/TokenUtil"
+import { showConfirmAlert } from "../../utils/AlertUtil"
 import useDetectDropdown from "../../hooks/useDetectDropdown";
-import { confirmAlert } from 'react-confirm-alert';
-import 'react-confirm-alert/src/react-confirm-alert.css';
 
 const DropdownContainer = styled.div`
     position: relative;
@@ -78,7 +76,7 @@ function DropdownLeft(props) {
     const { dropMain, dropItems } = props;
 
     const handleLogoutClick = () => {
-        confirmAlert({
+        showConfirmAlert({
             title: '로그아웃 확인',
             message: '정말 로그아웃 하시겠습니까?',
             buttons: [

@@ -1,0 +1,8 @@
+@media only screen and (max-width: 570px) {
+  .Toastify__toast-container--bottom-center {
+    left: 50% !important;
+    bottom: 30px !important;
+    transform: translateX(-50%) !important;
+    max-width: 85% !important;
+  }
+}

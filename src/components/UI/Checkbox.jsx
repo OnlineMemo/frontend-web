@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import '../../App.css';
 
 function Checkbox({ friend, friendId, checkedList, checkHandler }) {  // (props) 대신 적어주었음.
 

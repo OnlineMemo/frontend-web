@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import styled from "styled-components";
-import '../../App.css';
 import { checkToken, clearToken } from "../../utils/TokenUtil"
 import { getKSTDate, getKSTDateFromLocal } from "../../utils/TimeUtil"
+import { showConfirmAlert } from "../../utils/AlertUtil"
 import Apis from "../../apis/Api";
 import Highcharts from "highcharts";  // Line Graph
 import HighchartsReact from "highcharts-react-official";
@@ -10,8 +10,6 @@ import { Grid } from "gridjs";  // Grid
 import "gridjs/dist/theme/mermaid.css";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';  // 버전 5
-import { confirmAlert } from 'react-confirm-alert';
-import 'react-confirm-alert/src/react-confirm-alert.css';
 
 const PageWrapper = styled.div`
     display: flex;
@@ -237,7 +235,7 @@ function StatisticPage(props) {
     const ga4GridRef = useRef(null);
 
     const handleLogoutClick = () => {
-        confirmAlert({
+        showConfirmAlert({
             title: '로그아웃 확인',
             message: '정말 로그아웃 하시겠습니까?',
             buttons: [

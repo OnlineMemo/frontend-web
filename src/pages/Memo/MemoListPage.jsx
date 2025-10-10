@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { Helmet } from 'react-helmet-async';
 import styled from "styled-components";
-import '../../App.css';
 import BasicWrapper from "../../components/Styled/BasicWrapper";
 import SortMemo from "../../components/UI/SortMemo";
 import SearchMemo from "../../components/UI/SearchMemo";

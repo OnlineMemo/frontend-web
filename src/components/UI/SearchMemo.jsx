@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
-import '../../App.css';
 
 const SearchContainer = styled.div`
     display: flex;

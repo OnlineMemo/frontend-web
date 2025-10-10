@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import '../../App.css';
 
 const HelloWrapper = styled.div`
     background-color: #bcb8b1;

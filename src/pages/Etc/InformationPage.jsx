@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import '../../App.css';
 import { useNavigate } from "react-router-dom";
 import BasicWrapper from "../../components/Styled/BasicWrapper";
 

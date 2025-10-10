@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import '../../App.css';
 import NavWrapper from "../Styled/NavWrapper";
 import { checkToken } from "../../utils/TokenUtil"
 import Apis from "../../apis/Api";

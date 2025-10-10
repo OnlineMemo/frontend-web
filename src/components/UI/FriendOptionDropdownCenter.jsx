@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import '../../App.css';
 import useDetectDropdown from "../../hooks/useDetectDropdown";
 import SendFriendshipModal from "../Modal/SendFriendshipModal";
 import Apis from "../../apis/Api";

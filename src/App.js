@@ -4,7 +4,6 @@ import { Helmet } from 'react-helmet-async';
 import styled, { StyleSheetManager } from "styled-components";
 import './App.css';
 import { ToastContainer, Bounce, Slide } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import LoadingNav from "./components/Navigation/LoadingNav";
 import BasicWrapper from "./components/Styled/BasicWrapper";
 import { retryLazy } from "./utils/lazyUtil.js"

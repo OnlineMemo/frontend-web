@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import '../../App.css';
 import NavWrapper from "../Styled/NavWrapper";
 import DropdownLeft from "../UI/DropdownLeft";
 import NewMemoOptionDropdownRight from "../UI/NewMemoOptionDropdownRight";
