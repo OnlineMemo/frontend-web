@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.78a31936.css",
-    "main.js": "/static/js/main.e01d2ded.js",
+    "main.css": "/static/css/main.e4c9fb45.css",
+    "main.js": "/static/js/main.c4e9e5dc.js",
     "static/js/4396.720a7381.chunk.js": "/static/js/4396.720a7381.chunk.js",
     "static/js/9203.8ae94c07.chunk.js": "/static/js/9203.8ae94c07.chunk.js",
     "static/js/7.52331ab0.chunk.js": "/static/js/7.52331ab0.chunk.js",
@@ -43,7 +43,6 @@
     "static/js/9734.2d6ff3b6.chunk.js": "/static/js/9734.2d6ff3b6.chunk.js",
     "static/js/6850.35c917e4.chunk.js": "/static/js/6850.35c917e4.chunk.js",
     "static/js/6102.ce293162.chunk.js": "/static/js/6102.ce293162.chunk.js",
-    "static/js/1100.4a19da4d.chunk.js": "/static/js/1100.4a19da4d.chunk.js",
     "static/js/743.89e30e41.chunk.js": "/static/js/743.89e30e41.chunk.js",
     "static/js/672.5ea6c5b6.chunk.js": "/static/js/672.5ea6c5b6.chunk.js",
     "static/js/3354.e0f5728d.chunk.js": "/static/js/3354.e0f5728d.chunk.js",
@@ -80,11 +79,10 @@
     "static/media/Kalam-Regular_subset_footer.woff2": "/static/media/Kalam-Regular_subset_footer.21e8952fafd81eb4570e.woff2",
     "static/media/KOTRAHOPE_subset_header.woff": "/static/media/KOTRAHOPE_subset_header.6f06764a0a57c25b08f6.woff",
     "static/media/KOTRAHOPE_subset_header.woff2": "/static/media/KOTRAHOPE_subset_header.9a32f3a8861c3b24eed3.woff2",
-    "static/media/logo.svg": "/static/media/logo.6ce24c58023cc2f8fd88.svg",
     "index.html": "/index.html"
   },
   "entrypoints": [
-    "static/css/main.78a31936.css",
-    "static/js/main.e01d2ded.js"
+    "static/css/main.e4c9fb45.css",
+    "static/js/main.c4e9e5dc.js"
   ]
 }
