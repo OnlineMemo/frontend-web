@@ -31,8 +31,19 @@ const uniqueFontFiles = [...new Set(fontFiles)];
 uniqueHtmlFiles.forEach(file => {
   let html = fs.readFileSync(file, 'utf8');
 
-  const toastStyleRegex = /<style[^>]*>[\s\S]*?:root\{--toastify-color-light[\s\S]*?<\/style>/gi;
+  // - postbuild 시 비활성화할 커스텀 태그 제거 (true,'true',"true" 모두 감지 가능)
+  // !!! 주의 : 내부에 텍스트 외 '다른 태그' 또는 '<'가 존재하면 data-disable-build 옵션 부여금지 !!!
+  // ex X. <태그명 data-disable-build="true"><div><span>내용</span></div></태그명> => 제거없이 유지됨
+  // ex X. <태그명 data-disable-build="true">내용1<내용2</태그명> => 앞부분만 제거됨 '내용1<내용2</태그명>'
+  // ex 1. <태그명 data-disable-build="true">내용1>내용2</태그명> => 제거 O (우선순위 1-1)
+  // ex 2. <태그명 data-disable-build="true">내용</태그명> => 제거 O (우선순위 1-2)
+  // ex 3. <태그명 data-disable-build="true" /> => 제거 O (우선순위 2-1)
+  // ex 4. <태그명 data-disable-build="true"> => 제거 O (우선순위 2-2)
+  const disableBuildRegex = /<([a-z][a-z0-9]*)\b[^>]*\sdata-disable-build\s*=\s*(?:["']true["']|true)[^>]*>[^<]*<\/\1>|<[^>]*\sdata-disable-build\s*=\s*(?:["']true["']|true)[^>]*\/?>/gi;
+  html = html.replace(disableBuildRegex, '');
+
   // - 첫번째 이외의 모든 중복 Toast CSS 제거
+  // const toastStyleRegex = /<style[^>]*>[\s\S]*?:root\{--toastify-color-light[\s\S]*?<\/style>/gi;
   // const matches = html.match(toastStyleRegex);
   // if (matches && matches.length > 1) {
   //   for (let i = 1; i < matches.length; i++) {
@@ -40,6 +51,7 @@ uniqueHtmlFiles.forEach(file => {
   //   }
   // }
   // - 모든 Toast CSS 제거 (런타임에 1회 추가 재생성됨.)
+  const toastStyleRegex = /<style[^>]*>[\s\S]*?:root\{--toastify-color-light[\s\S]*?<\/style>/gi;
   html = html.replace(toastStyleRegex, '');
 
   // - 첫번째 이외의 모든 중복 styled Components CSS 제거
@@ -88,6 +100,6 @@ uniqueHtmlFiles.forEach(file => {
 });
 
 
-// =============================================== //
+// ============== < Run Completed > ============== //
 
 console.log(`✅ fix-head.js 실행 완료!`);
