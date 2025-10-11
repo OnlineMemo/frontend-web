@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Helmet } from 'react-helmet-async';
 import styled, { StyleSheetManager } from "styled-components";
 // import './App.css';
@@ -17,6 +17,8 @@ import MainFont from './assets/fonts/BMJUA_ttf.woff2';
 import FontAwesomeFont from './assets/fontawesome/fontawesome-webfont.woff2';
 
 // Eager Suspense
+import Header from './components/Core/Header';
+import Footer from './components/Core/Footer';
 import NoLoginNav from "./components/Navigation/NoLoginNav"
 import LoginPage from "./pages/User/LoginPage"
 import SignupPage from "./pages/User/SignupPage"
@@ -37,65 +39,6 @@ const FriendListPage = LazyLoad("./pages/Friend/FriendListPage");
 const SenderListPage = LazyLoad("./pages/Friend/SenderListPage");
 const NotFoundPage = LazyLoad("./pages/Etc/NotFoundPage");
 const StatisticPage = LazyLoad("./pages/BackOffice/StatisticPage");
-
-
-// ============ < Styled Components > ============ //
-
-const MainTitleText = styled.header`
-    font-size: 3rem;
-    text-align: center;
-    font-family: "KOTRAHOPE";  // HeaderFont
-    margin: 9px 0px;
-    color: #463f3a;
-
-    @media(min-width: 1365px) {
-        font-size: 3.3rem;
-        margin: 18px 0px;
-    }
-`;
-
-const LittleTitle = styled.div`
-    font-size: 1.25rem;
-    text-align: center;
-    font-family: "KOTRAHOPE";  // HeaderFont
-    color: #463f3a;
-
-    @media(min-width: 1365px) {
-        font-size: 1.7rem;
-    }
-`;
-
-const FooterContainer = styled.footer`
-    text-align: center;
-    color: #463f3a;
-    margin: 9px;
-    line-height: 155%;
-
-    @media(min-width: 1365px) {
-        margin-top: 18px;
-        margin-bottom: 18px;
-    }
-
-    #footerUp {
-      color: black;
-      font-size: 1.2rem;
-      font-family: "Kalam-Regular";  // FooterFont
-
-      @media(min-width: 1365px) {
-          font-size: 1.35rem;
-      }
-    }
-
-    /* #footerDown {
-      color: black;
-      font-size: 1.2rem;
-      font-family: "Kalam-Regular";  // FooterFont
-
-      @media(min-width: 1365px) {
-          font-size: 1.35rem;
-      }
-    } */
-`;
 
 
 // ============ < Sub Components > ============ //
@@ -274,41 +217,6 @@ function HelmetGa4Component() {
   );
 }
 
-function TitleComponent() {  // 홈키
-  const location = useLocation();
-  const pathName = location?.pathname || "/";
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    // hydration 오류(#418, #423) 해결 : 서버와 클라이언트의 렌더링 출력이 일치하도록 함.
-    if (!location?.pathname) return;
-    const isHasTokens = !!(localStorage.getItem("accessToken") && localStorage.getItem("refreshToken"));
-    setIsLoggedIn(isHasTokens);
-  }, [location?.pathname]);
-
-  return (
-      <MainTitleText>
-        <Link
-          id="mainTitleLink"
-          to={
-            isLoggedIn === true
-              ? "/memos"
-              : (pathName === "/" || pathName === "/login")
-                  ? pathName
-                  : "/"
-          }
-          onClick={() => {
-            ["filter", "search", "scroll"].forEach(key => sessionStorage.removeItem(key));
-          }}
-          style={{ textDecoration: "none", color: "#463f3a" }}
-        >
-          온라인 메모장 <i className="fa fa-pencil-square-o" aria-hidden="true"></i>
-          <LittleTitle>OnlineMemo.kr</LittleTitle>
-        </Link>
-      </MainTitleText>
-  );
-}
-
 
 // ============ < Main Component > ============ //
 
@@ -448,7 +356,7 @@ function App(props) {
       {/* [ Header ] */}
       <HelmetGa4Component />
       {wrapComponent(
-        <TitleComponent />,
+        <Header />,
         true
       )}
       
@@ -466,18 +374,7 @@ function App(props) {
 
       {/* [ Footer ] */}
       {wrapComponent(
-        <FooterContainer>
-          <span id="footerUp">
-              <br className="disablePreviewAndDrag" />
-              <br className="disablePreviewAndDrag" />
-              <strong>
-                Copyright 2023-2025. SAHYUNJIN. all rights reserved.
-              </strong>
-              <br />
-          </span>
-          {/* <span id="footerDown">
-          </span> */}
-        </FooterContainer>,
+        <Footer />,
         true
       )}
 
