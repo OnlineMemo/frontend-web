@@ -1,0 +1,111 @@
+html {
+    font-size: 62.5%;
+    background-color: #f4f3ee;
+    margin: 0px 8px;
+}
+
+@media (min-width: 1365px) {
+    html {
+        margin: 0px 185px;
+    }
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+} */
+
+.disablePreviewAndDrag {
+  /* disable Preview */
+  -webkit-touch-callout: none;
+  /* disable Drag */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+
+/* [ font-face Style ] */
+
+@font-face {
+  font-family: "jua";
+  /* src: url("./assets/fonts/BMJUA_ttf.ttf") format("truetype"); */
+  /* src: url("./assets/fonts/BMJUA_ttf.woff2") format("woff2"); */
+  /* src: url("./assets/fonts/BMJUA_ttf.woff2") format("woff2"), url("./assets/fonts/BMJUA_ttf.woff") format("woff"), url("./assets/fonts/BMJUA_ttf.ttf") format("truetype"); */
+  src: url("../fonts/BMJUA_ttf.woff2") format("woff2"), url("../fonts/BMJUA_ttf.woff") format("woff"), url("../fonts/BMJUA_ttf.ttf") format("truetype");
+  font-weight: 50;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'KOTRAHOPE';
+  
+  /* < All > */
+  /* src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/KOTRAHOPE.woff2') format('woff2'); */
+  /* src: url('./assets/fonts/KOTRAHOPE.woff2') format('woff2'); */
+  /* src: url('./assets/fonts/KOTRAHOPE.woff2') format('woff2'), url('./assets/fonts/KOTRAHOPE.ttf') format('truetype'); */
+
+  /* < Subset By https://transfonter.org : '온라인 메모장 www.OnlineMemo.kr' > */
+  /* src: url('./assets/fonts/KOTRAHOPE_subset_header.woff2') format('woff2'), url('./assets/fonts/KOTRAHOPE_subset_header.woff') format('woff'), url('./assets/fonts/KOTRAHOPE_subset_header.ttf') format('truetype'); */
+  src: url('../fonts/KOTRAHOPE_subset_header.woff2') format('woff2'), url('../fonts/KOTRAHOPE_subset_header.woff') format('woff'), url('../fonts/KOTRAHOPE_subset_header.ttf') format('truetype');
+
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* @font-face {
+  font-family: "Kalam-Bold";
+  src: url("./assets/fonts/Kalam-Bold.ttf") format("truetype");
+  font-weight: 50;
+  font-display: swap;
+} */
+
+/* @font-face {
+  font-family: "Kalam-Light";
+  src: url("./assets/fonts/Kalam-Light.ttf") format("truetype");
+  font-weight: 50;
+  font-display: swap;
+} */
+
+@font-face {
+  font-family: "Kalam-Regular";
+
+  /* < All > */
+  /* src: url("./assets/fonts/Kalam-Regular.ttf") format("truetype"); */
+
+  /* < Subset By https://transfonter.org : 'Copyright 2023-2025. SAHYUNJIN. all rights reserved. c146789sahyunjin' > */
+  /* src: url('./assets/fonts/Kalam-Regular_subset_footer.woff2') format('woff2'), url('./assets/fonts/Kalam-Regular_subset_footer.woff') format('woff'), url('./assets/fonts/Kalam-Regular_subset_footer.ttf') format('truetype'); */
+  src: url('../fonts/Kalam-Regular_subset_footer.woff2') format('woff2'), url('../fonts/Kalam-Regular_subset_footer.woff') format('woff'), url('../fonts/Kalam-Regular_subset_footer.ttf') format('truetype');
+
+  font-weight: 50;
+  font-display: swap;
+}
+
+/* @font-face {
+  font-family: 'Happiness-Sans-Title';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2205@1.0/Happiness-Sans-Title.woff2') format('woff2');
+  // src: url('./assets/fonts/Happiness-Sans-Title.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+} */
+
+@font-face {
+  font-family: 'LINESeedKR-Bd';
+  /* src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/LINESeedKR-Bd.woff2') format('woff2'); */
+  /* src: url('./assets/fonts/LINESeedKR-Bd.woff2') format('woff2'); */
+  /* src: url('./assets/fonts/LINESeedKR-Bd.woff2') format('woff2'), url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/LINESeedKR-Bd.woff2') format('woff2'); */
+  src: url('../fonts/LINESeedKR-Bd.woff2') format('woff2'), url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/LINESeedKR-Bd.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;  /* swap; */
+}

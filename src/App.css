@@ -1,7 +1,0 @@
-.disablePreviewAndDrag {
-  /* disable Preview */
-  -webkit-touch-callout: none;
-  /* disable Drag */
-  -webkit-user-select: none;
-  user-select: none;
-}

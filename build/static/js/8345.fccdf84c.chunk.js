@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkonlinememo_react_project=self.webpackChunkonlinememo_react_project||[]).push([[8345],{58345:(e,o,t)=>{e.exports=t.p+"static/media/fontawesome-webfont.f691f37e57f04c152e23.woff"}}]);

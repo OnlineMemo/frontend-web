@@ -11,25 +11,26 @@ const htmlFiles = [
 ];
 const uniqueHtmlFiles = [...new Set(htmlFiles)];
 
-// - css files
-const cssFiles = [
-  ...glob.sync('build/fontawesome/font-awesome.shj.css'),
-];
-const uniqueCssFiles = [...new Set(cssFiles)];
-
 // - font files
 const fontFiles = [
-  ...glob.sync('build/static/media/fontawesome-webfont.*.woff2'),
-  ...glob.sync('build/static/media/fontawesome-webfont.*.woff'),
-  ...glob.sync('build/static/media/fontawesome-webfont.*.ttf'),
+  ...glob.sync('build/static/media/*.woff2'),
+  ...glob.sync('build/static/media/*.woff'),
+  ...glob.sync('build/static/media/*.ttf'),
 ];
 const uniqueFontFiles = [...new Set(fontFiles)];
+
+// - css files
+const cssFiles = [
+  ...glob.sync('build/global/globalStyle.css'),
+  ...glob.sync('build/global/font-awesome.shj.css'),
+];
+const uniqueCssFiles = [...new Set(cssFiles)];
 
 
 // ================ < Fix Head > ================ //
 
-uniqueHtmlFiles.forEach(file => {
-  let html = fs.readFileSync(file, 'utf8');
+uniqueHtmlFiles.forEach(htmlFile => {
+  let html = fs.readFileSync(htmlFile, 'utf8');
 
   // - postbuild 시 비활성화할 커스텀 태그 제거 (true,'true',"true" 모두 감지 가능)
   // !!! 주의 : 내부에 텍스트 외 '다른 태그' 또는 '<'가 존재하면 data-disable-build 옵션 부여금지 !!!
@@ -39,7 +40,7 @@ uniqueHtmlFiles.forEach(file => {
   // ex 2. <태그명 data-disable-build="true">내용</태그명> => 제거 O (우선순위 1-2)
   // ex 3. <태그명 data-disable-build="true" /> => 제거 O (우선순위 2-1)
   // ex 4. <태그명 data-disable-build="true"> => 제거 O (우선순위 2-2)
-  const disableBuildRegex = /<([a-z][a-z0-9]*)\b[^>]*\sdata-disable-build\s*=\s*(?:["']true["']|true)[^>]*>[^<]*<\/\1>|<[^>]*\sdata-disable-build\s*=\s*(?:["']true["']|true)[^>]*\/?>/gi;
+  const disableBuildRegex = /(?<!<!--\s*)<([a-z][a-z0-9]*)\b[^>]*\sdata-disable-build\s*=\s*(?:["']true["']|true)[^>]*>[^<]*<\/\1>|(?<!<!--\s*)<[^>]*\sdata-disable-build\s*=\s*(?:["']true["']|true)[^>]*\/?>/gi;  // '<!--' 주석으로 시작하지 않아야함.
   html = html.replace(disableBuildRegex, '');
 
   // - 첫번째 이외의 모든 중복 Toast CSS 제거
@@ -73,30 +74,45 @@ uniqueHtmlFiles.forEach(file => {
   html = html.replace(/<meta[^>]*charset[^>]*>/gi, '');
   html = html.replace(/<head[^>]*>/i, match => `${match}<meta charset="UTF-8" />`);
 
-  if (uniqueCssFiles.length > 0) {
-    // - head 태그의 맨 뒤에 <style>fontawesome.css<style> 스타일 삽입
-    let css = fs.readFileSync(uniqueCssFiles[0], 'utf8');
+  // - font 파일정보 정리
+  const fontObjMap = {};
+  uniqueFontFiles.forEach(fontFile => {  // build/static/media/name.hash.woff2
+    const fontPath = fontFile.replace(/^.*(?=\/static)/, '');  // /static/media/name.hash.woff2
+    const buildName = fontPath.split('/').pop();  // name.hash.woff2
+    const ext = buildName.split('.').pop();  // woff2
+    const originName = `${buildName.split('.')[0]}.${ext}`;  // name.woff2
+
+    fontObjMap[originName] = {
+      staticPath: fontPath,
+    };
+  });
+
+  // - head 태그의 맨 뒤에 <style>global.css & fontawesome.css<style> 스타일 삽입
+  let cssOptions = [];
+  uniqueCssFiles.forEach(cssFile => {
+    let css = fs.readFileSync(cssFile, 'utf8');
     css = css.replace(/\/\*[\s\S]*?\*\//g, '');  // CSS 주석 제거 ('/* */' 형태)
     css = css.replace(/\s+/g, ' ').trim();  // 연속공백 1칸으로 최소화 (minify 최적화)
 
-    // - 삽입한 fontawesome.css 스타일에 빌드된 static 폰트 경로 교체
-    const fontObj = {};
-    for (const fontPath of uniqueFontFiles) {
-      if (!fontObj['woff2'] && fontPath.endsWith('.woff2')) fontObj['woff2'] = fontPath.replace(/^build/, '');
-      if (!fontObj['woff'] && fontPath.endsWith('.woff')) fontObj['woff'] = fontPath.replace(/^build/, '');
-      if (!fontObj['ttf'] && fontPath.endsWith('.ttf')) fontObj['ttf'] = fontPath.replace(/^build/, '');
-      if (fontObj['woff2'] && fontObj['woff'] && fontObj['ttf']) break;
-    }
-    css = css.replace(/url\(['"]?\.\/fontawesome-webfont\.(woff2|woff|ttf)['"]?\)/g, (match, ext) => {  // ext는 확장자를 의미
-      return fontObj[ext] ? `url('${fontObj[ext]}')` : match;
+    css = css.replace(/url\((['"]?)([^'")]+)\1\)/gi, (match, _, fontPath) => {
+      if (fontPath.startsWith('http://') || fontPath.startsWith('https://')) {
+        return match;
+      }
+      const fontOriginFName = fontPath.includes('/') ? fontPath.split('/').pop() : fontPath;
+      const fontObj = fontObjMap[fontOriginFName];
+      if (fontObj && fontObj.staticPath) {
+        return `url('${fontObj.staticPath}')`;
+      }
+      else {
+        return match;
+      }
     });
+    cssOptions.push(css);
+  });
+  const styleTagWithCss = `<style>${cssOptions.join('')}</style>`;
+  html = html.replace(/<\/head>/i, `${styleTagWithCss}</head>`);
 
-    // - 최종 스타일 'css & font' 결과물을 'html' 파일에 삽입
-    const styleTagWithCss = `<style>${css}</style>`;
-    html = html.replace(/<\/head>/i, `${styleTagWithCss}</head>`);
-  }
-
-  fs.writeFileSync(file, html, 'utf8');
+  fs.writeFileSync(htmlFile, html, 'utf8');
 });
 
 

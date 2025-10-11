@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
 import { Helmet } from 'react-helmet-async';
 import styled, { StyleSheetManager } from "styled-components";
-import './App.css';
+// import './App.css';
 import { ToastContainer, Bounce, Slide } from 'react-toastify';
 import LoadingNav from "./components/Navigation/LoadingNav";
 import BasicWrapper from "./components/Styled/BasicWrapper";
@@ -14,7 +14,7 @@ import { getTitle, getDescription, getCanonical } from "./utils/MetaUtil"
 import HeaderFont from './assets/fonts/KOTRAHOPE_subset_header.woff2';
 import FooterFont from './assets/fonts/Kalam-Regular_subset_footer.woff2';
 import MainFont from './assets/fonts/BMJUA_ttf.woff2';
-import FontAwesomeFont from './assets/fonts/fontawesome-webfont.woff2';
+import FontAwesomeFont from './assets/fontawesome/fontawesome-webfont.woff2';
 
 // Eager Suspense
 import NoLoginNav from "./components/Navigation/NoLoginNav"
@@ -266,9 +266,9 @@ function HelmetGa4Component() {
         <meta name="description" content={getDescription(pathName)} />
         <link rel="canonical" href={getCanonical(pathName)} />
 
-        <link rel="preload" href={HeaderFont} as="font" type="font/woff2" crossOrigin="anonymous" />
-        <link rel="preload" href={FooterFont} as="font" type="font/woff2" crossOrigin="anonymous" />
-        <link rel="preload" href={MainFont} as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href={HeaderFont} as="font" type="font/woff2" crossOrigin="anonymous" fetchpriority="high" />  {/* 레이아웃 최상단이라 Layout Shift 최소화하기위함. */}
+        <link rel="preload" href={FooterFont} as="font" type="font/woff2" crossOrigin="anonymous" fetchpriority="low" />  {/* 레이아웃 최하단이라 preload 중 로딩이 늦어도 무관함. */}
+        <link rel="preload" href={MainFont} as="font" type="font/woff2" crossOrigin="anonymous" fetchpriority="high" />  {/* 용량이 크므로 로딩 완료시점을 앞당기기위함. */}
         <link rel="preload" href={FontAwesomeFont} as="font" type="font/woff2" crossOrigin="anonymous" />
       </Helmet>
   );

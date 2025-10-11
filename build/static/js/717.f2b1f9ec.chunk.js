@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkonlinememo_react_project=self.webpackChunkonlinememo_react_project||[]).push([[717],{60717:(e,t,c)=>{e.exports=c.p+"static/media/FontAwesome.91f80bba1dfc26a3fa4c.otf"}}]);

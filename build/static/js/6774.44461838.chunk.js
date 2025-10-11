@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkonlinememo_react_project=self.webpackChunkonlinememo_react_project||[]).push([[6774],{96774:(e,c,t)=>{t.r(c),t.d(c,{default:()=>n});const n={}}}]);
