@@ -12,12 +12,12 @@ const htmlFiles = [
 const uniqueHtmlFiles = [...new Set(htmlFiles)];
 
 // - font files
-const fontFiles = [
-  ...glob.sync('build/static/media/*.woff2'),
-  ...glob.sync('build/static/media/*.woff'),
-  ...glob.sync('build/static/media/*.ttf'),
-];
-const uniqueFontFiles = [...new Set(fontFiles)];
+// const fontFiles = [
+//   ...glob.sync('build/static/media/*.woff2'),
+//   ...glob.sync('build/static/media/*.woff'),
+//   ...glob.sync('build/static/media/*.ttf'),
+// ];
+// const uniqueFontFiles = [...new Set(fontFiles)];
 
 // - css files
 const cssFiles = [
@@ -25,6 +25,10 @@ const cssFiles = [
   ...glob.sync('build/global/font-awesome.shj.css'),
 ];
 const uniqueCssFiles = [...new Set(cssFiles)];
+
+// - asset fileNames
+const assetManifest = JSON.parse(fs.readFileSync('build/asset-manifest.json', 'utf8'));
+const assetObjMap = assetManifest.files;
 
 
 // ================ < Fix Head > ================ //
@@ -75,17 +79,17 @@ uniqueHtmlFiles.forEach(htmlFile => {
   html = html.replace(/<head[^>]*>/i, match => `${match}<meta charset="UTF-8" />`);
 
   // - font 파일정보 정리
-  const fontObjMap = {};
-  uniqueFontFiles.forEach(fontFile => {  // build/static/media/name.hash.woff2
-    const fontPath = fontFile.replace(/^.*(?=\/static)/, '');  // /static/media/name.hash.woff2
-    const buildName = fontPath.split('/').pop();  // name.hash.woff2
-    const ext = buildName.split('.').pop();  // woff2
-    const originName = `${buildName.split('.')[0]}.${ext}`;  // name.woff2
+  // const fontObjMap = {};
+  // uniqueFontFiles.forEach(fontFile => {  // build/static/media/name.hash.woff2
+  //   const fontPath = fontFile.replace(/^.*(?=\/static)/, '');  // /static/media/name.hash.woff2
+  //   const buildName = fontPath.split('/').pop();  // name.hash.woff2
+  //   const ext = buildName.split('.').pop();  // woff2
+  //   const originName = `${buildName.split('.')[0]}.${ext}`;  // name.woff2
 
-    fontObjMap[originName] = {
-      staticPath: fontPath,
-    };
-  });
+  //   fontObjMap[originName] = {
+  //     staticPath: fontPath,
+  //   };
+  // });
 
   // - head 태그의 맨 뒤에 <style>global.css & fontawesome.css<style> 스타일 삽입
   let cssOptions = [];
@@ -99,9 +103,9 @@ uniqueHtmlFiles.forEach(htmlFile => {
         return match;
       }
       const fontOriginFName = fontPath.includes('/') ? fontPath.split('/').pop() : fontPath;
-      const fontObj = fontObjMap[fontOriginFName];
-      if (fontObj && fontObj.staticPath) {
-        return `url('${fontObj.staticPath}')`;
+      const fontStaticPath = assetObjMap[`static/media/${fontOriginFName}`];
+      if (fontStaticPath) {
+        return `url('${fontStaticPath}')`;
       }
       else {
         return match;
