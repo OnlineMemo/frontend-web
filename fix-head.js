@@ -122,4 +122,16 @@ uniqueHtmlFiles.forEach(htmlFile => {
 
 // ============== < Run Completed > ============== //
 
+// - 프로덕션에 불필요한 build 파일 삭제
+const publicBuildDir = ['build/global', 'build/dev'];  // 디렉토리
+publicBuildDir.forEach(dir => {
+  try {
+    if (fs.existsSync(dir)) {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  } catch (err) {
+    console.error(`❌ fix-head.js 실행 실패! : 디렉토리 삭제 ERROR`);
+  }
+});
+
 console.log(`✅ fix-head.js 실행 완료!`);

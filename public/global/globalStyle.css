@@ -40,7 +40,7 @@ body {
   /* src: url("./assets/fonts/BMJUA_ttf.ttf") format("truetype"); */
   /* src: url("./assets/fonts/BMJUA_ttf.woff2") format("woff2"); */
   /* src: url("./assets/fonts/BMJUA_ttf.woff2") format("woff2"), url("./assets/fonts/BMJUA_ttf.woff") format("woff"), url("./assets/fonts/BMJUA_ttf.ttf") format("truetype"); */
-  src: url("../fonts/BMJUA_ttf.woff2") format("woff2"), url("../fonts/BMJUA_ttf.woff") format("woff"), url("../fonts/BMJUA_ttf.ttf") format("truetype");
+  src: url("../dev/BMJUA_ttf.woff2") format("woff2"), url("../../src/assets/fonts/BMJUA_ttf.woff") format("woff"), url("../../src/assets/fonts/BMJUA_ttf.ttf") format("truetype");
   font-weight: 50;
   font-display: swap;
 }
@@ -55,7 +55,7 @@ body {
 
   /* < Subset By https://transfonter.org : '온라인 메모장 www.OnlineMemo.kr' > */
   /* src: url('./assets/fonts/KOTRAHOPE_subset_header.woff2') format('woff2'), url('./assets/fonts/KOTRAHOPE_subset_header.woff') format('woff'), url('./assets/fonts/KOTRAHOPE_subset_header.ttf') format('truetype'); */
-  src: url('../fonts/KOTRAHOPE_subset_header.woff2') format('woff2'), url('../fonts/KOTRAHOPE_subset_header.woff') format('woff'), url('../fonts/KOTRAHOPE_subset_header.ttf') format('truetype');
+  src: url('../dev/KOTRAHOPE_subset_header.woff2') format('woff2'), url('../../src/assets/fonts/KOTRAHOPE_subset_header.woff') format('woff'), url('../../src/assets/fonts/KOTRAHOPE_subset_header.ttf') format('truetype');
 
   font-weight: normal;
   font-style: normal;
@@ -84,7 +84,7 @@ body {
 
   /* < Subset By https://transfonter.org : 'Copyright 2023-2025. SAHYUNJIN. all rights reserved. c146789sahyunjin' > */
   /* src: url('./assets/fonts/Kalam-Regular_subset_footer.woff2') format('woff2'), url('./assets/fonts/Kalam-Regular_subset_footer.woff') format('woff'), url('./assets/fonts/Kalam-Regular_subset_footer.ttf') format('truetype'); */
-  src: url('../fonts/Kalam-Regular_subset_footer.woff2') format('woff2'), url('../fonts/Kalam-Regular_subset_footer.woff') format('woff'), url('../fonts/Kalam-Regular_subset_footer.ttf') format('truetype');
+  src: url('../dev/Kalam-Regular_subset_footer.woff2') format('woff2'), url('../../src/assets/fonts/Kalam-Regular_subset_footer.woff') format('woff'), url('../../src/assets/fonts/Kalam-Regular_subset_footer.ttf') format('truetype');
 
   font-weight: 50;
   font-display: swap;
@@ -104,7 +104,7 @@ body {
   /* src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/LINESeedKR-Bd.woff2') format('woff2'); */
   /* src: url('./assets/fonts/LINESeedKR-Bd.woff2') format('woff2'); */
   /* src: url('./assets/fonts/LINESeedKR-Bd.woff2') format('woff2'), url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/LINESeedKR-Bd.woff2') format('woff2'); */
-  src: url('../fonts/LINESeedKR-Bd.woff2') format('woff2'), url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/LINESeedKR-Bd.woff2') format('woff2');
+  src: url('../dev/LINESeedKR-Bd.woff2') format('woff2'), url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/LINESeedKR-Bd.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: block;  /* swap; */

@@ -103,7 +103,7 @@ const MoreWrapper = styled(HelloWrapper)`
     }
 `;
 
-function UserProfilePage(props) {
+function ProfilePage(props) {
     const navigate = useNavigate();
 
     const [copyClassName, setCopyClassName] = useState('fa fa-clone');
@@ -244,4 +244,4 @@ function UserProfilePage(props) {
     );
 }
 
-export default UserProfilePage;
+export default ProfilePage;

@@ -34,7 +34,7 @@ const MemoListPage = LazyLoad("./pages/Memo/MemoListPage");
 const InformationPage = LazyLoad("./pages/Etc/InformationPage");
 const ReadAndEditMemoPage = LazyLoad("./pages/Memo/ReadAndEditMemoPage");
 const NewMemoPage = LazyLoad("./pages/Memo/NewMemoPage");
-const UserProfilePage = LazyLoad("./pages/User/UserProfilePage");
+const ProfilePage = LazyLoad("./pages/User/ProfilePage");
 const FriendListPage = LazyLoad("./pages/Friend/FriendListPage");
 const SenderListPage = LazyLoad("./pages/Friend/SenderListPage");
 const NotFoundPage = LazyLoad("./pages/Etc/NotFoundPage");
@@ -116,7 +116,7 @@ function RouteComponent() {
         <Route path="/download" element={wrapComponent(<><NoLoginNav /><DownloadPage /></>, true)} />
 
         {/* 로그인 사용자용 - Nav가 분리된 페이지 */}
-        <Route path="/users" element={wrapComponent(<><YesLoginNav /><UserProfilePage /></>)} />
+        <Route path="/users" element={wrapComponent(<><YesLoginNav /><ProfilePage /></>)} />
         <Route path="/friends" element={wrapComponent(<><YesLoginNav /><FriendListPage /></>)} />
         <Route path="/senders" element={wrapComponent(<><YesLoginNav /><SenderListPage /></>)} />
 
