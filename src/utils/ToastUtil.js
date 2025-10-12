@@ -9,44 +9,32 @@ const loadToastCSS = async () => {
     }
 };
 
-const showSuccessToast = async (toastText) => {
+const showToast = async (toastType, text, autoClose = null) => {
     await loadToastCSS();
     toast.dismiss();
+    
     setTimeout(() => {
-        toast.success(toastText, {
-            // style: { ... }
+        toast[toastType](text, {  // toast[toastType]() = toast.success(), error(), warn(), info()
+            ...(autoClose !== null && { autoClose }),
+            // style: { ... },
         });
     }, 100);
 };
 
-const showErrorToast = async (toastText) => {
-    await loadToastCSS();
-    toast.dismiss();
+const showSuccessToast = (toastText, autoClose = null) =>
     setTimeout(() => {
-        toast.error(toastText, {
-            // style: { ... }
-        });
-    }, 100);
-};
+        showToast('success', toastText, autoClose)
+    }, 150);  // warn, info 보다 늦게 표시해 dismiss 후 실행을 보장. (대기시간: dismiss 보장 150 -> 기본 100)
 
-const showWarnToast = async (toastText) => {
-    await loadToastCSS();
-    toast.dismiss();
+const showErrorToast = (toastText, autoClose = null) =>
     setTimeout(() => {
-        toast.warn(toastText, {
-            // style: { ... }
-        });
-    }, 100);
-};
+        showToast('error', toastText, autoClose)
+    }, 150);  // warn, info 보다 늦게 표시해 dismiss 후 실행을 보장. (대기시간: dismiss 보장 150 -> 기본 100)
 
-const showInfoToast = async (toastText) => {
-    await loadToastCSS();
-    toast.dismiss();
-    setTimeout(() => {
-        toast.info(toastText, {
-            autoClose: 10000
-        });
-    }, 100);
-};
+const showWarnToast = (toastText, autoClose = null) =>
+    showToast('warn', toastText, autoClose);  // (대기시간: 기본 100)
+
+const showInfoToast = (toastText, autoClose = null) =>
+    showToast('info', toastText, autoClose);  // (대기시간: 기본 100)
 
 export { showSuccessToast, showErrorToast, showWarnToast, showInfoToast };

@@ -36,7 +36,7 @@ function Header(props) {
         setIsLoggedIn(isHasTokens);
     }, [location?.pathname]);
 
-  return (
+    return (
         <HeaderContainer>
             <Link
                 id="mainTitleLink"
@@ -56,7 +56,7 @@ function Header(props) {
                 <LittleTitle>OnlineMemo.kr</LittleTitle>
             </Link>
         </HeaderContainer>
-  );
+    );
 }
 
 export default Header;

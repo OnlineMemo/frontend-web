@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { clearToken } from "../utils/TokenUtil"
 import { getFullDatetimeStr } from "../utils/TimeUtil"
+import { showErrorToast } from "../utils/ToastUtil"
 
 const Apis = axios.create({
     baseURL: process.env.REACT_APP_DB_HOST,
@@ -81,6 +82,15 @@ Apis.interceptors.response.use(
         }
         else if (err.response?.data?.status === 404) {
             redirectTo404Page(); // 404 Not Found 페이지로 이동
+        }
+        else if (err.response?.data?.status === 500) {
+            const { url, method } = originalConfig;
+            const isMemoAITitle = (url === '/memos/ai/title') && (method?.toLowerCase() === 'post');
+            if (isMemoAITitle === false) {
+                setTimeout(() => {
+                    showErrorToast("서버 오류입니다. 잠시 후 시도해주세요.");
+                }, 600);  // (대기시간: 중첩 방지 600 -> dismiss 보장 150 -> 기본 100)
+            }
         }
 
         return Promise.reject(err); // 그 외의 에러는 그대로 반환

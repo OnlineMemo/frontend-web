@@ -153,7 +153,7 @@ function ReadAndEditMemoPage(props) {
         }
 
         if (contentValue.length > 15) {  // 내용이 15자 초과일때만 '제목 AI 생성' API 호출 (불필요한 리소스 낭비 방지.)
-            showInfoToast("제목 AI : 내용을 분석하는 중 ...")
+            showInfoToast("제목 AI : 내용을 분석하는 중 ...", 10000)
             const prevTitle = (prevTitleValue === null && titleValue) ? titleValue : prevTitleValue;
 
             await Apis
