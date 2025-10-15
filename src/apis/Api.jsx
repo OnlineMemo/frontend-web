@@ -98,8 +98,8 @@ Apis.interceptors.response.use(
 );
 
 function blockUseService() {  // 서비스 이용을 막음. (점검시간에 적용 예정.)
-    const startDateTime = "2025-09-30 00:00";
-    const endDateTime = "2025-09-30 06:00";
+    const startDateTime = "2025-10-16 00:00";
+    const endDateTime = "2025-10-16 03:00";
 
     const currentDate = new Date();
     const startDate = new Date(getFullDatetimeStr(startDateTime));
