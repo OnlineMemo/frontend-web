@@ -23,7 +23,7 @@ function GlobalModal(props) {  // Global Modals Component (with Route)
     const location = useLocation();
 
     const progressStartDateTime = "2025-10-15 20:00";
-    const middleDateTime = "2025-10-16 05:00";
+    const middleDateTime = "2025-10-16 07:00";
     const completeEndDateTime = "2025-10-21 00:00";  // or "2025-10-20 23:59"
 
 
@@ -38,7 +38,7 @@ function GlobalModal(props) {  // Global Modals Component (with Route)
             >
                 - 점검 안내 -<br></br>
                 <div style={{ lineHeight: "12%" }}><br></br></div>
-                10월 16일(수) 00시~05시
+                10월 16일(수) 00시~07시
                 <br></br><br></br>
 
                 * 인프라/서버 이관 및 상향<br></br>
