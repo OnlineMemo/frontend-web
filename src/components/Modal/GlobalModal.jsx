@@ -23,7 +23,7 @@ function GlobalModal(props) {  // Global Modals Component (with Route)
     const location = useLocation();
 
     const progressStartDateTime = "2025-10-15 20:00";
-    const middleDateTime = "2025-10-16 03:00";
+    const middleDateTime = "2025-10-16 05:00";
     const completeEndDateTime = "2025-10-21 00:00";  // or "2025-10-20 23:59"
 
 
