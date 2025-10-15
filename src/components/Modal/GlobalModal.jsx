@@ -38,7 +38,7 @@ function GlobalModal(props) {  // Global Modals Component (with Route)
             >
                 - 점검 안내 -<br></br>
                 <div style={{ lineHeight: "12%" }}><br></br></div>
-                10월 16일(수) 00시~03시
+                10월 16일(수) 00시~05시
                 <br></br><br></br>
 
                 * 인프라/서버 이관 및 상향<br></br>

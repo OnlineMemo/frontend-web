@@ -12,7 +12,7 @@ function NoticeModal(props) {
     } = props;
     
     const noticeStateKey = isProgressOrComplete ? 'noticeProgressState' : 'noticeCompleteState';
-    const maxNoticeCnt = 3;  // 최대 3회(하루에 1회씩)까지만 보게하기.
+    const maxNoticeCnt = 2;  // 최대 2회(하루에 1회씩)까지만 보게하기.
 
     const [noticeModalOn, setNoticeModalOn] = useState(false);
 
