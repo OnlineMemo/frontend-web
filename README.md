@@ -16,7 +16,7 @@ props 간의 API 호출 구조를 재설계하는 등 여러 최적화를 수행
 - 전체 레포지토리&nbsp;:&nbsp;&nbsp;<a href="https://github.com/orgs/OnlineMemo/repositories?q=sort%3Aname-asc">FullStack Repo</a>
 - <strong>Refactor (24.08.17)</strong>&nbsp;:&nbsp;&nbsp;[현재] 3400줄 리팩토링 (Package)
 - <strong>Refactor (25.06.19)</strong>&nbsp;:&nbsp;&nbsp;<a href="https://github.com/OnlineMemo/frontend-web/pull/4">[PR] 편집충돌 동시성 제어 (Lock) </a>
-- <strong>Refactor (25.09.01)</strong>&nbsp;:&nbsp;&nbsp;<a href="https://github.com/OnlineMemo/frontend-web/pull/7">[PR] Admin 백오피스 지표 (Traffic)</a>
+- <strong>Refactor (25.09.01)</strong>&nbsp;:&nbsp;&nbsp;<a href="https://github.com/OnlineMemo/frontend-web/pull/7">[PR] GA4 · Admin 백오피스 지표 (Traffic)</a>
 - <strong>Refactor (25.09.26)</strong>&nbsp;:&nbsp;&nbsp;<a href="https://github.com/OnlineMemo/frontend-web/pull/9">[PR] 메모 제목 AI 자동화 (OpenAI)</a>
 
 <!--
