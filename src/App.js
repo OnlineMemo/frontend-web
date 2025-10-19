@@ -10,9 +10,9 @@ import { getTitle, getDescription, getCanonical } from "./utils/MetaUtil"
 
 // Preload Font
 import HeaderFont from './assets/fonts/KOTRAHOPE_subset_header.woff2';
-import FooterFont from './assets/fonts/Kalam-Regular_subset_footer.woff2';
-import MainFont from './assets/fonts/BMJUA_ttf.woff2';
-import FontAwesomeFont from './assets/fontawesome/fontawesome-webfont.woff2';
+// import FooterFont from './assets/fonts/Kalam-Regular_subset_footer.woff2';
+// import MainFont from './assets/fonts/BMJUA_ttf.woff2';
+// import FontAwesomeFont from './assets/fontawesome/fontawesome-webfont.woff2';
 
 // Eager Suspense
 import Header from './components/Core/Header';
@@ -171,9 +171,9 @@ function HelmetComponent() {
         <link rel="canonical" href={getCanonical(pathName)} />
 
         {preloadFont(HeaderFont, "high")}  {/* high : 레이아웃 최상단으로서 Layout Shift 최소화하기위함. */}
-        {preloadFont(FooterFont, "low")}  {/* low : 레이아웃 최하단이라 preload 중 로딩이 늦어도 무관함. */}
-        {preloadFont(MainFont, "high")}  {/* high : 용량이 크므로 로딩 완료시점을 앞당기기위함. */}
-        {preloadFont(FontAwesomeFont)}
+        {/* {preloadFont(FooterFont, "low")}  {/ low : 레이아웃 최하단이라 preload 중 로딩이 늦어도 무관함. /} */}
+        {/* {preloadFont(MainFont, "high")}  {/ high : 용량이 크므로 로딩 완료시점을 앞당기기위함. /} */}
+        {/* {preloadFont(FontAwesomeFont)} */}
       </Helmet>
   );
 }
