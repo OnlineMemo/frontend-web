@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import HelloWrapper from "../../components/Styled/HelloWrapper";
@@ -7,6 +7,7 @@ import { parseToken } from "../../utils/TokenUtil"
 import { showSuccessToast, showErrorToast } from "../../utils/ToastUtil"
 import { showConfirmAlert } from "../../utils/AlertUtil"
 import Apis from "../../apis/Api";
+import { debounce } from 'lodash';
 
 const MoreWrapper = styled(HelloWrapper)`
     .loginInput {
@@ -113,7 +114,7 @@ function LoginPage(props) {
             return;
         }
         if (loginFailModalOn === false) {
-            handleLoginClick(emailValue, pwValue);
+            debounceLoginClick(emailValue, pwValue);
         }
         else if (loginFailModalOn === true) {
             setLoginFailModalOn(false);
@@ -156,6 +157,12 @@ function LoginPage(props) {
                 })
         }
     }
+    const debounceLoginClick = useCallback(
+        debounce((emailValue, pwValue) => {
+            handleLoginClick(emailValue, pwValue);
+        }, 200),
+        [handleLoginClick]
+    );
 
     useEffect(() => {
         const storedAlertValue = sessionStorage.getItem("alert");
@@ -203,7 +210,7 @@ function LoginPage(props) {
                     &nbsp;&nbsp;&nbsp;
                     <Link to={'/signup'}>회원가입</Link>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button style={{ padding: "1px 6px 1px 6px", borderTop: "2px solid #767676", borderLeft: "2px solid #767676", borderBottom: "2px solid #212121", borderRight: "2px solid #212121" }} onClick={(event) => handleLoginClick(emailValue, pwValue)}>로그인</button>
+                    <button style={{ padding: "1px 6px 1px 6px", borderTop: "2px solid #767676", borderLeft: "2px solid #767676", borderBottom: "2px solid #212121", borderRight: "2px solid #212121" }} onClick={(event) => debounceLoginClick(emailValue, pwValue)}>로그인</button>
                 </div>
             </h2>
 
