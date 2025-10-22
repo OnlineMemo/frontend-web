@@ -646,7 +646,7 @@ function StatisticPage(props) {
     }, []);
 
     return (
-        <PageWrapper>
+        <PageWrapper role="main">
             <TitleContainer>
                 <h1>[ 온라인 메모장 - Back Office ]</h1>
                 <div id="userContainer">

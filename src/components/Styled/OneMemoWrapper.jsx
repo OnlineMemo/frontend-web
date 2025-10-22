@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-const OneMemoWrapper = styled.div`
+const OneMemoWrapper = styled.div.attrs({ role: "main" })`
     background-color: #bcb8b1;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;

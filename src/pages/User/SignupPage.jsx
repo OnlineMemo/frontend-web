@@ -150,16 +150,16 @@ function SignupPage(props) {
                 회원가입<br></br>
                 <hr></hr>
                 <div className="flex-container">
-                    &nbsp;&nbsp;이름:&nbsp;&nbsp;<input type="text" className={`inputInform ${isWrongName ? 'wrongName' : ''}`} style={{ width: "114px" }} placeholder=" 한글,영문,숫자 (2자 이상)" size="17" onChange={handleChangeName} />
+                    &nbsp;&nbsp;이름:&nbsp;&nbsp;<input type="text" className={`inputInform ${isWrongName ? 'wrongName' : ''}`} style={{ width: "114px" }} placeholder=" 한글,영문,숫자 (2자 이상)" size="17" onChange={handleChangeName} aria-label="이름" />
                 </div>
                 <div className="flex-container">
-                    &nbsp;&nbsp;id:&nbsp;&nbsp;<input type="text" className={`inputInform ${isWrongId ? 'wrongId' : ''}`} style={{ width: "132px" }} placeholder=" 영문,숫자 (4~16자)" maxLength="16" onChange={handleChangeEmail} />
+                    &nbsp;&nbsp;id:&nbsp;&nbsp;<input type="text" className={`inputInform ${isWrongId ? 'wrongId' : ''}`} style={{ width: "132px" }} placeholder=" 영문,숫자 (4~16자)" maxLength="16" onChange={handleChangeEmail} aria-label="아이디" />
                 </div>
                 <div className="flex-container">
-                    pw:&nbsp;&nbsp;<input type="password" className={`inputInform ${isWrongPw ? 'wrongPw' : ''}`} style={{ width: "133px" }} placeholder=" 영문,숫자,특수문자 (8자 이상)" onChange={handleChangePw} />
+                    pw:&nbsp;&nbsp;<input type="password" className={`inputInform ${isWrongPw ? 'wrongPw' : ''}`} style={{ width: "133px" }} placeholder=" 영문,숫자,특수문자 (8자 이상)" onChange={handleChangePw} aria-label="비밀번호" />
                 </div>
                 <div className="flex-container">
-                    pw 확인:&nbsp;&nbsp;<input type="password" className={`inputInform ${isWrongConfirm ? 'wrongConfirm' : ''}`} style={{ width: "93px" }} placeholder=" pw 재입력" size="14" onChange={handleChangeConfirm} />
+                    pw 확인:&nbsp;&nbsp;<input type="password" className={`inputInform ${isWrongConfirm ? 'wrongConfirm' : ''}`} style={{ width: "93px" }} placeholder=" pw 재입력" size="14" onChange={handleChangeConfirm} aria-label="비밀번호 확인" />
                 </div>
                 <div style={{ lineHeight: "40%" }}><br></br></div>
                 <div className="flex-container">

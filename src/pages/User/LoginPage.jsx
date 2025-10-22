@@ -193,10 +193,10 @@ function LoginPage(props) {
                 Login<br></br>
                 <hr></hr>
                 <div className="flex-container">
-                    &nbsp;&nbsp;id:&nbsp;&nbsp;<input type="text" className={`loginInput ${isWrongEmail ? 'wrongInput' : ''}`}  maxLength="16" onChange={handleChangeLoginId} onKeyDown={(event) => doClickEnter(event)} />
+                    &nbsp;&nbsp;id:&nbsp;&nbsp;<input type="text" className={`loginInput ${isWrongEmail ? 'wrongInput' : ''}`} maxLength="16" onChange={handleChangeLoginId} onKeyDown={(event) => doClickEnter(event)} aria-label="아이디" />
                 </div>
                 <div className="flex-container">
-                    pw:&nbsp;&nbsp;<span style={{ width: "0.3px" }}></span><input type="password" className={`loginInput ${isWrongPw ? 'wrongInput' : ''}`}  onChange={handleChangePw} onKeyDown={(event) => doClickEnter(event)} />
+                    pw:&nbsp;&nbsp;<span style={{ width: "0.3px" }}></span><input type="password" className={`loginInput ${isWrongPw ? 'wrongInput' : ''}`} onChange={handleChangePw} onKeyDown={(event) => doClickEnter(event)} aria-label="비밀번호" />
                 </div>
                 <div className="flex-container">
                     <Link to={'/password'}>pw 변경</Link>
