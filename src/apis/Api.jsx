@@ -1,10 +1,14 @@
 import axios from 'axios';
+import qs from 'qs';
 import { clearToken } from "../utils/TokenUtil"
 import { getFullDatetimeStr } from "../utils/TimeUtil"
 import { showErrorToast } from "../utils/ToastUtil"
 
 const Apis = axios.create({
     baseURL: process.env.REACT_APP_DB_HOST,
+    paramsSerializer: {
+        serialize: params => qs.stringify(params, { encode: true })
+    },
 });
 
 // API 요청시 헤더에 AccessToken 달아줌.

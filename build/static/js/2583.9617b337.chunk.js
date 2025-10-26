@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkonlinememo_react_project=self.webpackChunkonlinememo_react_project||[]).push([[2583],{72583:(e,c,n)=>{n.r(c);n(13829)}}]);

@@ -61,12 +61,18 @@ function MemoListPage(props) {
 
 
     const getMemos = async (e) => {  // 해당 사용자의 모든 메모 리스트 조회 (초기 메인 화면)
-        let queryParams = '';
-        if (filter !== null && search === null) queryParams = `?filter=${filter}`;
-        else if (filter === null && search !== null) queryParams = `?search=${search}`;
+        const queryParams = {};
+        if (filter !== null && search === null) {
+            queryParams.filter = filter;
+        }
+        else if (filter === null && search !== null) {
+            queryParams.search = search;
+        }
         
         await Apis
-            .get(`/memos` + queryParams)
+            .get(`/memos`, {  // `/memos?~`로 직접 이어붙이면, 특수문자 인코딩 누락으로 400 에러발생 가능.
+                params: queryParams
+            })
             .then((response) => {
                 setMemos(response.data.data);
                 setIsFirstGetMemos(true);
