@@ -284,7 +284,7 @@ function StatisticPage(props) {
     }
 
 
-    // ============ < Call API & Calculate > ============ //
+    // ============ < Call API > ============ //
 
     async function getUserStatistics() {
         await Apis
@@ -299,106 +299,12 @@ function StatisticPage(props) {
             })
     }
 
-    async function getGa4CalcData() {
+    async function getGa4Dashboard() {  // getGa4CalcData() + getGa4Statistics()
         const startDatetime = getRequestDatetimeStr(startDate, "00:00:00");
         const endDatetime = getRequestDatetimeStr(endDate, "23:59:59");
 
         await Apis
-            .get(`/back-office/ga4/calc-data`, {
-                params: {
-                    startDatetime: startDatetime,
-                    endDatetime: endDatetime
-                }
-            })
-            .then((response) => {
-                const data = response.data.data;  // 이미 날짜시각 오름차순으로 정렬되어옴.
-                const dateInfoMap = new Map();
-                const loginUserIdMap = new Map();
-                const userPseudoIdMap = new Map();
-                const pageViewCountMap = new Map();
-                const pseudoIdWithLoginMap = new Map();  // 로그인한 사용자들의 pseudoId (실사용자 수 집계 시, 활성 사용자 중복 제거용)
-                const pseudoIdWithNoLoginMap = new Map();  // 로그인하지 않은 사용자들의 pseudoId
-
-                data.forEach(item => {
-                    const eventDatetime = item.eventDatetime;  // ex) "2025-08-01T16:41:25.398"
-                    const key = eventDatetime.slice(0, 10);  // "2025-08-01"
-                    const [year, month, day] = key.split("-");
-
-                    if (!dateInfoMap.has(key)) {
-                        dateInfoMap.set(key, {
-                            year,
-                            month,
-                            day,
-                            yearSuffix: year.slice(2, 4),
-                        });
-                        loginUserIdMap.set(key, new Set());
-                        userPseudoIdMap.set(key, new Set());
-                        pageViewCountMap.set(key, 0);
-                        pseudoIdWithLoginMap.set(key, new Set());
-                        pseudoIdWithNoLoginMap.set(key, new Set());
-                    }
-                    
-                    const loginUserId = item.loginUserId;
-                    const userPseudoId = item.userPseudoId;
-                    if (loginUserId > 0) {
-                        loginUserIdMap.get(key).add(loginUserId);
-                        pseudoIdWithLoginMap.get(key).add(userPseudoId);
-                    }
-                    userPseudoIdMap.get(key).add(userPseudoId);
-                    pageViewCountMap.set(key, pageViewCountMap.get(key) + 1);
-                });
-
-                data.forEach(item => {
-                    const eventDatetime = item.eventDatetime;  // ex) "2025-08-01T16:41:25.398"
-                    const key = eventDatetime.slice(0, 10);  // "2025-08-01"
-
-                    const loginUserId = item.loginUserId;
-                    const userPseudoId = item.userPseudoId;
-                    if (loginUserId === 0 && !pseudoIdWithLoginMap.get(key).has(userPseudoId)) {
-                        pseudoIdWithNoLoginMap.get(key).add(userPseudoId);
-                    }
-                });
-
-                const calcReult = [];
-                for (const key of dateInfoMap.keys()) {
-                    const dateInfo = dateInfoMap.get(key);
-                    const loginUserCount = loginUserIdMap.get(key).size;
-                    const activeUserCount = userPseudoIdMap.get(key).size;
-                    const uniqueUserCount = pseudoIdWithNoLoginMap.get(key).size + loginUserCount;
-                    const pageViewCount = pageViewCountMap.get(key);
-
-                    calcReult.push({
-                        dateInfo,
-                        uniqueUserCount,
-                        loginUserCount,
-                        activeUserCount,
-                        pageViewCount,
-                    });
-                }
-
-                const columnKeys = [
-                    ['날짜', item => `${item.dateInfo.month}/${item.dateInfo.day}`],
-                    ['실사용자 수', item => item.uniqueUserCount],
-                    ['로그인 사용자 수', item => item.loginUserCount],
-                    ['활성 사용자 수', item => item.activeUserCount],
-                    ['조회수', item => item.pageViewCount],
-                ];
-                const columns = Object.fromEntries(
-                    columnKeys.map(([key, fn]) => [key, calcReult.map(fn)])
-                );
-                setGa4LineCols(columns);
-            })
-            .catch((error) => {
-                //console.log(error);
-            })
-    }
-
-    async function getGa4Statistics() {
-        const startDatetime = getRequestDatetimeStr(startDate, "00:00:00");
-        const endDatetime = getRequestDatetimeStr(endDate, "23:59:59");
-
-        await Apis
-            .get(`/back-office/ga4/statistics`, {
+          .get(`/back-office/ga4/dashboard`, {
                 params: {
                     startDatetime: startDatetime,
                     endDatetime: endDatetime
@@ -406,25 +312,54 @@ function StatisticPage(props) {
             })
             .then((response) => {
                 const data = response.data.data;
-                const columnKeys = [
-                    ['순위', (_, index) => index + 1],
-                    ['페이지 경로', item => item.pagePath],
-                    ['실사용자 수', item => item.uniqueUserCount],
-                    ['로그인 사용자 수', item => item.loginUserCount],
-                    ['활성 사용자 수', item => item.activeUserCount],
-                    ['조회수', item => item.pageViewCount],
-                    ['미인증 접근 차단', item => item.unauthBlockedCount],
-                ];
-                const columns = Object.fromEntries(
-                    columnKeys.map(([key, fn]) => [key, data.map(fn)])
-                );
-                setGa4GridCols(columns);
-                setGa4GridRender(prev => prev + 1);
+                const {calcResponseDtoList, statisticResponseDtoList} = data;  // {GA4 계산용 데이터, GA4 페이지별 이용자 통계}
+                processGa4CalcData(calcResponseDtoList);
+                processGa4Statistics(statisticResponseDtoList);
             })
             .catch((error) => {
                 //console.log(error);
             })
     }
+
+    // async function getGa4CalcData() {
+    //     const startDatetime = getRequestDatetimeStr(startDate, "00:00:00");
+    //     const endDatetime = getRequestDatetimeStr(endDate, "23:59:59");
+
+    //     await Apis
+    //         .get(`/back-office/ga4/calc-data`, {
+    //             params: {
+    //                 startDatetime: startDatetime,
+    //                 endDatetime: endDatetime
+    //             }
+    //         })
+    //         .then((response) => {
+    //             const data = response.data.data;  // 이미 날짜시각 오름차순으로 정렬되어옴.
+    //             processGa4CalcData(data);  // calcResponseDtoList
+    //         })
+    //         .catch((error) => {
+    //             //console.log(error);
+    //         })
+    // }
+
+    // async function getGa4Statistics() {
+    //     const startDatetime = getRequestDatetimeStr(startDate, "00:00:00");
+    //     const endDatetime = getRequestDatetimeStr(endDate, "23:59:59");
+
+    //     await Apis
+    //         .get(`/back-office/ga4/statistics`, {
+    //             params: {
+    //                 startDatetime: startDatetime,
+    //                 endDatetime: endDatetime
+    //             }
+    //         })
+    //         .then((response) => {
+    //             const data = response.data.data;
+    //             processGa4Statistics(data);  // statisticResponseDtoList
+    //         })
+    //         .catch((error) => {
+    //             //console.log(error);
+    //         })
+    // }
 
     useEffect(() => {
         getUserStatistics();
@@ -434,12 +369,111 @@ function StatisticPage(props) {
         if (startDate && endDate) {            
             if (ga4GridRender === 0 ||  // 첫 렌더링때는 API 반드시 호출하도록 함
                 (prevStartDate.getTime() !== startDate.getTime() || prevEndDate.getTime() !== endDate.getTime())) {
-                getGa4CalcData();
-                getGa4Statistics();
+                // getGa4CalcData();
+                // getGa4Statistics();
+                getGa4Dashboard();
                 setPrevDateRange([startDate, endDate]);
             }
         }
     }, [startDate, endDate]);
+
+
+    // ============ < Process Data > ============ //
+
+    const processGa4CalcData = (data) => {  // data = calcResponseDtoList
+        const dateInfoMap = new Map();
+        const loginUserIdMap = new Map();
+        const userPseudoIdMap = new Map();
+        const pageViewCountMap = new Map();
+        const pseudoIdWithLoginMap = new Map();  // 로그인한 사용자들의 pseudoId (실사용자 수 집계 시, 활성 사용자 중복 제거용)
+        const pseudoIdWithNoLoginMap = new Map();  // 로그인하지 않은 사용자들의 pseudoId
+
+        data.forEach(item => {
+            const eventDatetime = item.eventDatetime;  // ex) "2025-08-01T16:41:25.398"
+            const key = eventDatetime.slice(0, 10);  // "2025-08-01"
+            const [year, month, day] = key.split("-");
+
+            if (!dateInfoMap.has(key)) {
+                dateInfoMap.set(key, {
+                    year,
+                    month,
+                    day,
+                    yearSuffix: year.slice(2, 4),
+                });
+                loginUserIdMap.set(key, new Set());
+                userPseudoIdMap.set(key, new Set());
+                pageViewCountMap.set(key, 0);
+                pseudoIdWithLoginMap.set(key, new Set());
+                pseudoIdWithNoLoginMap.set(key, new Set());
+            }
+            
+            const loginUserId = item.loginUserId;
+            const userPseudoId = item.userPseudoId;
+            if (loginUserId > 0) {
+                loginUserIdMap.get(key).add(loginUserId);
+                pseudoIdWithLoginMap.get(key).add(userPseudoId);
+            }
+            userPseudoIdMap.get(key).add(userPseudoId);
+            pageViewCountMap.set(key, pageViewCountMap.get(key) + 1);
+        });
+
+        data.forEach(item => {
+            const eventDatetime = item.eventDatetime;  // ex) "2025-08-01T16:41:25.398"
+            const key = eventDatetime.slice(0, 10);  // "2025-08-01"
+
+            const loginUserId = item.loginUserId;
+            const userPseudoId = item.userPseudoId;
+            if (loginUserId === 0 && !pseudoIdWithLoginMap.get(key).has(userPseudoId)) {
+                pseudoIdWithNoLoginMap.get(key).add(userPseudoId);
+            }
+        });
+
+        const calcReult = [];
+        for (const key of dateInfoMap.keys()) {
+            const dateInfo = dateInfoMap.get(key);
+            const loginUserCount = loginUserIdMap.get(key).size;
+            const activeUserCount = userPseudoIdMap.get(key).size;
+            const uniqueUserCount = pseudoIdWithNoLoginMap.get(key).size + loginUserCount;
+            const pageViewCount = pageViewCountMap.get(key);
+
+            calcReult.push({
+                dateInfo,
+                uniqueUserCount,
+                loginUserCount,
+                activeUserCount,
+                pageViewCount,
+            });
+        }
+
+        const columnKeys = [
+            ['날짜', item => `${item.dateInfo.month}/${item.dateInfo.day}`],
+            ['실사용자 수', item => item.uniqueUserCount],
+            ['로그인 사용자 수', item => item.loginUserCount],
+            ['활성 사용자 수', item => item.activeUserCount],
+            ['조회수', item => item.pageViewCount],
+        ];
+        const columns = Object.fromEntries(
+            columnKeys.map(([key, fn]) => [key, calcReult.map(fn)])
+        );
+        setGa4LineCols(columns);
+    }
+
+    const processGa4Statistics = (data) => {  // data = statisticResponseDtoList
+        const columnKeys = [
+            ['순위', (_, index) => index + 1],
+            ['페이지 경로', item => item.pagePath],
+            ['실사용자 수', item => item.uniqueUserCount],
+            ['로그인 사용자 수', item => item.loginUserCount],
+            ['활성 사용자 수', item => item.activeUserCount],
+            ['조회수', item => item.pageViewCount],
+            ['미인증 접근 차단', item => item.unauthBlockedCount],
+        ];
+        const columns = Object.fromEntries(
+            columnKeys.map(([key, fn]) => [key, data.map(fn)])
+        );
+        setGa4GridCols(columns);
+        setGa4GridRender(prev => prev + 1);
+    }
 
 
     // ============ < Make Charts (Line Graph, Grid) > ============ //
