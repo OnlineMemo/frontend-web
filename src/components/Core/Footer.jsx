@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { getKSTDateFromLocal } from "../../utils/TimeUtil"
 
 const FooterContainer = styled.footer`
     color: #463f3a;
@@ -25,19 +26,21 @@ const FooterText = styled.span`
 `;
 
 function Footer(props) {
-  return (
+    const kstYear = getKSTDateFromLocal(new Date()).getFullYear();
+
+    return (
         <FooterContainer>
             <FooterText>
                 <br className="disablePreviewAndDrag" />
                 <br className="disablePreviewAndDrag" />
                 <strong>
-                    Copyright 2023-2025. SAHYUNJIN. all rights reserved.
+                    {`Copyright 2023-${kstYear}. SAHYUNJIN. all rights reserved.`}
                 </strong>
                 <br />
             </FooterText>
             {/* <FooterText>content</FooterText> */}
         </FooterContainer>
-  );
+    );
 }
 
 export default Footer;
