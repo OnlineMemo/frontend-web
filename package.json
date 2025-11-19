@@ -30,6 +30,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "prebuild": "node fix-sitemap.js",
     "build": "GENERATE_SOURCEMAP=false react-scripts build",
     "postbuild": "react-hydratable && node fix-head.js",
     "preview": "react-hydratable --preview",
