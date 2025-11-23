@@ -214,18 +214,111 @@ const CustomDatePicker = styled(DatePicker)`
     }
 `;
 
+const ShortcutContainer = styled.div`
+    position: absolute;
+    top: calc(6.35px + 22px + 3.6px);
+    right: calc(11px + 2.6px + 148px);
+    display: ${props => (props.shortcutOn ? "flex" : "none")};
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    width: 48px;
+    // height: calc(170.688px - 7.2px - 13px);
+    padding: 7.7px 2.5px 7.7px 4px;
+    background: #f0f0f0;
+    border: 1px solid #aeaeae;
+    border-radius: 0.3rem;
+    z-index: 999;
+
+    /* @media(max-width: 650px) {
+        top: calc(6.35px + 20.5px + 3.9px);
+        right: calc(11px + 35.5px);
+    } */
+
+    @media(max-width: 650px) {
+        top: calc(9.6px + 20.5px + 3.9px);
+        right: calc((11px + 2.6px + 148px) * 2 - 7px);
+
+        width: calc(48px * 2);
+        // height: calc((170.688px - 7.2px - 13px) * 2 - 13px);
+        padding: calc(7.7px * 2) calc(2.5px * 2) calc(7.7px * 2) calc(4px * 2);
+        border: calc(1px * 2) solid #aeaeae;
+    }
+`;
+
+const ShortcutScrollArea = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 4px;
+
+    padding-left: 3px;
+    padding-right: 4px;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+        width: 2.5px;
+        background-color: transparent;
+        border-radius: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: #bcb8b1;
+        border-radius: 4px;
+    }
+
+    @media(max-width: 650px) {
+        gap: calc(4px * 2);
+
+        padding-left: calc(3px * 2 + 2px);
+        padding-right: calc(4px * 2 + 2px);
+
+        &::-webkit-scrollbar {
+            width: calc(2.5px * 2);
+        }
+    }
+`;
+
+const ShortcutButton = styled.button`
+    width: 43.5px;
+    padding-top: 3.2px;
+    padding-bottom: 3.2px;
+    background-color: #463f3a;
+    border: 0.8px solid #858080;
+    border-radius: 0.3rem;
+
+    font-family: "jua";
+    font-size: 12px;
+    color: white;
+    cursor: pointer;
+
+    @media(max-width: 650px) {
+        width: calc(43.5px * 2);
+        padding-top: calc(3.2px * 2);
+        padding-bottom: calc(3.2px * 2);
+        border: calc(0.8px * 2 - 0.3px) solid #858080;
+    }
+
+    &:hover {
+        background-color: #886b62a1;
+    }
+`;
+
 
 function StatisticPage(props) {
     const [prevDateRange, setPrevDateRange] = useState([
         getKSTDate("2025-08-01", "00:00:00"),
-        getKSTDate("2025-08-31", "00:00:00"),
+        getKSTDate("2025-08-31", "00:00:00")
     ]);
     const [prevStartDate, prevEndDate] = prevDateRange;
     const [dateRange, setDateRange] = useState([
         getKSTDate("2025-08-01", "00:00:00"),
-        getKSTDate("2025-08-31", "00:00:00"),
+        getKSTDate("2025-08-31", "00:00:00")
     ]);
     const [startDate, endDate] = dateRange;
+    const [shortcutOn, setShortcutOn] = useState(false);
 
     const [signupUserCnt, setSignupUserCnt] = useState(0);  // User
     const [withdrawnUserCnt, setWithdrawnUserCnt] = useState(0);
@@ -256,6 +349,25 @@ function StatisticPage(props) {
         });
     };
 
+    const handleShortcutClick = (arrIdx) => {
+        const yearMonthStr = yearMonthArr[arrIdx];
+        const yearStr = `20${yearMonthStr.slice(0, 2)}`;
+        const monthStr = yearMonthStr.slice(3, 5);
+
+        let lastDay = null;
+        if (arrIdx !== yearMonthArr.length-1) {
+            lastDay = new Date(Number(yearStr), Number(monthStr), 0).getDate();
+        }
+        else {
+            lastDay = getMaxDate().getDate();
+        }
+
+        setDateRange([
+            getKSTDate(`${yearStr}-${monthStr}-01`, "00:00:00"),
+            getKSTDate(`${yearStr}-${monthStr}-${String(lastDay).padStart(2, "0")}`, "00:00:00")
+        ]);
+    }
+
     const getMaxDate = () => {
         const kstDate = getKSTDateFromLocal(new Date());  // 현재 시각
         const hour = kstDate.getHours();
@@ -282,6 +394,30 @@ function StatisticPage(props) {
         const printDateStr = `${startDateStr} ~ ${endDateStr}  📆`;  // 또는 🔻 사용할것.
         return printDateStr;
     }
+
+    const yearMonthArr = (() => {  // IIFE 함수로 변수화
+        const minDate = getKSTDate("2025-08-01", "00:00:00");  // loopDate
+        const maxDate = getMaxDate();
+        const arr = [];
+        while (minDate <= maxDate) {
+            const shortYearStr = String(minDate.getFullYear()).slice(-2);
+            const monthStr = String(minDate.getMonth() + 1).padStart(2, "0");
+            arr.push(`${shortYearStr}.${monthStr}`);
+            minDate.setMonth(minDate.getMonth() + 1);
+        }
+        return arr;
+    })();
+
+    const yearMonthButtons = (
+        <ShortcutScrollArea>
+            {yearMonthArr.map((item, index) => (
+                // !!! 주의 : onClick 사용 시 DatePicker가 먼저 닫혀 버튼 이벤트가 무효되므로, onMouseDown을 사용할것 !!!
+                <ShortcutButton key={index} onMouseDown={() => handleShortcutClick(index)}>
+                    {item}
+                </ShortcutButton>
+            ))}
+        </ShortcutScrollArea>
+    );
 
 
     // ============ < Call API > ============ //
@@ -635,6 +771,29 @@ function StatisticPage(props) {
 
     // ============ < View > ============ //
 
+    const updateLayoutMobile = () => {
+        const htmlTag = document.querySelector("html");
+        const bodyTag = document.querySelector("body");
+
+        if (window.innerWidth <= 650) {
+            if (htmlTag) htmlTag.style.overflowX = "hidden";
+            if (bodyTag) bodyTag.style.overflowX = "hidden";
+        }
+        else {
+            if (htmlTag) htmlTag.style.overflowX = "";
+            if (bodyTag) bodyTag.style.overflowX = "";
+        }
+    }
+
+    const updateShortcutMobile = () => {
+        const datepickerElement = document.querySelector(".react-datepicker");
+        const shortcutElement = document.getElementById("shortcutContainer");
+        if (!datepickerElement || !shortcutElement) return;
+
+        const minusHeight = (window.innerWidth <= 650) ? 46 : 24;
+        shortcutElement.style.height = `${datepickerElement.offsetHeight - minusHeight}px`;
+    }
+
     useEffect(() => {
         checkToken();
 
@@ -658,26 +817,31 @@ function StatisticPage(props) {
 
         // 모바일의 zoom 옵션 적용을 위함. (반응형 설정)
         // ==> !!! 추후 useMediaQuery 감지 방식으로 최적화 예정 !!!
-        const updateLayoutMobile = () => {
-            const htmlTag = document.querySelector("html");
-            const bodyTag = document.querySelector("body");
-
-            if (window.innerWidth <= 650) {
-                if (htmlTag) htmlTag.style.overflowX = "hidden";
-                if (bodyTag) bodyTag.style.overflowX = "hidden";
-            }
-            else {
-                if (htmlTag) htmlTag.style.overflowX = "";
-                if (bodyTag) bodyTag.style.overflowX = "";
-            }
-        }
         updateLayoutMobile();
 
         window.addEventListener('resize', updateLayoutMobile);
         return () => {
             window.removeEventListener('resize', updateLayoutMobile);
-        };
+        };        
     }, []);
+
+    // - 비활성화 : CustomDatePicker의 onCalendarOpen/Close 방식으로 전환함. -
+    // useEffect(() => {
+    //     const changeStatusShortcut = () => {
+    //         const datepickerElement = document.querySelector(".react-datepicker");
+    //         setShortcutOn(!!datepickerElement);
+    //     }
+
+    //     const observer = new MutationObserver(() => {
+    //         changeStatusShortcut();
+    //     });
+    //     observer.observe(document.body, { childList: true, subtree: true });
+    //     changeStatusShortcut();
+
+    //     return () => {
+    //         observer.disconnect();
+    //     }
+    // }, []);
 
     return (
         <PageWrapper role="main">
@@ -702,6 +866,9 @@ function StatisticPage(props) {
                         selectsRange
                         shouldCloseOnSelect={true}
                         onChange={(dateRange) => setDateRange(dateRange)}
+                        onCalendarOpen={() => {setShortcutOn(true); updateShortcutMobile();}}
+                        onMonthChange={updateShortcutMobile}
+                        onCalendarClose={() => setShortcutOn(false)}
                         minDate={getKSTDate("2025-08-01", "00:00:00")}  // "15:30:00"
                         maxDate={getMaxDate()}
                         startDate={startDate}
@@ -715,6 +882,9 @@ function StatisticPage(props) {
                         ]}
                     />
                 </DateContainer>
+                <ShortcutContainer id="shortcutContainer" className="react-datepicker-ignore-onclickoutside" shortcutOn={shortcutOn}>
+                    {yearMonthButtons}
+                </ShortcutContainer>
                 {lineOptions &&
                      <HighchartsReact highcharts={Highcharts} options={lineOptions} style={{ width: '100%', height: '100%' }} />
                 }
