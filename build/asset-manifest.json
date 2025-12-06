@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.js": "/static/js/main.8a6ffe60.js",
+    "main.js": "/static/js/main.248adc82.js",
     "static/css/5755.2ef97e20.chunk.css": "/static/css/5755.2ef97e20.chunk.css",
     "static/js/5755.977467d4.chunk.js": "/static/js/5755.977467d4.chunk.js",
     "static/css/6419.bbdadc91.chunk.css": "/static/css/6419.bbdadc91.chunk.css",
@@ -78,7 +78,7 @@
     "static/css/8297.f9d1fd26.chunk.css": "/static/css/8297.f9d1fd26.chunk.css",
     "static/js/8297.246eb045.chunk.js": "/static/js/8297.246eb045.chunk.js",
     "static/js/3829.2aab22cc.chunk.js": "/static/js/3829.2aab22cc.chunk.js",
-    "static/js/2272.6d125fb3.chunk.js": "/static/js/2272.6d125fb3.chunk.js",
+    "static/js/2272.bb29b77d.chunk.js": "/static/js/2272.bb29b77d.chunk.js",
     "static/media/KOTRAHOPE.ttf": "/static/media/KOTRAHOPE.a239803da24b52b850f9.ttf",
     "static/media/BMJUA_ttf.ttf": "/static/media/BMJUA_ttf.bf12d2d886260d73277b.ttf",
     "static/media/KOTRAHOPE.woff2": "/static/media/KOTRAHOPE.13e091dfbd431f1b69da.woff2",
@@ -104,6 +104,6 @@
     "index.html": "/index.html"
   },
   "entrypoints": [
-    "static/js/main.8a6ffe60.js"
+    "static/js/main.248adc82.js"
   ]
 }

@@ -822,7 +822,7 @@ function StatisticPage(props) {
         window.addEventListener('resize', updateLayoutMobile);
         return () => {
             window.removeEventListener('resize', updateLayoutMobile);
-        };        
+        };
     }, []);
 
     // - 비활성화 : CustomDatePicker의 onCalendarOpen/Close 방식으로 전환함. -
