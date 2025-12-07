@@ -3,6 +3,7 @@ import qs from 'qs';
 import { clearToken } from "../utils/TokenUtil"
 import { getFullDatetimeStr } from "../utils/TimeUtil"
 import { showErrorToast } from "../utils/ToastUtil"
+import { throttle } from 'lodash';
 
 // Backend to Frontend 만료 응답 컨벤션
 const tokenExpiredCode = "TOKEN_EXPIRED";
@@ -100,7 +101,7 @@ Apis.interceptors.response.use(
                     ? "요청이 너무 빠릅니다. 잠시 후 시도해주세요."  // DDoS 차단대기 알림 (RateLimit)
                     : "서버 오류입니다. 잠시 후 시도해주세요.";  // 단순 500 알림
                 setTimeout(() => {
-                    showErrorToast(toastMessage);
+                    throttleShowErrorToast(toastMessage);
                 }, 600);  // (대기시간: 중첩 방지 600 -> dismiss 보장 150 -> 기본 100)
             }
         }
@@ -150,5 +151,9 @@ function redirectTo404Page() {
         window.location.href = '/404';
     }
 }
+
+const throttleShowErrorToast = throttle((message) => {
+    showErrorToast(message);
+}, 1500, { leading: true, trailing: false });
 
 export default Apis;
