@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { checkToken, clearToken } from "../../utils/TokenUtil"
 import { getKSTDate, getKSTDateFromLocal } from "../../utils/TimeUtil"
@@ -308,6 +309,12 @@ const ShortcutButton = styled.button`
 
 
 function StatisticPage(props) {
+    const location = useLocation();
+    const [isExcludeDdos, setIsExcludeDdos] = useState(() => {  // ex) www.domain.kr?excludeDdos=true
+        const queryParams = new URLSearchParams(location.search);
+        return queryParams.get("excludeDdos") !== 'false';  // 기본값 true
+    });
+
     const [prevDateRange, setPrevDateRange] = useState([
         getKSTDate("2025-08-01", "00:00:00"),
         getKSTDate("2025-08-31", "00:00:00")
@@ -443,7 +450,8 @@ function StatisticPage(props) {
           .get(`/back-office/ga4/dashboard`, {
                 params: {
                     startDatetime: startDatetime,
-                    endDatetime: endDatetime
+                    endDatetime: endDatetime,
+                    excludeDdos: isExcludeDdos
                 }
             })
             .then((response) => {
@@ -465,7 +473,8 @@ function StatisticPage(props) {
     //         .get(`/back-office/ga4/calc-data`, {
     //             params: {
     //                 startDatetime: startDatetime,
-    //                 endDatetime: endDatetime
+    //                 endDatetime: endDatetime,
+    //                 excludeDdos: isExcludeDdos
     //             }
     //         })
     //         .then((response) => {
@@ -485,7 +494,8 @@ function StatisticPage(props) {
     //         .get(`/back-office/ga4/statistics`, {
     //             params: {
     //                 startDatetime: startDatetime,
-    //                 endDatetime: endDatetime
+    //                 endDatetime: endDatetime,
+    //                 excludeDdos: isExcludeDdos
     //             }
     //         })
     //         .then((response) => {
