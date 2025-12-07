@@ -32,6 +32,7 @@ Apis.interceptors.request.use(function (config) {
 });
 
 // Axios 인터셉터 설정 (응답)
+let reissueApiPromise = null;
 Apis.interceptors.response.use(
     function (response) {
         return response;  // 응답이 성공적일 경우 그대로 반환
@@ -45,21 +46,28 @@ Apis.interceptors.response.use(
         if (httpStatus === 401) {
             // - 토큰 만료인 경우
             if (httpCode === tokenExpiredCode && httpMessage === tokenExpiredMessage) {
-                const reissueRequestDto = {
-                    accessToken: localStorage.getItem("accessToken"),
-                    refreshToken: localStorage.getItem("refreshToken"),
-                };
-
                 try {
-                    const response = await axios.post(  // 토큰 재발급 요청
-                        `${process.env.REACT_APP_DB_HOST}/reissue`,
-                        reissueRequestDto
-                    );
-                    if (response) {
-                        localStorage.setItem("accessToken", response.data.data.accessToken);  // 새 토큰으로 교체
-                        localStorage.setItem("refreshToken", response.data.data.refreshToken);
-                        return await Apis.request(originalConfig);  // 기존 요청 재전송
+                    if (reissueApiPromise === null) {
+                        const reissueRequestDto = {
+                            accessToken: localStorage.getItem("accessToken"),
+                            refreshToken: localStorage.getItem("refreshToken"),
+                        };
+                        reissueApiPromise = axios.post(  // 토큰 재발급 요청 및 Promise 할당
+                            `${process.env.REACT_APP_DB_HOST}/reissue`,
+                            reissueRequestDto
+                        ).then(response => {
+                            if (response) {
+                                localStorage.setItem("accessToken", response.data.data.accessToken);  // 새 토큰으로 교체
+                                localStorage.setItem("refreshToken", response.data.data.refreshToken);
+                            }
+                            return response;
+                        }).finally(() => {
+                            reissueApiPromise = null;
+                        });
                     }
+
+                    await reissueApiPromise;  // 토큰 재발급 완료까지 대기 (페이지 내 reissue 중복호출 방지)
+                    return await Apis.request(originalConfig);  // await 종료 후 기존 요청 재전송
                 } catch (err) {
                     console.error(err);
 
