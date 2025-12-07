@@ -11,9 +11,9 @@ const Apis = axios.create({
     },
 });
 
-// API 요청시 헤더에 AccessToken 달아줌.
+// API 요청시 헤더에 AccessToken 장착
 Apis.interceptors.request.use(function (config) {
-    const isBlocked = blockUseService();  // 서비스 이용을 막음. (점검시간에 적용 예정.)
+    const isBlocked = blockUseService();  // 서비스 이용을 막음. (점검시간에 적용 예정)
     if (isBlocked) {
         return Promise.reject({ message: "maintenance" });
     }
@@ -22,51 +22,49 @@ Apis.interceptors.request.use(function (config) {
     if (storedAccessToken) {
         config.headers["Authorization"] = `Bearer ${storedAccessToken}`;
     }
-    return config; // 항상 config를 반환
+    return config;  // 항상 config를 반환
 });
 
 // AccessToken 만료됐을때 처리
 Apis.interceptors.response.use(
     function (response) {
-        return response; // 응답이 성공적일 경우 그대로 반환
+        return response;  // 응답이 성공적일 경우 그대로 반환
     },
 
     async function (err) {
         const originalConfig = err.config;
-        const reissueRequestDto = {
-            accessToken: localStorage.getItem("accessToken"),
-            refreshToken: localStorage.getItem("refreshToken"),
-        };
+        const { status: httpStatus, code: httpCode, message: httpMessage } = err.response?.data || {};  // err.response?.data?.필드명
 
-        // 토큰 만료 에러 처리
-        if (err.response?.data?.status === 401 &&
-            err.response.data.code === "TOKEN_EXPIRED" &&
-            err.response.data.message === "ERROR - JWT 토큰 만료 에러") {
+        // [ ERROR 401 ]
+        if (httpStatus === 401) {
+            // - 토큰 만료인 경우
+            if (httpCode === "TOKEN_EXPIRED" && httpMessage === "ERROR - JWT 토큰 만료 에러") {
+                const reissueRequestDto = {
+                    accessToken: localStorage.getItem("accessToken"),
+                    refreshToken: localStorage.getItem("refreshToken"),
+                };
+
                 try {
-                    const response = await axios.post(
+                    const response = await axios.post(  // 토큰 재발급 요청
                         `${process.env.REACT_APP_DB_HOST}/reissue`,
                         reissueRequestDto
                     );
-
                     if (response) {
-                        // 새 토큰을 로컬 스토리지에 저장
-                        localStorage.setItem("accessToken", response.data.data.accessToken);
+                        localStorage.setItem("accessToken", response.data.data.accessToken);  // 새 토큰으로 교체
                         localStorage.setItem("refreshToken", response.data.data.refreshToken);
-
-                        // 원래 요청 재전송
-                        return await Apis.request(originalConfig);
+                        return await Apis.request(originalConfig);  // 기존 요청 재전송
                     }
                 } catch (err) {
                     console.error(err);
 
-                    const { url, method, data } = originalConfig;
-                    const isMemoSave = (url === '/memos') && (method?.toLowerCase() === 'post');
-                    const isMemoUpdate = /^\/memos\/\d+$/.test(url) && (method?.toLowerCase() === 'put')
-                    const isMemoAITitle = (url === '/memos/ai/title') && (method?.toLowerCase() === 'post');
+                    const isMemoSave = checkURI(originalConfig, '/memos', 'post');
+                    const isMemoUpdate = checkURI(originalConfig, /^\/memos\/\d+$/, 'put');
+                    const isMemoAITitle = checkURI(originalConfig, '/memos/ai/title', 'post');
                     if (isMemoSave || isMemoUpdate || isMemoAITitle) {
                         try {
-                            const parsedData = data && (typeof data === 'string' ? JSON.parse(data) : data);
-                            const memoContent = parsedData?.content;
+                            const prevRequestDto = originalConfig.data;
+                            const parsedDto = prevRequestDto && (typeof prevRequestDto === 'string' ? JSON.parse(prevRequestDto) : prevRequestDto);
+                            const memoContent = parsedDto?.content;
                             memoContent && sessionStorage.setItem("memoContent", memoContent);  // 메모 내용 임시저장
                         } catch (parseErr) {
                             // console.error(parseErr);
@@ -77,31 +75,36 @@ Apis.interceptors.response.use(
                     clearToken();
                     redirectToLogin(); // 토큰 재발급 실패 시 로그인 화면으로 이동
                 }
-            return Promise.reject(err);
+                return Promise.reject(err);
+            }
+            // - 기타 401 경우
+            else {
+                clearToken();
+                redirectToLogin(); // 로그인 화면으로 이동
+            }
         }
-        // 기타 401 에러 처리
-        else if (err.response?.data?.status === 401) {
-            clearToken();
-            redirectToLogin(); // 로그인 화면으로 이동
-        }
-        else if (err.response?.data?.status === 404) {
+        // [ ERROR 404 ]
+        else if (httpStatus === 404) {
             redirectTo404Page(); // 404 Not Found 페이지로 이동
         }
-        else if (err.response?.data?.status === 500) {
-            const { url, method } = originalConfig;
-            const isMemoAITitle = (url === '/memos/ai/title') && (method?.toLowerCase() === 'post');
+        // [ ERROR 429,500 ]
+        else if (httpStatus === 429 || httpStatus === 500) {
+            const isMemoAITitle = checkURI(originalConfig, '/memos/ai/title', 'post');
             if (isMemoAITitle === false) {
+                const toastMessage = (httpStatus === 429)
+                    ? "요청이 너무 빠릅니다. 잠시 후 시도해주세요."  // DDoS 차단대기 알림
+                    : "서버 오류입니다. 잠시 후 시도해주세요.";  // 단순 500 알림
                 setTimeout(() => {
-                    showErrorToast("서버 오류입니다. 잠시 후 시도해주세요.");
+                    showErrorToast(toastMessage);
                 }, 600);  // (대기시간: 중첩 방지 600 -> dismiss 보장 150 -> 기본 100)
             }
         }
 
-        return Promise.reject(err); // 그 외의 에러는 그대로 반환
+        return Promise.reject(err);  // 부모 호출부 catch문으로 전파
     }
 );
 
-function blockUseService() {  // 서비스 이용을 막음. (점검시간에 적용 예정.)
+function blockUseService() {  // 서비스 이용을 막음. (점검시간에 적용 예정)
     const startDateTime = "2025-10-16 00:00";
     const endDateTime = "2025-10-16 06:00";
 
@@ -118,6 +121,15 @@ function blockUseService() {  // 서비스 이용을 막음. (점검시간에 �
         }
     }
     return false;  // axios 요청 허용
+}
+
+function checkURI(originalConfig, targetUrl, targetMethod) {
+    const { url, method } = originalConfig;
+    const isUrlMatched = (targetUrl instanceof RegExp)
+        ? targetUrl.test(url)  // regex 자료형인 경우
+        : url === targetUrl;  // string 자료형인 경우
+    const isMethodMatched = (method?.toLowerCase() === targetMethod);
+    return (isUrlMatched) && (isMethodMatched);
 }
 
 function redirectToLogin() {
