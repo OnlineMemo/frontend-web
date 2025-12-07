@@ -4,6 +4,11 @@ import { clearToken } from "../utils/TokenUtil"
 import { getFullDatetimeStr } from "../utils/TimeUtil"
 import { showErrorToast } from "../utils/ToastUtil"
 
+// Backend to Frontend 만료 응답 컨벤션
+const tokenExpiredCode = "TOKEN_EXPIRED";
+const tokenExpiredMessage = "ERROR - JWT 토큰 만료 에러";
+
+// Axios 기본 설정
 const Apis = axios.create({
     baseURL: process.env.REACT_APP_DB_HOST,
     paramsSerializer: {
@@ -11,7 +16,7 @@ const Apis = axios.create({
     },
 });
 
-// API 요청시 헤더에 AccessToken 장착
+// Axios 인터셉터 설정 (요청)
 Apis.interceptors.request.use(function (config) {
     const isBlocked = blockUseService();  // 서비스 이용을 막음. (점검시간에 적용 예정)
     if (isBlocked) {
@@ -20,12 +25,12 @@ Apis.interceptors.request.use(function (config) {
 
     const storedAccessToken = localStorage.getItem("accessToken");
     if (storedAccessToken) {
-        config.headers["Authorization"] = `Bearer ${storedAccessToken}`;
+        config.headers["Authorization"] = `Bearer ${storedAccessToken}`;  // API 요청 시 헤더에 AccessToken 장착
     }
     return config;  // 항상 config를 반환
 });
 
-// AccessToken 만료됐을때 처리
+// Axios 인터셉터 설정 (응답)
 Apis.interceptors.response.use(
     function (response) {
         return response;  // 응답이 성공적일 경우 그대로 반환
@@ -38,7 +43,7 @@ Apis.interceptors.response.use(
         // [ ERROR 401 ]
         if (httpStatus === 401) {
             // - 토큰 만료인 경우
-            if (httpCode === "TOKEN_EXPIRED" && httpMessage === "ERROR - JWT 토큰 만료 에러") {
+            if (httpCode === tokenExpiredCode && httpMessage === tokenExpiredMessage) {
                 const reissueRequestDto = {
                     accessToken: localStorage.getItem("accessToken"),
                     refreshToken: localStorage.getItem("refreshToken"),
@@ -92,7 +97,7 @@ Apis.interceptors.response.use(
             const isMemoAITitle = checkURI(originalConfig, '/memos/ai/title', 'post');
             if (isMemoAITitle === false) {
                 const toastMessage = (httpStatus === 429)
-                    ? "요청이 너무 빠릅니다. 잠시 후 시도해주세요."  // DDoS 차단대기 알림
+                    ? "요청이 너무 빠릅니다. 잠시 후 시도해주세요."  // DDoS 차단대기 알림 (RateLimit)
                     : "서버 오류입니다. 잠시 후 시도해주세요.";  // 단순 500 알림
                 setTimeout(() => {
                     showErrorToast(toastMessage);
@@ -141,7 +146,7 @@ function redirectToLogin() {
 
 function redirectTo404Page() {
     const pathname = window.location.pathname;
-    if (pathname !== '/friends' && pathname !== '/senders') {  // 친구 미발견 시, 리다이렉트 대신 모달로 알림.
+    if (pathname !== '/friends' && pathname !== '/senders') {  // 친구 미발견 시, 리다이렉트 대신 모달로 알림
         window.location.href = '/404';
     }
 }
