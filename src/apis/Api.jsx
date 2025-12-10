@@ -41,6 +41,7 @@ Apis.interceptors.response.use(
     async function (err) {
         const originalConfig = err.config;
         const { status: httpStatus, code: httpCode, message: httpMessage } = err.response?.data || {};  // err.response?.data?.필드명
+        const networkStatus = err.response?.status;  // httpStatus: 백엔드 응답 상태코드, networkStatus: 실제 HTTP 상태코드
 
         // [ ERROR 401 ]
         if (httpStatus === 401) {
@@ -101,13 +102,13 @@ Apis.interceptors.response.use(
         else if (httpStatus === 404) {
             redirectTo404Page(); // 404 Not Found 페이지로 이동
         }
-        // [ ERROR 429,500 ]
-        else if (httpStatus === 429 || httpStatus === 500) {
+        // [ ERROR 500(Backend), 429(Cloudflare) ]
+        else if (httpStatus === 500 || networkStatus === 429) {
             const isMemoAITitle = checkURI(originalConfig, '/memos/ai/title', 'post');
             if (isMemoAITitle === false) {
-                const toastMessage = (httpStatus === 429)
-                    ? "요청이 너무 빠릅니다. 잠시 후 시도해주세요."  // DDoS 차단대기 알림 (RateLimit)
-                    : "서버 오류입니다. 잠시 후 시도해주세요.";  // 단순 500 알림
+                const toastMessage = (httpStatus === 500)
+                    ? "서버 오류입니다. 잠시 후 시도해주세요."  // 백엔드 500 알림
+                    : "요청이 너무 빠릅니다. 잠시 후 시도해주세요.";  // DDoS 차단대기 알림 (RateLimit)
                 setTimeout(() => {
                     throttleShowErrorToast(toastMessage);
                 }, 600);  // (대기시간: 중첩 방지 600 -> dismiss 보장 150 -> 기본 100)
