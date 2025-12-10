@@ -103,6 +103,8 @@ Apis.interceptors.response.use(
             redirectTo404Page(); // 404 Not Found 페이지로 이동
         }
         // [ ERROR 500(Backend), 429(Cloudflare) ]
+        // !!! preflight OPTIONS는 브라우저가 직접 요청하므로, 해당 응답은 인터셉터에서 감지 불가능.
+        //     따라서 본 429 알림은, 추후 WAF 또는 유료 Cloudflare로 응답 커스텀 시 자동 적용될 예정. !!!
         else if (httpStatus === 500 || networkStatus === 429) {
             const isMemoAITitle = checkURI(originalConfig, '/memos/ai/title', 'post');
             if (isMemoAITitle === false) {
