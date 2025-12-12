@@ -696,6 +696,10 @@ function StatisticPage(props) {
                 line: {
                     dataLabels: {
                         enabled: true,
+                        allowOverlap: true,  // 그래프 숫자 레이어링 가능
+                        style: {
+                            fontSize: '7.6px',
+                        }
                     },
                     enableMouseTracking: false,
                     lineWidth: 2.5,
@@ -724,7 +728,7 @@ function StatisticPage(props) {
                     name: "조회수",
                     data: ga4LineCols["조회수"],
                     yAxis: 1,
-                    color: "#1a75ff",
+                    color: "#1A75FF",
                 },
             ],
         };
