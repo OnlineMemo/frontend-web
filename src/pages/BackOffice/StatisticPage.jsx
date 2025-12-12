@@ -316,13 +316,39 @@ function StatisticPage(props) {
     });
 
     const [prevDateRange, setPrevDateRange] = useState([
-        getKSTDate("2025-08-01", "00:00:00"),
-        getKSTDate("2025-08-31", "00:00:00")
+        // 변경 전 : getKSTDate("2025-08-01", "00:00:00"),
+        (() => {  // IIFE 함수로 변수화
+            const initDate = getKSTDate("2025-08-01", "00:00:00");
+            const maxDate = getMaxDate();
+            maxDate.setDate(maxDate.getDate() - 30);  // 현재날짜 포함한 총 31일치
+            maxDate.setHours(0,0,0,0);
+            return initDate > maxDate ? initDate : maxDate;
+        })(),
+        // 변경 전 : getKSTDate("2025-08-31", "00:00:00")
+        (() => {  // IIFE 함수로 변수화
+            const initDate = getKSTDate("2025-08-31", "00:00:00");
+            const maxDate = getMaxDate();
+            maxDate.setHours(0,0,0,0);
+            return initDate > maxDate ? initDate : maxDate;
+        })()
     ]);
     const [prevStartDate, prevEndDate] = prevDateRange;
     const [dateRange, setDateRange] = useState([
-        getKSTDate("2025-08-01", "00:00:00"),
-        getKSTDate("2025-08-31", "00:00:00")
+        // 변경 전 : getKSTDate("2025-08-01", "00:00:00"),
+        (() => {  // IIFE 함수로 변수화
+            const initDate = getKSTDate("2025-08-01", "00:00:00");
+            const maxDate = getMaxDate();
+            maxDate.setDate(maxDate.getDate() - 30);  // 현재날짜 포함한 총 31일치
+            maxDate.setHours(0,0,0,0);
+            return initDate > maxDate ? initDate : maxDate;
+        })(),
+        // 변경 전 : getKSTDate("2025-08-31", "00:00:00")
+        (() => {  // IIFE 함수로 변수화
+            const initDate = getKSTDate("2025-08-31", "00:00:00");
+            const maxDate = getMaxDate();
+            maxDate.setHours(0,0,0,0);
+            return initDate > maxDate ? initDate : maxDate;
+        })()
     ]);
     const [startDate, endDate] = dateRange;
     const [shortcutOn, setShortcutOn] = useState(false);
@@ -375,7 +401,7 @@ function StatisticPage(props) {
         ]);
     }
 
-    const getMaxDate = () => {
+    function getMaxDate() {
         const kstDate = getKSTDateFromLocal(new Date());  // 현재 시각
         const hour = kstDate.getHours();
         const minute = kstDate.getMinutes();
