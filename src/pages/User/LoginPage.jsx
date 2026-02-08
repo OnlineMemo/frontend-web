@@ -18,6 +18,81 @@ const MoreWrapper = styled(HelloWrapper)`
         border: 3.3px solid #dd2b2b;
         border-radius: 3px;
     }
+
+    & > h2 {
+        @media(min-height: 648.2px) {
+            margin-top: calc(50vh - 277.249px - 30px - 19px);
+        }
+    }
+`;
+
+const SocialProof = styled.div`
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+    animation: fadeInUp 0.6s ease-out;
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 0.6;
+            transform: scale(0.85);
+        }
+    }
+`;
+
+const ProofBadge = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    font-size: 14px;
+    color: #333;
+    backdrop-filter: blur(4px);
+
+    .dot {
+        width: 8px;
+        height: 8px;
+        background: #4CAF50;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+
+    .number {
+        font-size: 16px;
+        font-weight: 800;
+        color: #1a73e8;
+    }
+
+    @media(max-width: 530px) {
+        padding: 5px 12px;
+        font-size: 13px;
+
+        .number {
+            font-size: 15px;
+        }
+    }
 `;
 
 const DivWrapper = styled.div`
@@ -30,7 +105,7 @@ const DivWrapper = styled.div`
 
     @media(max-width: 370px) {
         width: 320px;
-    }    
+    }
     @media(min-width: 371px) and (max-width: 530px) {
         width: 346px;
     }
@@ -66,6 +141,9 @@ function LoginPage(props) {
     const [pwValue, setPwValue] = useState("");
     const [isWrongEmail, setIsWrongEmail] = useState(false);
     const [isWrongPw, setIsWrongPw] = useState(false);
+
+    const signupUserCount = 1800;
+    const activeUserCount = 530;
 
     const handleConfirmAlert = (title, message, storedMemoContent = null) => {
         const buttons = [];
@@ -195,6 +273,17 @@ function LoginPage(props) {
     return (
         <MoreWrapper>
             <h2>나만의 메모 보관함으로 접속&nbsp;&nbsp;<i className="fa fa-mouse-pointer" aria-hidden="true"></i></h2>
+            <SocialProof>
+                <ProofBadge>
+                    {/* 👥 */}
+                    <span className="dot" />
+                    <span><span className="number">{signupUserCount.toLocaleString()}+</span> 명이 가입</span>
+                </ProofBadge>
+                <ProofBadge>
+                    🔥
+                    <span>월 <span className="number">{activeUserCount.toLocaleString()}+</span> 명이 사용</span>
+                </ProofBadge>
+            </SocialProof>
             <h2 style={{ paddingLeft: "18px", paddingRight: "18px" }}>
                 <i className="fa fa-user-circle" aria-hidden="true"></i><br></br>
                 Login<br></br>
