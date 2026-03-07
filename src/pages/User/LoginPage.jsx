@@ -142,8 +142,8 @@ function LoginPage(props) {
     const [isWrongEmail, setIsWrongEmail] = useState(false);
     const [isWrongPw, setIsWrongPw] = useState(false);
 
-    const signupUserCount = 1800;
-    const activeUserCount = 540;
+    const signupUserCount = 2000;
+    const activeUserCount = 580;
 
     const handleConfirmAlert = (title, message, storedMemoContent = null) => {
         const buttons = [];
