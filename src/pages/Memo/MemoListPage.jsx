@@ -6,7 +6,7 @@ import BasicWrapper from "../../components/Styled/BasicWrapper";
 import SortMemo from "../../components/UI/SortMemo";
 import SearchMemo from "../../components/UI/SearchMemo";
 import MemoList from "../../components/List/MemoList";
-import { checkToken } from "../../utils/TokenUtil";
+import { checkToken, parseToken } from "../../utils/TokenUtil";
 import Apis from "../../apis/Api";
 import { showWarnToast } from "../../utils/ToastUtil";
 import YesLoginNav from "../../components/Navigation/YesLoginNav";
@@ -27,13 +27,16 @@ const DivWrapper = styled.div`
 function MemoListPage(props) {
     const location = useLocation();
 
+    const userId = parseToken().decodedId;
     const isMemosMounted = useRef(false);  // 상태값 즉시반영
     const [isFirstGetMemos, setIsFirstGetMemos] = useState(false);
     const [memos, setMemos] = useState([]);
     const [allFriends, setAllFriends] = useState([]);
     const [pinnedMemoIds, setPinnedMemoIds] = useState(() => {
         try {
-            return JSON.parse(localStorage.getItem('pinnedMemoIds')) || [];
+            const allPinnedInfo = JSON.parse(localStorage.getItem('pinnedMemoIds')) || {};
+            const myPinnedMemoIds = allPinnedInfo[userId] || [];
+            return myPinnedMemoIds;
         } catch {
             return [];
         }
@@ -59,7 +62,13 @@ function MemoListPage(props) {
             const next = prev.includes(memoId)
                 ? prev.filter(id => id !== memoId)
                 : [...prev, memoId];
-            localStorage.setItem('pinnedMemoIds', JSON.stringify(next));
+            try {
+                const allPinnedInfo = JSON.parse(localStorage.getItem('pinnedMemoIds')) || {};
+                allPinnedInfo[userId] = next;
+                localStorage.setItem('pinnedMemoIds', JSON.stringify(allPinnedInfo));
+            } catch {
+                localStorage.setItem('pinnedMemoIds', JSON.stringify({ [userId]: next }));
+            }
             return next;
         });
     };
