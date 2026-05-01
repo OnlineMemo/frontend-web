@@ -26,13 +26,13 @@ const MemoItemsWrapper = styled.div`
     align-items: center;
     justify-content: space-between;
 
-    background: #FEF5C6;
+    background: ${({ $isPinMemo }) => $isPinMemo ? '#fae0a2' : '#fef5c6'};
     border-bottom: 2.2px solid #463f3a;
     box-shadow: 0px 0.7px;
     border-radius: 9px;
     cursor: pointer;
     :hover {
-        background: #faeb9e;
+        background: ${({ $isPinMemo }) => $isPinMemo ? '#f5d68c' : '#faeb9e'};
     }
 
     .fa-users {
@@ -54,6 +54,11 @@ const MemoItemsWrapper = styled.div`
         :hover {
             cursor: grab;
         }
+    }
+    .fa-thumb-tack {
+        font-size: 1.52rem;
+        color: #b8312a;
+        transform: rotate(45deg);
     }
     .fa-ellipsis-v {
         font-size: 1.7rem;
@@ -148,13 +153,18 @@ function MemoList(props) {
             {sortedMemos && sortedMemos.map((memo) => {
                 const isPinMemo = pinnedMemoIds.includes(memo.memoId);
                 return (
-                    <MemoItemsWrapper key={memo.memoId}>
+                    <MemoItemsWrapper key={memo.memoId} $isPinMemo={isPinMemo}>
                         <IsStarButton style={{ flexGrow: "4" }} memoId={memo.memoId} isStar={memo.isStar} memoHasUsersCount={memo.memoHasUsersCount} />
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <Link style={{ textDecoration: "none", flexGrow: "8" }} to={`/memos/${memo.memoId}`} onClick={storeFilterSearchScroll} >
                             <MemoListItem title={memo.title} modifiedTime={memo.modifiedTime} userResponseDtoList={memo.userResponseDtoList} memoHasUsersCount={memo.memoHasUsersCount} />
                         </Link>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        {isPinMemo &&
+                            <>
+                                <i className="fa fa-thumb-tack" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
+                            </>
+                        }
                         <MemoOptionButton style={{ flexGrow: "4" }} memoId={memo.memoId} userResponseDtoList={memo.userResponseDtoList} memoHasUsersCount={memo.memoHasUsersCount} allFriends={allFriends} getMemos={getMemos} isPinMemo={isPinMemo} togglePinMemo={togglePinMemo} />
                     </MemoItemsWrapper>
                 );
