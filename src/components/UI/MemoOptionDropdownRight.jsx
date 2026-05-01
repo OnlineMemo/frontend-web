@@ -100,7 +100,7 @@ const FriendsWrapper = styled.div`
 function MemoOptionDropdownRight(props) {
     const navigate = useNavigate();
 
-    const { dropMain, dropItems, memoId, userResponseDtoList, allFriends, getMemos } = props;
+    const { dropMain, dropItems, memoId, userResponseDtoList, allFriends, getMemos, togglePinMemo } = props;
 
     const [ddIsOpen, ddRef, ddHandler] = useDetectDropdown(false);  // props를 받아오는게 아닌 훅 종류를 사용하였으므로, {}가 아닌, []로 받아야한다.
     // useDetectDropdown(initialValue)의 initialValue를 false로 넣어주었다. 그러므로, IsOpen이 false가 되어 ddIsOpen도 false가 된다.
@@ -170,9 +170,11 @@ function MemoOptionDropdownRight(props) {
                         {dropItems.map((drop, index) => {
                             return (
                                 <li id="dropLi" key={index}>
-                                    {index == 0  // 친구초대 부분의 인덱스번호
-                                        ? <Link style={{ textDecoration: "none" }} onClick={() => setInviteModalOn(!inviteModalOn)}>{drop.name}</Link> // 친구초대 클릭하면
-                                        : <Link style={{ textDecoration: "none" }} onClick={(event) => handleFirstModalClick(`${drop.name}`, event)}>{drop.name}</Link>  // 메모삭제 클릭하면
+                                    {index === 0  // 친구초대 부분의 인덱스번호
+                                        ? <Link style={{ textDecoration: "none" }} onClick={() => setInviteModalOn(!inviteModalOn)}>{drop.name}</Link>  // 친구초대 클릭하면
+                                        : index === 1  // 상단고정 부분의 인덱스번호
+                                            ? <Link style={{ textDecoration: "none" }} onClick={() => togglePinMemo(memoId)}>{drop.name}</Link>  // 상단고정 클릭하면
+                                            : <Link style={{ textDecoration: "none" }} onClick={(event) => handleFirstModalClick(`${drop.name}`, event)}>{drop.name}</Link>  // 메모삭제 클릭하면
                                     }
                                 </li>
                             );

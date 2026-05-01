@@ -91,7 +91,15 @@ const filterNames = {
 };
 
 function MemoList(props) {
-    const { filter, search, memos, allFriends, getMemos, isFirstGetMemos } = props;
+    const { filter, search, memos, allFriends, getMemos, isFirstGetMemos, pinnedMemoIds, togglePinMemo } = props;
+
+    const sortedMemos = [...memos].sort((a, b) => {
+        const aPinned = pinnedMemoIds.includes(a.memoId);
+        const bPinned = pinnedMemoIds.includes(b.memoId);
+        if (aPinned && !bPinned) return -1;
+        if (!aPinned && bPinned) return 1;
+        return 0;
+    });
 
     const getFilterName = () => {
         return filterNames[filter] ?? "전체 메모";  // 후자는 에러의 경우이나, 사용자에게 별도로 알리지 않기 위함.
@@ -137,16 +145,17 @@ function MemoList(props) {
                 </div>
             }
 
-            {memos && memos.map((memo) => {
+            {sortedMemos && sortedMemos.map((memo) => {
+                const isPinMemo = pinnedMemoIds.includes(memo.memoId);
                 return (
                     <MemoItemsWrapper key={memo.memoId}>
                         <IsStarButton style={{ flexGrow: "4" }} memoId={memo.memoId} isStar={memo.isStar} memoHasUsersCount={memo.memoHasUsersCount} />
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <Link style={{ textDecoration: "none", flexGrow: "8" }} to={`/memos/${memo.memoId}`} onClick={storeFilterSearchScroll} >
-                            <MemoListItem title={memo.title} modifiedTime={memo.modifiedTime} userResponseDtoList={memo.userResponseDtoList} memoHasUsersCount={memo.memoHasUsersCount} /> 
+                            <MemoListItem title={memo.title} modifiedTime={memo.modifiedTime} userResponseDtoList={memo.userResponseDtoList} memoHasUsersCount={memo.memoHasUsersCount} />
                         </Link>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <MemoOptionButton style={{ flexGrow: "4" }} memoId={memo.memoId} userResponseDtoList={memo.userResponseDtoList} memoHasUsersCount={memo.memoHasUsersCount} allFriends={allFriends} getMemos={getMemos} />
+                        <MemoOptionButton style={{ flexGrow: "4" }} memoId={memo.memoId} userResponseDtoList={memo.userResponseDtoList} memoHasUsersCount={memo.memoHasUsersCount} allFriends={allFriends} getMemos={getMemos} isPinMemo={isPinMemo} togglePinMemo={togglePinMemo} />
                     </MemoItemsWrapper>
                 );
             })}

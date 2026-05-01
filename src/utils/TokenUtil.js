@@ -39,22 +39,25 @@ const parseToken = (accessToken, refreshToken) => {
 
 const excludeLocalStorageKeys = new Set(['isTest', 'noticeProgressState', 'noticeCompleteState', 'maxAIUsageDate']);
 const excludeSessionStorageKeys = new Set(['alert', 'memoContent']);
+const protectedLocalStorageKeys = new Set(['pinnedMemoIds']);
+const protectedSessionStorageKeys = new Set([]);
 const clearToken = (isAllclear = false) => {
-    if (isAllclear === false) {
-        for (const key of Object.keys(localStorage)) {
-            if (!excludeLocalStorageKeys.has(key)) {
-                localStorage.removeItem(key);
-            }
-        }
-        for (const key of Object.keys(sessionStorage)) {
-            if (!excludeSessionStorageKeys.has(key)) {
-                sessionStorage.removeItem(key);
-            }
+    const localKeepKeys = (isAllclear === false)
+        ? excludeLocalStorageKeys.union(protectedLocalStorageKeys)
+        : protectedLocalStorageKeys;
+    const sessionKeepKeys = (isAllclear === false)
+        ? excludeSessionStorageKeys.union(protectedSessionStorageKeys)
+        : protectedSessionStorageKeys;
+
+    for (const key of Object.keys(localStorage)) {
+        if (!localKeepKeys.has(key)) {
+            localStorage.removeItem(key);
         }
     }
-    else {
-        localStorage.clear();
-        sessionStorage.clear();
+    for (const key of Object.keys(sessionStorage)) {
+        if (!sessionKeepKeys.has(key)) {
+            sessionStorage.removeItem(key);
+        }
     }
 }
 

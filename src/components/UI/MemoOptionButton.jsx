@@ -30,11 +30,14 @@ const MemoOptionWrapper = styled.div`
 `;
 
 function MemoOptionButton(props) {
-    const { memoId, userResponseDtoList, memoHasUsersCount, allFriends, getMemos } = props;
+    const { memoId, userResponseDtoList, memoHasUsersCount, allFriends, getMemos, isPinMemo, togglePinMemo } = props;
 
     const dropItemsGroupOption = [
         {
             name: "친구 초대",
+        },
+        {
+            name: isPinMemo ? "고정 해제" : "상단 고정",
         },
         {
             name: "그룹 탈퇴",
@@ -44,6 +47,9 @@ function MemoOptionButton(props) {
     const dropItemsPrivateOption = [
         {
             name: "친구 초대",
+        },
+        {
+            name: isPinMemo ? "고정 해제" : "상단 고정",
         },
         {
             name: "메모 삭제",
@@ -68,6 +74,7 @@ function MemoOptionButton(props) {
                 userResponseDtoList={userResponseDtoList}
                 allFriends={allFriends}
                 getMemos={getMemos}
+                togglePinMemo={togglePinMemo}
             />
         </MemoOptionWrapper>
     );

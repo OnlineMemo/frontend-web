@@ -8,6 +8,7 @@ import SearchMemo from "../../components/UI/SearchMemo";
 import MemoList from "../../components/List/MemoList";
 import { checkToken } from "../../utils/TokenUtil";
 import Apis from "../../apis/Api";
+import { showWarnToast } from "../../utils/ToastUtil";
 import YesLoginNav from "../../components/Navigation/YesLoginNav";
 import OneMemoFont from '../../assets/fonts/LINESeedKR-Bd.woff2';  // Prefetch Font (!= Preload)
 
@@ -30,6 +31,13 @@ function MemoListPage(props) {
     const [isFirstGetMemos, setIsFirstGetMemos] = useState(false);
     const [memos, setMemos] = useState([]);
     const [allFriends, setAllFriends] = useState([]);
+    const [pinnedMemoIds, setPinnedMemoIds] = useState(() => {
+        try {
+            return JSON.parse(localStorage.getItem('pinnedMemoIds')) || [];
+        } catch {
+            return [];
+        }
+    });
 
     // API 재호출용
     const [filter, setFilter] = useState(null);
@@ -40,6 +48,21 @@ function MemoListPage(props) {
     // 시각화 변수 초기화용
     const [toggleSortClick, setToggleSortClick] = useState(false);  // 정렬 시, 검색텍스트 초기화를 위함.
     const [toggleSearchClick, setToggleSearchClick] = useState(false);  // 검색 시, 정렬기준 초기화를 위함.
+
+    const MAX_PIN_COUNT = 3;
+    const togglePinMemo = (memoId) => {
+        setPinnedMemoIds(prev => {
+            if (!prev.includes(memoId) && prev.length >= MAX_PIN_COUNT) {
+                showWarnToast("상단 고정은 최대 3개까지 가능합니다.");
+                return prev;
+            }
+            const next = prev.includes(memoId)
+                ? prev.filter(id => id !== memoId)
+                : [...prev, memoId];
+            localStorage.setItem('pinnedMemoIds', JSON.stringify(next));
+            return next;
+        });
+    };
 
     const setFirstValues = (sortValue, searchValue) => {
         setFirstSortValue(sortValue);
@@ -194,7 +217,7 @@ function MemoListPage(props) {
                     {firstSortValue !== null && <SortMemo className="flex-item" setParam={setParam} firstSortValue={firstSortValue} toggleSearchClick={toggleSearchClick} />}
                     {firstSearchValue !== null && <SearchMemo className="flex-item" setParam={setParam} firstSearchValue={firstSearchValue} toggleSortClick={toggleSortClick} />}
                 </DivWrapper>
-                <MemoList memos={memos} filter={filter} search={search} allFriends={allFriends} getMemos={getMemos} isFirstGetMemos={isFirstGetMemos} />
+                <MemoList memos={memos} filter={filter} search={search} allFriends={allFriends} getMemos={getMemos} isFirstGetMemos={isFirstGetMemos} pinnedMemoIds={pinnedMemoIds} togglePinMemo={togglePinMemo} />
             </BasicWrapper>
         </>
     );
