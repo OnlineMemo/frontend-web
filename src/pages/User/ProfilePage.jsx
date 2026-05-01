@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import HelloWrapper from "../../components/Styled/HelloWrapper"
 import ConfirmModal from "../../components/Modal/ConfirmModal";
-import { checkToken, clearToken } from "../../utils/TokenUtil";
+import { checkToken, parseToken, clearToken } from "../../utils/TokenUtil";
 import Apis from "../../apis/Api";
 
 const MoreWrapper = styled(HelloWrapper)`
@@ -170,6 +170,12 @@ function ProfilePage(props) {
         await Apis
             .delete(`/users`)
             .then((response) => {
+                try {
+                    const allPinnedInfo = JSON.parse(localStorage.getItem('pinnedMemoIds')) || {};
+                    const userId = parseToken().decodedId;
+                    delete allPinnedInfo[userId];  // 회원탈퇴한 유저의 메모핀 정보만 제거
+                    localStorage.setItem('pinnedMemoIds', JSON.stringify(allPinnedInfo));
+                } catch { }
                 clearToken(true);  // 회원탈퇴이므로, 제외키들을 함께 제거해도 무관.
                 navigate('/login');
             })
