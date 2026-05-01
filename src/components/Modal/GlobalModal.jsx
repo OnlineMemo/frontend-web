@@ -23,8 +23,8 @@ function GlobalModal(props) {  // Global Modals Component (with Route)
     const location = useLocation();
 
     const progressStartDateTime = "2025-10-15 20:00";
-    const middleDateTime = "2025-10-16 06:00";
-    const completeEndDateTime = "2025-10-21 00:00";  // or "2025-10-20 23:59"
+    const middleDateTime = "2026-05-02 02:00";
+    const completeEndDateTime = "2026-05-09 00:00";  // or "2025-05-08 23:59"
 
 
     return (
@@ -55,16 +55,16 @@ function GlobalModal(props) {  // Global Modals Component (with Route)
                 modalStyle={{ height: "203.5px", paddingTop: "36.5px", paddingBottom: "47px" }}
                 iconStyle={{ fontSize: "4rem" }} contentStyle={{ lineHeight: "115%" }}
             >
-                [ v 2.2.1 업데이트 완료 ]
+                [ v 2.3.0 업데이트 완료 ]
                 <div style={{ lineHeight: "90%" }}><br></br></div>
                 
-                * 데이터베이스 방화벽 강화<br></br>
+                * 메모 상단고정 기능 추가<br></br>
                 <div style={{ lineHeight: "5%" }}><br></br></div>
-                * 로그인 만료 시 메모 복구<br></br>
+                * 각 메모 옵션(:)에서 설정<br></br>
                 <div style={{ lineHeight: "5%" }}><br></br></div>
-                * 검색 결과 및 스크롤 유지
+                * 최대 3개까지 고정 가능
                 <div style={{ lineHeight: "5%" }}><br></br></div>
-                * 조회 속도 20% 향상
+                * 기기별 독립 설정 지원
             </NoticeModal>
         </GlobalWrapper>
     );
