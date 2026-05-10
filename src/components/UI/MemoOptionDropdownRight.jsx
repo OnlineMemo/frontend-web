@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import useDetectDropdown from "../../hooks/useDetectDropdown";
@@ -100,7 +100,7 @@ const FriendsWrapper = styled.div`
 function MemoOptionDropdownRight(props) {
     const navigate = useNavigate();
 
-    const { dropMain, dropItems, memoId, userResponseDtoList, allFriends, getMemos, togglePinMemo } = props;
+    const { dropMain, dropItems, memoId, userResponseDtoList, allFriends, getMemos, isPinMemo, togglePinMemo } = props;
 
     const [ddIsOpen, ddRef, ddHandler] = useDetectDropdown(false);  // props를 받아오는게 아닌 훅 종류를 사용하였으므로, {}가 아닌, []로 받아야한다.
     // useDetectDropdown(initialValue)의 initialValue를 false로 넣어주었다. 그러므로, IsOpen이 false가 되어 ddIsOpen도 false가 된다.
@@ -140,10 +140,11 @@ function MemoOptionDropdownRight(props) {
             })
     }
 
-    const handleDeleteClick = async (e) => { 
+    const handleDeleteClick = async (e) => {
         await Apis
             .delete(`/memos/${memoId}`)
             .then((response) => {
+                if (isPinMemo) togglePinMemo(memoId);
                 getMemos();
             })
             .catch((error) => {

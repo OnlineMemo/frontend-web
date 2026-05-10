@@ -9,6 +9,7 @@ import MemoList from "../../components/List/MemoList";
 import { checkToken, parseToken } from "../../utils/TokenUtil";
 import Apis from "../../apis/Api";
 import { showWarnToast } from "../../utils/ToastUtil";
+import { removePinnedMemoId } from "../../utils/MemoUtil";
 import YesLoginNav from "../../components/Navigation/YesLoginNav";
 import OneMemoFont from '../../assets/fonts/LINESeedKR-Bd.woff2';  // Prefetch Font (!= Preload)
 
@@ -199,6 +200,19 @@ function MemoListPage(props) {
             document.removeEventListener("click", handleBeforeHomeClick);
         };
     }, [location]);
+
+    useEffect(() => {
+        if (isFirstGetMemos === false) return;
+        if (filter !== null || search !== null) return;
+
+        const validMemoIds = new Set(memos.map(memo => memo.memoId));
+        setPinnedMemoIds(prev => {
+            const invalidMemoIds = prev.filter(id => !validMemoIds.has(id));
+            if (invalidMemoIds.length === 0) return prev;
+            invalidMemoIds.forEach(id => removePinnedMemoId(id));
+            return prev.filter(id => validMemoIds.has(id));
+        });
+    }, [memos, isFirstGetMemos]);
 
     useEffect(() => {
         if (isFirstGetMemos === false) return;

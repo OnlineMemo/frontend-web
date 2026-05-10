@@ -4,6 +4,7 @@ import styled from "styled-components";
 import NavWrapper from "../Styled/NavWrapper";
 import ConfirmModal from "../Modal/ConfirmModal";
 import Apis from "../../apis/Api";
+import { removePinnedMemoId } from "../../utils/MemoUtil";
 
 const Wrapper = styled(NavWrapper)`
 
@@ -278,6 +279,7 @@ function ReadAndEditMemoNav(props) {
         await Apis
             .delete(`/memos/${props.memoId}`)
             .then((response) => {
+                removePinnedMemoId(props.memoId);
                 navigate(`/memos`);
             })
             .catch((error) => {

@@ -74,6 +74,7 @@ function MemoOptionButton(props) {
                 userResponseDtoList={userResponseDtoList}
                 allFriends={allFriends}
                 getMemos={getMemos}
+                isPinMemo={isPinMemo}
                 togglePinMemo={togglePinMemo}
             />
         </MemoOptionWrapper>
