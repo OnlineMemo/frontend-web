@@ -5,7 +5,7 @@ import NewMemoNav from "../../components/Navigation/NewMemoNav";
 import ConfirmModal from "../../components/Modal/ConfirmModal";
 import { checkToken } from "../../utils/TokenUtil"
 import { saveUnsavedMemo, getUnsavedMemo, removeUnsavedMemo } from "../../utils/MemoUtil";
-import { getDateStr } from "../../utils/TimeUtil"
+import { getDateStr, getRelativeTimeStr } from "../../utils/TimeUtil"
 import { showSuccessToast, showErrorToast, showWarnToast, showInfoToast } from "../../utils/ToastUtil"
 import Apis from "../../apis/Api";
 import { debounce } from 'lodash';
@@ -207,12 +207,15 @@ function NewMemoPage(props) {
             </OneMemoWrapper>
 
             {recoveryModalOn && (
-                <ConfirmModal closeModal={handleCancelRecoveryClick} customStyle={{ height: "147px" }}>
+                <ConfirmModal closeModal={handleCancelRecoveryClick} customStyle={{ height: "168px" }}>
                     <br></br>
                     <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
                     <h2 className="successSignupModalTitle" style={{ fontSize: "1.8rem" }}>
                         저장되지 않은 내용이 있어요.
                     </h2>
+                    <p style={{ fontSize: "1.35rem", color: "#767676", marginTop: "-8px", marginBottom: "0px", textAlign: "center" }}>
+                        ({getRelativeTimeStr(getUnsavedMemo("new", null)?.savedAt)} 임시저장됨)
+                    </p>
                     <div style={{ lineHeight: "50%" }}><br></br></div>
                     <div style={{ float: "right" }}>
                         <button className="copyModalButton" onClick={handleRecoveryClick}>복구</button>&nbsp;&nbsp;
