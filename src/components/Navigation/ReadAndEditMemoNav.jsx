@@ -4,7 +4,7 @@ import styled from "styled-components";
 import NavWrapper from "../Styled/NavWrapper";
 import ConfirmModal from "../Modal/ConfirmModal";
 import Apis from "../../apis/Api";
-import { removePinnedMemoId, removeUnsavedMemo } from "../../utils/MemoUtil";
+import { removePinnedMemoId, removeUnsavedMemo, saveUnsavedMemo } from "../../utils/MemoUtil";
 
 const Wrapper = styled(NavWrapper)`
 
@@ -271,6 +271,9 @@ function ReadAndEditMemoNav(props) {
                     }
                     else if (httpStatus === 423) {
                         handleConflictModalOn("다른 사용자가 수정 중입니다.");
+                    }
+                    else {
+                        saveUnsavedMemo("edit", Number(props.memoId), props.title, props.content);
                     }
                 })
         }

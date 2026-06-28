@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import NavWrapper from "../Styled/NavWrapper";
 import { checkToken } from "../../utils/TokenUtil"
-import { removeUnsavedMemo } from "../../utils/MemoUtil"
+import { removeUnsavedMemo, saveUnsavedMemo } from "../../utils/MemoUtil"
 import Apis from "../../apis/Api";
 
 const Wrapper = styled(NavWrapper)`
@@ -165,7 +165,7 @@ function NewMemoNav(props) {
                     navigate(`/memos/${memoId}`);
                 })
                 .catch((error) => {
-                    //console.log(error);
+                    saveUnsavedMemo("new", null, titleValue, contentValue);
                 })
         }
     }
