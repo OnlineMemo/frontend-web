@@ -3,8 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Helmet } from 'react-helmet-async';
 import OneMemoWrapper from "../../components/Styled/OneMemoWrapper";
 import ReadAndEditMemoNav from "../../components/Navigation/ReadAndEditMemoNav";
+import ConfirmModal from "../../components/Modal/ConfirmModal";
 import { checkToken } from "../../utils/TokenUtil"
-import { saveUnsavedMemo } from "../../utils/MemoUtil";
+import { saveUnsavedMemo, getUnsavedMemo, removeUnsavedMemo } from "../../utils/MemoUtil";
 import { getDateStr } from "../../utils/TimeUtil"
 import { showSuccessToast, showErrorToast, showWarnToast, showInfoToast } from "../../utils/ToastUtil"
 import Apis from "../../apis/Api";
@@ -19,6 +20,7 @@ function ReadAndEditMemoPage(props) {
     const [titleValue, setTitleValue] = useState("");
     const [contentValue, setContentValue] = useState("");
     const [purpose, setPurpose] = useState("read");
+    const [recoveryModalOn, setRecoveryModalOn] = useState(false);
 
     const extendLockGap = (1000 * 60 * 10) - (1000 * 15);  // 10분 - 15초 (밀리초 단위)
     const extendLockTimerRef = useRef(null);
@@ -146,6 +148,11 @@ function ReadAndEditMemoPage(props) {
                     let height = textarea.scrollHeight;  // 높이
                     textarea.style.height = `${height + 8}px`;
                 }  // textarea 초기 높이 지정
+
+                if (purpose === "edit") {
+                    const unsavedMemo = getUnsavedMemo("edit", Number(memoId));
+                    if (unsavedMemo) setRecoveryModalOn(true);
+                }
             })
             .catch((error) => {
                 //console.log(error);
@@ -205,6 +212,20 @@ function ReadAndEditMemoPage(props) {
         debounce(handleAITitleClick, 300),
         [handleAITitleClick]
     );
+
+    const handleRecoveryClick = () => {
+        const unsavedMemo = getUnsavedMemo("edit", Number(memoId));
+        if (unsavedMemo) {
+            setTitleValue(unsavedMemo.title);
+            setContentValue(unsavedMemo.content);
+        }
+        removeUnsavedMemo("edit", Number(memoId));
+        setRecoveryModalOn(false);
+    };
+    const handleCancelRecoveryClick = () => {
+        removeUnsavedMemo("edit", Number(memoId));
+        setRecoveryModalOn(false);
+    };
 
     useEffect(() => {
         checkToken();
@@ -311,6 +332,21 @@ function ReadAndEditMemoPage(props) {
             <OneMemoWrapper>
                 {purposeComponent}
             </OneMemoWrapper>
+
+            {recoveryModalOn && (
+                <ConfirmModal closeModal={handleCancelRecoveryClick} customStyle={{ height: "147px" }}>
+                    <br></br>
+                    <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
+                    <h2 className="successSignupModalTitle" style={{ fontSize: "1.8rem" }}>
+                        저장되지 않은 내용이 있어요.
+                    </h2>
+                    <div style={{ lineHeight: "50%" }}><br></br></div>
+                    <div style={{ float: "right" }}>
+                        <button className="copyModalButton" onClick={handleRecoveryClick}>복구</button>&nbsp;&nbsp;
+                        <button className="cancelButton" onClick={handleCancelRecoveryClick}>무시</button>
+                    </div>
+                </ConfirmModal>
+            )}
         </div>
     );
 }

@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import OneMemoWrapper from "../../components/Styled/OneMemoWrapper";
 import NewMemoNav from "../../components/Navigation/NewMemoNav";
+import ConfirmModal from "../../components/Modal/ConfirmModal";
 import { checkToken } from "../../utils/TokenUtil"
-import { saveUnsavedMemo } from "../../utils/MemoUtil";
+import { saveUnsavedMemo, getUnsavedMemo, removeUnsavedMemo } from "../../utils/MemoUtil";
 import { getDateStr } from "../../utils/TimeUtil"
 import { showSuccessToast, showErrorToast, showWarnToast, showInfoToast } from "../../utils/ToastUtil"
 import Apis from "../../apis/Api";
@@ -16,6 +17,7 @@ function NewMemoPage(props) {
     const [prevTitleValue, setPrevTitleValue] = useState(null);
     const [titleValue, setTitleValue] = useState("");
     const [contentValue, setContentValue] = useState("");
+    const [recoveryModalOn, setRecoveryModalOn] = useState(false);
 
     const initialRef = useRef({ title: "", content: "" });
     const isDirty = titleValue !== initialRef.current.title || contentValue !== initialRef.current.content;
@@ -145,9 +147,26 @@ function NewMemoPage(props) {
         [handleAITitleClick]
     );
 
+    const handleRecoveryClick = () => {
+        const unsavedMemo = getUnsavedMemo("new", null);
+        if (unsavedMemo) {
+            setTitleValue(unsavedMemo.title);
+            setContentValue(unsavedMemo.content);
+        }
+        removeUnsavedMemo("new", null);
+        setRecoveryModalOn(false);
+    };
+    const handleCancelRecoveryClick = () => {
+        removeUnsavedMemo("new", null);
+        setRecoveryModalOn(false);
+    };
+
     useEffect(() => {
         checkToken();
         startNewMemo();  // 출생시점에 startNewMemo 한번 실행.
+
+        const unsavedMemo = getUnsavedMemo("new", null);
+        if (unsavedMemo) setRecoveryModalOn(true);
 
         const handleBeforeunload = () => unsavedRef.current?.();
         window.addEventListener('beforeunload', handleBeforeunload);
@@ -186,6 +205,21 @@ function NewMemoPage(props) {
             <OneMemoWrapper>
                 {purposeComponent}
             </OneMemoWrapper>
+
+            {recoveryModalOn && (
+                <ConfirmModal closeModal={handleCancelRecoveryClick} customStyle={{ height: "147px" }}>
+                    <br></br>
+                    <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
+                    <h2 className="successSignupModalTitle" style={{ fontSize: "1.8rem" }}>
+                        저장되지 않은 내용이 있어요.
+                    </h2>
+                    <div style={{ lineHeight: "50%" }}><br></br></div>
+                    <div style={{ float: "right" }}>
+                        <button className="copyModalButton" onClick={handleRecoveryClick}>복구</button>&nbsp;&nbsp;
+                        <button className="cancelButton" onClick={handleCancelRecoveryClick}>무시</button>
+                    </div>
+                </ConfirmModal>
+            )}
         </div>
     );
 }
