@@ -39,7 +39,7 @@ const parseToken = (accessToken, refreshToken) => {
 
 const excludeLocalStorageKeys = new Set(['isTest', 'noticeProgressState', 'noticeCompleteState', 'maxAIUsageDate']);
 const excludeSessionStorageKeys = new Set(['alert', 'memoContent']);
-const protectedLocalStorageKeys = new Set(['pinnedMemoIds']);
+const protectedLocalStorageKeys = new Set(['pinnedMemoIds', 'unsavedMemos']);
 const protectedSessionStorageKeys = new Set([]);
 const clearToken = (isAllclear = false) => {
     const localKeepKeys = (isAllclear === false)

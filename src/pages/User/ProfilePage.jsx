@@ -4,7 +4,7 @@ import styled from "styled-components";
 import HelloWrapper from "../../components/Styled/HelloWrapper"
 import ConfirmModal from "../../components/Modal/ConfirmModal";
 import { checkToken, clearToken } from "../../utils/TokenUtil";
-import { removeAllPinnedMemoIds } from "../../utils/MemoUtil";
+import { removeAllPinnedMemoIds, removeAllUnsavedMemos } from "../../utils/MemoUtil";
 import Apis from "../../apis/Api";
 
 const MoreWrapper = styled(HelloWrapper)`
@@ -172,6 +172,7 @@ function ProfilePage(props) {
             .delete(`/users`)
             .then((response) => {
                 removeAllPinnedMemoIds();  // 회원탈퇴한 유저의 메모핀 정보만 제거
+                removeAllUnsavedMemos();  // 회원탈퇴한 유저의 임시저장 메모 정보만 제거
                 clearToken(true);  // 회원탈퇴이므로, 제외키들을 함께 제거해도 무관.
                 navigate('/login');
             })

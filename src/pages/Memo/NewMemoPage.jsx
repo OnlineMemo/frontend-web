@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import OneMemoWrapper from "../../components/Styled/OneMemoWrapper";
 import NewMemoNav from "../../components/Navigation/NewMemoNav";
-import { checkToken } from "../../utils/TokenUtil";
+import { checkToken } from "../../utils/TokenUtil"
+import { saveUnsavedMemo } from "../../utils/MemoUtil";
 import { getDateStr } from "../../utils/TimeUtil"
 import { showSuccessToast, showErrorToast, showWarnToast, showInfoToast } from "../../utils/ToastUtil"
 import Apis from "../../apis/Api";
@@ -15,6 +16,15 @@ function NewMemoPage(props) {
     const [prevTitleValue, setPrevTitleValue] = useState(null);
     const [titleValue, setTitleValue] = useState("");
     const [contentValue, setContentValue] = useState("");
+
+    const initialRef = useRef({ title: "", content: "" });
+    const isDirty = titleValue !== initialRef.current.title || contentValue !== initialRef.current.content;
+    const wasSavedRef = useRef(false);
+    const unsavedRef = useRef(null);
+    unsavedRef.current = () => {
+        if (!isDirty || wasSavedRef.current) return;
+        saveUnsavedMemo("new", null, titleValue, contentValue);
+    };
 
     const handleChangeTitle = (event) => {
         setTitleValue(event.target.value);
@@ -138,6 +148,14 @@ function NewMemoPage(props) {
     useEffect(() => {
         checkToken();
         startNewMemo();  // 출생시점에 startNewMemo 한번 실행.
+
+        const handleBeforeunload = () => unsavedRef.current?.();
+        window.addEventListener('beforeunload', handleBeforeunload);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeunload);
+            unsavedRef.current?.();
+        };
     }, []);
 
     // new는 다른 용도와는 다르게, 애초에 빈값이므로 value 속성을 삭제해주어야 인풋으로 값이 적혀진다. 예시로 useState("") 로 시작해버리면 값이 안적혀진다.
@@ -161,7 +179,10 @@ function NewMemoPage(props) {
 
     return (
         <div>
-            <NewMemoNav title={titleValue} content={contentValue} isGroup={isGroup} friendList={friendList} />
+            <NewMemoNav
+                title={titleValue} content={contentValue} isGroup={isGroup} friendList={friendList}
+                onSaveSuccess={() => { wasSavedRef.current = true; }}
+            />
             <OneMemoWrapper>
                 {purposeComponent}
             </OneMemoWrapper>

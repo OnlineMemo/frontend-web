@@ -3,7 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Helmet } from 'react-helmet-async';
 import OneMemoWrapper from "../../components/Styled/OneMemoWrapper";
 import ReadAndEditMemoNav from "../../components/Navigation/ReadAndEditMemoNav";
-import { checkToken } from "../../utils/TokenUtil";
+import { checkToken } from "../../utils/TokenUtil"
+import { saveUnsavedMemo } from "../../utils/MemoUtil";
 import { getDateStr } from "../../utils/TimeUtil"
 import { showSuccessToast, showErrorToast, showWarnToast, showInfoToast } from "../../utils/ToastUtil"
 import Apis from "../../apis/Api";
@@ -22,6 +23,15 @@ function ReadAndEditMemoPage(props) {
     const extendLockGap = (1000 * 60 * 10) - (1000 * 15);  // 10분 - 15초 (밀리초 단위)
     const extendLockTimerRef = useRef(null);
     const lastTypedTimeRef = useRef(Date.now());
+
+    const initialRef = useRef({ title: "", content: "" });
+    const isDirty = purpose === "edit" &&
+        (titleValue !== initialRef.current.title || contentValue !== initialRef.current.content);
+    const unsavedRef = useRef(null);
+    unsavedRef.current = () => {
+        if (!isDirty) return;
+        saveUnsavedMemo("edit", Number(memoId), titleValue, contentValue);
+    };
 
     const highPurposeFunction = (text) => {  // 상위 컴포넌트 함수
         setPurpose(text);
@@ -128,6 +138,7 @@ function ReadAndEditMemoPage(props) {
                 setMemo(response.data.data);
                 setTitleValue(response.data.data.title);
                 setContentValue(response.data.data.content);
+                initialRef.current = { title: response.data.data.title, content: response.data.data.content };
 
                 let textarea = document.querySelector('.autoTextarea');
                 if (textarea) {
@@ -219,11 +230,16 @@ function ReadAndEditMemoPage(props) {
             navigate('/404');
         }
 
+        const handleBeforeunload = () => unsavedRef.current?.();
+        window.addEventListener('beforeunload', handleBeforeunload);
+
         return () => {
             if (extendLockTimerRef.current) {
                 clearTimeout(extendLockTimerRef.current);
                 extendLockTimerRef.current = null;
             }
+            window.removeEventListener('beforeunload', handleBeforeunload);
+            unsavedRef.current?.();
         };
     }, []);
 

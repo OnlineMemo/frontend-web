@@ -4,7 +4,7 @@ import styled from "styled-components";
 import NavWrapper from "../Styled/NavWrapper";
 import ConfirmModal from "../Modal/ConfirmModal";
 import Apis from "../../apis/Api";
-import { removePinnedMemoId } from "../../utils/MemoUtil";
+import { removePinnedMemoId, removeUnsavedMemo } from "../../utils/MemoUtil";
 
 const Wrapper = styled(NavWrapper)`
 
@@ -261,6 +261,7 @@ function ReadAndEditMemoNav(props) {
                     if (props.purpose === "edit" && props.memoHasUsersCount > 1) {
                         sessionStorage.removeItem('editGroupMemoId');
                     }
+                    removeUnsavedMemo("edit", props.memoId);
                     props.propPurposeFunction("read");  // 하위 컴포넌트 함수
                 })
                 .catch((error) => {
