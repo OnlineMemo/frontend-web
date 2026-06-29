@@ -319,7 +319,7 @@ function ReadAndEditMemoPage(props) {
             }
 
             <ReadAndEditMemoNav
-                purpose={purposeText} 
+                purpose={purposeText}
                 memoId={memoId}
                 title={memo && titleValue}
                 content={memo && contentValue}
@@ -328,6 +328,7 @@ function ReadAndEditMemoPage(props) {
                 currentVersion={memo && memo.currentVersion}
                 propPurposeFunction={highPurposeFunction}
                 rerendering={getMemo}
+                onLeaveEdit={() => unsavedRef.current?.()}
             />
             <OneMemoWrapper>
                 {purposeComponent}

@@ -363,7 +363,7 @@ function ReadAndEditMemoNav(props) {
         <span><button className="editButton" onClick={handleEditClick}>수정</button>&nbsp;&nbsp;<button className="deleteGroupButton" onClick={(event) => handleFirstModalClick("그룹을 탈퇴", event)}>그룹 탈퇴</button>&nbsp;</span>
     ];
     const editNavItems = [  // 메모 수정 용도
-        <span className="flex-left">&nbsp;<i className="fa fa-arrow-left" aria-hidden="true" onClick={() => { deleteLock(); props.propPurposeFunction("read"); }}></i></span>,
+        <span className="flex-left">&nbsp;<i className="fa fa-arrow-left" aria-hidden="true" onClick={() => { deleteLock(); props.onLeaveEdit?.(); props.propPurposeFunction("read"); }}></i></span>,
         <span><button className="saveButton" onClick={(event) => handleUpdateSaveClick(props.title, props.content, event)}>저장</button>&nbsp;</span>
     ];
 
