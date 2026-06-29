@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Helmet } from 'react-helmet-async';
+import styled from "styled-components";
 import OneMemoWrapper from "../../components/Styled/OneMemoWrapper";
 import ReadAndEditMemoNav from "../../components/Navigation/ReadAndEditMemoNav";
 import ConfirmModal from "../../components/Modal/ConfirmModal";
@@ -10,6 +11,24 @@ import { getDateStr, getRelativeTimeStr } from "../../utils/TimeUtil"
 import { showSuccessToast, showErrorToast, showWarnToast, showInfoToast } from "../../utils/ToastUtil"
 import Apis from "../../apis/Api";
 import { debounce } from 'lodash';
+
+const RecoveryModalWrapper = styled.div`
+    font-family: "jua";
+
+    button {
+        font-family: "jua";
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .recoveryTime {
+        margin-top: -8px;
+        margin-bottom: 11px;
+        font-size: 1.4rem;
+        color: #767676;
+        text-align: center;
+    }
+`;
 
 function ReadAndEditMemoPage(props) {
     const navigate = useNavigate();
@@ -335,21 +354,21 @@ function ReadAndEditMemoPage(props) {
             </OneMemoWrapper>
 
             {recoveryModalOn && (
-                <ConfirmModal closeModal={handleCancelRecoveryClick} customStyle={{ height: "168px" }}>
-                    <br></br>
-                    <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
-                    <h2 className="successSignupModalTitle" style={{ fontSize: "1.8rem" }}>
-                        저장되지 않은 내용이 있어요.
-                    </h2>
-                    <p style={{ fontSize: "1.35rem", color: "#767676", marginTop: "-8px", marginBottom: "0px", textAlign: "center" }}>
-                        ({getRelativeTimeStr(getUnsavedMemo("edit", Number(memoId))?.savedAt)} 임시저장됨)
-                    </p>
-                    <div style={{ lineHeight: "50%" }}><br></br></div>
-                    <div style={{ float: "right" }}>
-                        <button className="copyModalButton" onClick={handleRecoveryClick}>복구</button>&nbsp;&nbsp;
-                        <button className="cancelButton" onClick={handleCancelRecoveryClick}>무시</button>
-                    </div>
-                </ConfirmModal>
+                <RecoveryModalWrapper>
+                    <ConfirmModal closeModal={handleCancelRecoveryClick} customStyle={{ height: "136px" }}>
+                        <br></br>
+                        <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
+                        <h2 className="successSignupModalTitle"> 저장되지 않은 내용이 있어요.</h2>
+                        <div className="recoveryTime">
+                            ({getRelativeTimeStr(getUnsavedMemo("edit", Number(memoId))?.savedAt)} 임시저장됨)
+                        </div>
+                        <br></br>
+                        <div style={{ float: "right" }}>
+                            <button className="copyModalButton" onClick={handleRecoveryClick}>복구</button>&nbsp;&nbsp;
+                            <button className="cancelButton" onClick={handleCancelRecoveryClick}>무시</button>
+                        </div>
+                    </ConfirmModal>
+                </RecoveryModalWrapper>
             )}
         </div>
     );
