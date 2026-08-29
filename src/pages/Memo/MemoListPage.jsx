@@ -11,6 +11,7 @@ import Apis from "../../apis/Api";
 import { showWarnToast } from "../../utils/ToastUtil";
 import { removePinnedMemoId } from "../../utils/MemoUtil";
 import YesLoginNav from "../../components/Navigation/YesLoginNav";
+import MemoListSkeleton from "../../components/UI/MemoListSkeleton";
 import OneMemoFont from '../../assets/fonts/LINESeedKR-Bd.woff2';  // Prefetch Font (!= Preload)
 
 const DivWrapper = styled.div`
@@ -240,7 +241,10 @@ function MemoListPage(props) {
                     {firstSortValue !== null && <SortMemo className="flex-item" setParam={setParam} firstSortValue={firstSortValue} toggleSearchClick={toggleSearchClick} />}
                     {firstSearchValue !== null && <SearchMemo className="flex-item" setParam={setParam} firstSearchValue={firstSearchValue} toggleSortClick={toggleSortClick} />}
                 </DivWrapper>
-                <MemoList memos={memos} filter={filter} search={search} allFriends={allFriends} getMemos={getMemos} isFirstGetMemos={isFirstGetMemos} pinnedMemoIds={pinnedMemoIds} togglePinMemo={togglePinMemo} />
+                {isFirstGetMemos === false
+                    ? <MemoListSkeleton />
+                    : <MemoList memos={memos} filter={filter} search={search} allFriends={allFriends} getMemos={getMemos} isFirstGetMemos={isFirstGetMemos} pinnedMemoIds={pinnedMemoIds} togglePinMemo={togglePinMemo} />
+                }
             </BasicWrapper>
         </>
     );
