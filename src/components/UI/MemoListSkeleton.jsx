@@ -14,10 +14,11 @@ const Shimmer = styled.div`
 `;
 
 const Wrapper = styled.div`
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
+    padding-top: 6px;
 
     & > * + * {
         margin-top: 6px;
