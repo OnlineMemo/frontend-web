@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import styled from "styled-components";
 import OneMemoWrapper from "../../components/Styled/OneMemoWrapper";
 import ReadAndEditMemoNav from "../../components/Navigation/ReadAndEditMemoNav";
+import ReadMemoSkeleton from "../../components/UI/ReadMemoSkeleton";
 import ConfirmModal from "../../components/Modal/ConfirmModal";
 import { checkToken } from "../../utils/TokenUtil"
 import { saveUnsavedMemo, getUnsavedMemo, removeUnsavedMemo } from "../../utils/MemoUtil";
@@ -350,7 +351,10 @@ function ReadAndEditMemoPage(props) {
                 onLeaveEdit={() => unsavedRef.current?.()}
             />
             <OneMemoWrapper>
-                {purposeComponent}
+                {!memo && purpose === "read"
+                    ? <ReadMemoSkeleton />
+                    : purposeComponent
+                }
             </OneMemoWrapper>
 
             {recoveryModalOn && (
