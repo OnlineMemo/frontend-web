@@ -7,7 +7,7 @@ const shimmer = keyframes`
 `;
 
 const Shimmer = styled.div`
-    background: linear-gradient(90deg, #b2aca6 25%, #c4beba 50%, #b2aca6 75%);
+    background: linear-gradient(90deg, #a8a29c 25%, #cac4be 50%, #a8a29c 75%);
     background-size: 600px 100%;
     animation: ${shimmer} 2s infinite linear;
     border-radius: 4px;
