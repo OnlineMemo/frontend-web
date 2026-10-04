@@ -8,6 +8,8 @@ import { throttle } from 'lodash';
 // Backend to Frontend 만료 응답 컨벤션
 const tokenExpiredCode = "TOKEN_EXPIRED";
 const tokenExpiredMessage = "ERROR - JWT 토큰 만료 에러";
+const blockedUserCode = "BLOCKED_USER_ERROR";
+const blockedUserMessage = "ERROR - Blocked 계정 에러";
 
 // Axios 기본 설정
 const Apis = axios.create({
@@ -85,10 +87,10 @@ Apis.interceptors.response.use(
                             // console.error(parseErr);
                         }
                     }
-                    
-                    sessionStorage.setItem("alert", "loginExpired");
-                    clearToken();
-                    redirectToLogin(); // 토큰 재발급 실패 시 로그인 화면으로 이동
+
+                    const { status: tokenReissueStatus, code: tokenReissueCode, message: tokenReissueMessage } = err.response?.data || {};
+                    const isBlockedUser = (tokenReissueStatus === 403 && tokenReissueCode === blockedUserCode && tokenReissueMessage === blockedUserMessage);
+                    redirectToLoginWithAlert(isBlockedUser ? "blockedUser" : "loginExpired");  // 토큰 재발급 실패 시 로그인 화면으로 이동
                 }
                 return Promise.reject(err);
             }
@@ -96,6 +98,14 @@ Apis.interceptors.response.use(
             else {
                 clearToken();
                 redirectToLogin(); // 로그인 화면으로 이동
+            }
+        }
+        // [ ERROR 403 ]
+        else if (httpStatus === 403) {
+            // - 차단 계정인 경우
+            if (httpCode === blockedUserCode && httpMessage === blockedUserMessage) {
+                redirectToLoginWithAlert("blockedUser");  // 블랙리스트 감지 시 로그인 화면으로 이동
+                return Promise.reject({ message: "blockedUser" });
             }
         }
         // [ ERROR 404 ]
@@ -116,7 +126,6 @@ Apis.interceptors.response.use(
                 }, 600);  // (대기시간: 중첩 방지 600 -> dismiss 보장 150 -> 기본 100)
             }
         }
-
         return Promise.reject(err);  // 부모 호출부 catch문으로 전파
     }
 );
@@ -131,9 +140,7 @@ function blockUseService() {  // 서비스 이용을 막음. (점검시간에 �
     if (startDate <= currentDate && currentDate <= endDate) {
         const isTest = localStorage.getItem("isTest");
         if (!(isTest && isTest === 'true')) {
-            sessionStorage.setItem("alert", "maintenance");
-            clearToken();
-            redirectToLogin();
+            redirectToLoginWithAlert("maintenance");
             return true;  // axios 요청 막음
         }
     }
@@ -161,6 +168,12 @@ function redirectTo404Page() {
     if (pathname !== '/friends' && pathname !== '/senders') {  // 친구 미발견 시, 리다이렉트 대신 모달로 알림
         window.location.href = '/404';
     }
+}
+
+function redirectToLoginWithAlert(alertValue) {
+    sessionStorage.setItem("alert", alertValue);
+    clearToken();
+    redirectToLogin();
 }
 
 const throttleShowErrorToast = throttle((message) => {
