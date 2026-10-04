@@ -229,6 +229,11 @@ function LoginPage(props) {
                         handleConfirmAlert("점검 안내", "죄송합니다. 서비스 점검 중입니다.");
                         sessionStorage.removeItem("alert");
                     }
+                    else if (error.message === "blockedUser") {
+                        setConfirmAlertOn(true);
+                        handleConfirmAlert("이용 제한 계정", "운영자에게 문의해 주세요.");
+                        sessionStorage.removeItem("alert");
+                    }
                     else {
                         setLoginFailModalOn(true);
                     }
@@ -255,6 +260,12 @@ function LoginPage(props) {
         else if (storedAlertValue === "maintenance") {  // 점검 시간으로 인한 리다이렉트인 경우
             setConfirmAlertOn(true);
             handleConfirmAlert("점검 안내", "죄송합니다. 서비스 점검 중입니다.");
+            sessionStorage.removeItem("alert");
+            return;
+        }
+        else if (storedAlertValue === "blockedUser") {  // 차단 계정으로 인한 리다이렉트인 경우
+            setConfirmAlertOn(true);
+            handleConfirmAlert("이용 제한 계정", "운영자에게 문의해 주세요.");
             sessionStorage.removeItem("alert");
             return;
         }

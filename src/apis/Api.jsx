@@ -105,6 +105,7 @@ Apis.interceptors.response.use(
             // - 차단 계정인 경우
             if (httpCode === blockedUserCode && httpMessage === blockedUserMessage) {
                 redirectToLoginWithAlert("blockedUser");  // 블랙리스트 감지 시 로그인 화면으로 이동
+                return Promise.reject({ message: "blockedUser" });
             }
         }
         // [ ERROR 404 ]
@@ -125,7 +126,6 @@ Apis.interceptors.response.use(
                 }, 600);  // (대기시간: 중첩 방지 600 -> dismiss 보장 150 -> 기본 100)
             }
         }
-
         return Promise.reject(err);  // 부모 호출부 catch문으로 전파
     }
 );
