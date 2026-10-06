@@ -9,7 +9,7 @@ import ConfirmModal from "../../components/Modal/ConfirmModal";
 import { checkToken } from "../../utils/TokenUtil"
 import { saveUnsavedMemo, getUnsavedMemo, removeUnsavedMemo } from "../../utils/MemoUtil";
 import { getDateStr, getRelativeTimeStr } from "../../utils/TimeUtil"
-import { showSuccessToast, showErrorToast, showWarnToast, showInfoToast } from "../../utils/ToastUtil"
+import { showSuccessToast, showErrorToast, showWarnToast, showInfoToast, dismissToast } from "../../utils/ToastUtil"
 import Apis from "../../apis/Api";
 import { debounce } from 'lodash';
 
@@ -218,7 +218,10 @@ function ReadAndEditMemoPage(props) {
                     else if (httpStatus === 429) {
                         showErrorToast("현재 이용자가 많아, 잠시 후 시도해주세요.");
                     }
-                    else if (error.message !== "excessRequest") {  // 요청제한은 인터셉터에서 토스트 알림으로 대체함.
+                    else if (error.message === "excessRequest") {  // 요청제한은 인터셉터에서 토스트 알림으로 대체함.
+                        dismissToast();
+                    }
+                    else {  // else if (httpStatus === 500)
                         showErrorToast("문제가 발생했어요. 잠시 후 시도해주세요.");
                     }
                 })
