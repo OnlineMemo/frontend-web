@@ -119,8 +119,9 @@ Apis.interceptors.response.use(
             const isMemoAITitle = checkURI(originalConfig, '/memos/ai/title', 'post');
             // - 계정별 RateLimit 차단대기인 경우 (Backend)
             if (httpCode === excessRequestUserCode && httpMessage === excessRequestUserMessage) {
+                const retryAfterText = getRetryAfterText(err);
                 setTimeout(() => {
-                    throttleShowErrorToast("요청이 너무 빠릅니다. 10초 후 시도해주세요.");
+                    throttleShowErrorToast(`요청이 너무 빠릅니다. ${retryAfterText} 후 시도해주세요.`);
                 }, 600);  // (대기시간: 중첩 방지 600 -> dismiss 보장 150 -> 기본 100)
             }
             // - IP별 RateLimit 차단대기인 경우 (Cloudflare, WAF)
@@ -171,6 +172,14 @@ function checkURI(originalConfig, targetUrl, targetMethod) {
         : url === targetUrl;  // string 자료형인 경우
     const isMethodMatched = (method?.toLowerCase() === targetMethod);
     return (isUrlMatched) && (isMethodMatched);
+}
+
+function getRetryAfterText(err) {
+    const retryAfter = Number(err.response?.headers?.['retry-after']);
+    if (!(retryAfter > 0)) return "잠시";  // 헤더를 못 읽는 경우
+    if (retryAfter <= 10) return `${retryAfter}초`;
+    if (retryAfter < 3600) return `${Math.ceil(retryAfter / 60)}분`;
+    return `${Math.ceil(retryAfter / 3600)}시간`;
 }
 
 function redirectToLogin() {
