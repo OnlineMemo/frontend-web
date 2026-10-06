@@ -5,11 +5,13 @@ import { getFullDatetimeStr } from "../utils/TimeUtil"
 import { showErrorToast } from "../utils/ToastUtil"
 import { throttle } from 'lodash';
 
-// Backend to Frontend 만료 응답 컨벤션
+// Backend to Frontend 에러 응답 컨벤션
 const tokenExpiredCode = "TOKEN_EXPIRED";
 const tokenExpiredMessage = "ERROR - JWT 토큰 만료 에러";
 const blockedUserCode = "BLOCKED_USER_ERROR";
 const blockedUserMessage = "ERROR - Blocked 계정 에러";
+const excessRequestUserCode = "EXCESS_REQUEST_USER";
+const excessRequestUserMessage = "ERROR - 계정 요청 제한 초과";
 
 // Axios 기본 설정
 const Apis = axios.create({
@@ -112,20 +114,35 @@ Apis.interceptors.response.use(
         else if (httpStatus === 404) {
             redirectTo404Page(); // 404 Not Found 페이지로 이동
         }
-        // [ ERROR 500(Backend), 429(Cloudflare) ]
-        // !!! preflight OPTIONS는 브라우저가 직접 요청하므로, 해당 응답은 인터셉터에서 감지 불가능.
-        //     따라서 본 429 알림은, 추후 WAF 또는 유료 Cloudflare로 응답 커스텀 시 자동 적용될 예정. !!!
-        else if (httpStatus === 500 || networkStatus === 429) {
+        // [ ERROR 429 ]
+        else if (httpStatus === 429 || networkStatus === 429) {
             const isMemoAITitle = checkURI(originalConfig, '/memos/ai/title', 'post');
-            if (isMemoAITitle === false) {
-                const toastMessage = (httpStatus === 500)
-                    ? "서버 오류입니다. 잠시 후 시도해주세요."  // 백엔드 500 알림
-                    : "요청이 너무 빠릅니다. 잠시 후 시도해주세요.";  // DDoS 차단대기 알림 (RateLimit)
+            // - 계정별 RateLimit 차단대기인 경우 (Backend)
+            if (httpCode === excessRequestUserCode && httpMessage === excessRequestUserMessage) {
                 setTimeout(() => {
-                    throttleShowErrorToast(toastMessage);
+                    throttleShowErrorToast("요청이 너무 빠릅니다. 10초 후 시도해주세요.");
+                }, 600);  // (대기시간: 중첩 방지 600 -> dismiss 보장 150 -> 기본 100)
+            }
+            // - IP별 RateLimit 차단대기인 경우 (Cloudflare, WAF)
+            // !!! preflight OPTIONS는 브라우저가 직접 요청하므로, 해당 응답은 인터셉터에서 감지 불가능.
+            //     따라서 본 429 알림은, 추후 WAF 또는 유료 Cloudflare로 응답 커스텀 시 자동 적용될 예정. !!!
+            else if (isMemoAITitle === false) {
+                setTimeout(() => {
+                    throttleShowErrorToast("요청이 너무 빠릅니다. 잠시 후 시도해주세요.");
                 }, 600);  // (대기시간: 중첩 방지 600 -> dismiss 보장 150 -> 기본 100)
             }
         }
+        // [ ERROR 500 ]
+        else if (httpStatus === 500) {
+            const isMemoAITitle = checkURI(originalConfig, '/memos/ai/title', 'post');
+            // - 예상치 못한 서버 내부 에러인 경우
+            if (isMemoAITitle === false) {
+                setTimeout(() => {
+                    throttleShowErrorToast("서버 오류입니다. 잠시 후 시도해주세요.");
+                }, 600);  // (대기시간: 중첩 방지 600 -> dismiss 보장 150 -> 기본 100)
+            }
+        }
+
         return Promise.reject(err);  // 부모 호출부 catch문으로 전파
     }
 );
