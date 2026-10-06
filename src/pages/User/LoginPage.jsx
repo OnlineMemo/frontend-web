@@ -234,7 +234,7 @@ function LoginPage(props) {
                         handleConfirmAlert("이용 제한 계정", "운영자에게 문의해 주세요.");
                         sessionStorage.removeItem("alert");
                     }
-                    else {
+                    else if (error.message !== "excessRequest") {  // 요청제한은 페이지 모달 대신 인터셉터에서 토스트 알림으로 대체함.
                         setLoginFailModalOn(true);
                     }
                 })

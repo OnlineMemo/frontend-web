@@ -12,6 +12,8 @@ const blockedUserCode = "BLOCKED_USER_ERROR";
 const blockedUserMessage = "ERROR - Blocked 계정 에러";
 const excessRequestUserCode = "EXCESS_REQUEST_USER";
 const excessRequestUserMessage = "ERROR - 계정 요청 제한 초과";
+const excessRequestOpenAICode = "EXCESS_REQUEST_OPENAI";
+const excessRequestOpenAIMessage = "ERROR - AI 요청 제한 초과";
 
 // Axios 기본 설정
 const Apis = axios.create({
@@ -79,7 +81,7 @@ Apis.interceptors.response.use(
                     const isExcessRequestUser = (tokenReissueStatus === 429 && tokenReissueCode === excessRequestUserCode && tokenReissueMessage === excessRequestUserMessage);
                     if (isExcessRequestUser) {  // 계정 요청제한 시 로그아웃하지 않고 안내만 노출
                         throttleShowErrorToastWithDelay(`요청이 너무 빠릅니다. ${getRetryAfterText(reissueErr)} 후 시도해주세요.`);
-                        return Promise.reject(reissueErr);
+                        return Promise.reject({ message: "excessRequest" });
                     }
 
                     const isMemoSave = checkURI(originalConfig, '/memos', 'post');
@@ -122,16 +124,19 @@ Apis.interceptors.response.use(
         }
         // [ ERROR 429 ]
         else if (httpStatus === 429 || networkStatus === 429) {
-            const isMemoAITitle = checkURI(originalConfig, '/memos/ai/title', 'post');
+            const isExcessRequestUser = (httpCode === excessRequestUserCode && httpMessage === excessRequestUserMessage);
+            const isExcessRequestOpenAI = (httpCode === excessRequestOpenAICode && httpMessage === excessRequestOpenAIMessage);
             // - 계정별 RateLimit 차단대기인 경우 (Backend)
-            if (httpCode === excessRequestUserCode && httpMessage === excessRequestUserMessage) {
+            if (isExcessRequestUser) {
                 throttleShowErrorToastWithDelay(`요청이 너무 빠릅니다. ${getRetryAfterText(err)} 후 시도해주세요.`);
+                return Promise.reject({ message: "excessRequest" });
             }
             // - IP별 RateLimit 차단대기인 경우 (Cloudflare, WAF)
             // !!! preflight OPTIONS는 브라우저가 직접 요청하므로, 해당 응답은 인터셉터에서 감지 불가능.
             //     따라서 본 429 알림은, 추후 WAF 또는 유료 Cloudflare로 응답 커스텀 시 자동 적용될 예정. !!!
-            else if (isMemoAITitle === false) {
+            else if (isExcessRequestOpenAI === false) {
                 throttleShowErrorToastWithDelay("요청이 너무 빠릅니다. 잠시 후 시도해주세요.");
+                return Promise.reject({ message: "excessRequest" });
             }
         }
         // [ ERROR 500 ]

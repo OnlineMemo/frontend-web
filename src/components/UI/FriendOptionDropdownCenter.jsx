@@ -123,7 +123,9 @@ function FriendOptionDropdownRight(props) {
                 setModalOn(false);
             })
             .catch((error) => {
-                setIsNone(true);
+                if (error.message !== "excessRequest") {  // 요청제한은 인터셉터에서 토스트 알림으로 대체함.
+                    setIsNone(true);
+                }
             })
     }
 
