@@ -72,15 +72,14 @@ Apis.interceptors.response.use(
                     }
 
                     await reissueApiPromise;  // 토큰 재발급 완료까지 대기 (페이지 내 reissue 중복호출 방지)
-                    return await Apis.request(originalConfig);  // await 종료 후 기존 요청 재전송
-                } catch (err) {
-                    console.error(err);
+                } catch (reissueErr) {
+                    console.error(reissueErr);
 
-                    const { status: tokenReissueStatus, code: tokenReissueCode, message: tokenReissueMessage } = err.response?.data || {};
+                    const { status: tokenReissueStatus, code: tokenReissueCode, message: tokenReissueMessage } = reissueErr.response?.data || {};
                     const isExcessRequestUser = (tokenReissueStatus === 429 && tokenReissueCode === excessRequestUserCode && tokenReissueMessage === excessRequestUserMessage);
                     if (isExcessRequestUser) {  // 계정 요청제한 시 로그아웃하지 않고 안내만 노출
-                        throttleShowErrorToastWithDelay(`요청이 너무 빠릅니다. ${getRetryAfterText(err)} 후 시도해주세요.`);
-                        return Promise.reject(err);
+                        throttleShowErrorToastWithDelay(`요청이 너무 빠릅니다. ${getRetryAfterText(reissueErr)} 후 시도해주세요.`);
+                        return Promise.reject(reissueErr);
                     }
 
                     const isMemoSave = checkURI(originalConfig, '/memos', 'post');
@@ -99,8 +98,9 @@ Apis.interceptors.response.use(
 
                     const isBlockedUser = (tokenReissueStatus === 403 && tokenReissueCode === blockedUserCode && tokenReissueMessage === blockedUserMessage);
                     redirectToLoginWithAlert(isBlockedUser ? "blockedUser" : "loginExpired");  // 토큰 재발급 실패 시 로그인 화면으로 이동
+                    return Promise.reject(err);
                 }
-                return Promise.reject(err);
+                return await Apis.request(originalConfig);  // 토큰 재발급 성공 시 기존 요청 재전송
             }
             // - 기타 401 경우
             else {
