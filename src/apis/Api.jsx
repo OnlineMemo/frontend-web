@@ -76,6 +76,13 @@ Apis.interceptors.response.use(
                 } catch (err) {
                     console.error(err);
 
+                    const { status: tokenReissueStatus, code: tokenReissueCode, message: tokenReissueMessage } = err.response?.data || {};
+                    const isExcessRequestUser = (tokenReissueStatus === 429 && tokenReissueCode === excessRequestUserCode && tokenReissueMessage === excessRequestUserMessage);
+                    if (isExcessRequestUser) {  // 계정 요청제한 시 로그아웃하지 않고 안내만 노출
+                        throttleShowErrorToastWithDelay(`요청이 너무 빠릅니다. ${getRetryAfterText(err)} 후 시도해주세요.`);
+                        return Promise.reject(err);
+                    }
+
                     const isMemoSave = checkURI(originalConfig, '/memos', 'post');
                     const isMemoUpdate = checkURI(originalConfig, /^\/memos\/\d+$/, 'put');
                     const isMemoAITitle = checkURI(originalConfig, '/memos/ai/title', 'post');
@@ -90,7 +97,6 @@ Apis.interceptors.response.use(
                         }
                     }
 
-                    const { status: tokenReissueStatus, code: tokenReissueCode, message: tokenReissueMessage } = err.response?.data || {};
                     const isBlockedUser = (tokenReissueStatus === 403 && tokenReissueCode === blockedUserCode && tokenReissueMessage === blockedUserMessage);
                     redirectToLoginWithAlert(isBlockedUser ? "blockedUser" : "loginExpired");  // 토큰 재발급 실패 시 로그인 화면으로 이동
                 }
@@ -119,18 +125,13 @@ Apis.interceptors.response.use(
             const isMemoAITitle = checkURI(originalConfig, '/memos/ai/title', 'post');
             // - 계정별 RateLimit 차단대기인 경우 (Backend)
             if (httpCode === excessRequestUserCode && httpMessage === excessRequestUserMessage) {
-                const retryAfterText = getRetryAfterText(err);
-                setTimeout(() => {
-                    throttleShowErrorToast(`요청이 너무 빠릅니다. ${retryAfterText} 후 시도해주세요.`);
-                }, 600);  // (대기시간: 중첩 방지 600 -> dismiss 보장 150 -> 기본 100)
+                throttleShowErrorToastWithDelay(`요청이 너무 빠릅니다. ${getRetryAfterText(err)} 후 시도해주세요.`);
             }
             // - IP별 RateLimit 차단대기인 경우 (Cloudflare, WAF)
             // !!! preflight OPTIONS는 브라우저가 직접 요청하므로, 해당 응답은 인터셉터에서 감지 불가능.
             //     따라서 본 429 알림은, 추후 WAF 또는 유료 Cloudflare로 응답 커스텀 시 자동 적용될 예정. !!!
             else if (isMemoAITitle === false) {
-                setTimeout(() => {
-                    throttleShowErrorToast("요청이 너무 빠릅니다. 잠시 후 시도해주세요.");
-                }, 600);  // (대기시간: 중첩 방지 600 -> dismiss 보장 150 -> 기본 100)
+                throttleShowErrorToastWithDelay("요청이 너무 빠릅니다. 잠시 후 시도해주세요.");
             }
         }
         // [ ERROR 500 ]
@@ -138,9 +139,7 @@ Apis.interceptors.response.use(
             const isMemoAITitle = checkURI(originalConfig, '/memos/ai/title', 'post');
             // - 예상치 못한 서버 내부 에러인 경우
             if (isMemoAITitle === false) {
-                setTimeout(() => {
-                    throttleShowErrorToast("서버 오류입니다. 잠시 후 시도해주세요.");
-                }, 600);  // (대기시간: 중첩 방지 600 -> dismiss 보장 150 -> 기본 100)
+                throttleShowErrorToastWithDelay("서버 오류입니다. 잠시 후 시도해주세요.");
             }
         }
 
@@ -205,5 +204,11 @@ function redirectToLoginWithAlert(alertValue) {
 const throttleShowErrorToast = throttle((message) => {
     showErrorToast(message);
 }, 1500, { leading: true, trailing: false });
+
+function throttleShowErrorToastWithDelay(message) {
+    setTimeout(() => {
+        throttleShowErrorToast(message);
+    }, 600);  // (대기시간: 중첩 방지 600 -> dismiss 보장 150 -> 기본 100)
+}
 
 export default Apis;
