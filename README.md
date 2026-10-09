@@ -9,6 +9,7 @@
 - <strong>25.06.19</strong>&nbsp;:&nbsp;&nbsp;<a href="https://github.com/OnlineMemo/frontend-web/pull/4">[PR] 편집충돌 동시성 제어 (Lock) </a>
 - <strong>25.09.01</strong>&nbsp;:&nbsp;&nbsp;<a href="https://github.com/OnlineMemo/frontend-web/pull/7">[PR] GA4 · Admin 백오피스 지표 (Traffic)</a>
 - <strong>25.09.26</strong>&nbsp;:&nbsp;&nbsp;<a href="https://github.com/OnlineMemo/frontend-web/pull/9">[PR] 메모 제목 AI 자동화 (OpenAI)</a>
+- <strong>26.10.09</strong>&nbsp;:&nbsp;&nbsp;<a href="https://github.com/OnlineMemo/frontend-web/pull/11">[PR] 계정별 DDoS 트래픽 제어 (RateLimit)</a>
 
 <!--
 ### Refactor
