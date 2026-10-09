@@ -80,7 +80,7 @@ Apis.interceptors.response.use(
                     const { status: tokenReissueStatus, code: tokenReissueCode, message: tokenReissueMessage } = reissueErr.response?.data || {};
                     const isExcessRequestUser = (tokenReissueStatus === 429 && tokenReissueCode === excessRequestUserCode && tokenReissueMessage === excessRequestUserMessage);
                     if (isExcessRequestUser) {  // 계정 요청제한 시 로그아웃하지 않고 안내만 노출
-                        throttleShowErrorToastWithDelay(`요청이 너무 빠릅니다. ${getRetryAfterText(reissueErr)} 후 시도해주세요.`);
+                        throttleShowErrorToastWithDelay(`요청이 많습니다. ${getRetryAfterText(reissueErr)} 후 시도해주세요.`);
                         return Promise.reject({ message: "excessRequest" });
                     }
 
@@ -128,14 +128,14 @@ Apis.interceptors.response.use(
             const isExcessRequestOpenAI = (httpCode === excessRequestOpenAICode && httpMessage === excessRequestOpenAIMessage);
             // - 계정별 RateLimit 차단대기인 경우 (Backend)
             if (isExcessRequestUser) {
-                throttleShowErrorToastWithDelay(`요청이 너무 빠릅니다. ${getRetryAfterText(err)} 후 시도해주세요.`);
+                throttleShowErrorToastWithDelay(`요청이 많습니다. ${getRetryAfterText(err)} 후 시도해주세요.`);
                 return Promise.reject({ message: "excessRequest" });
             }
             // - IP별 RateLimit 차단대기인 경우 (Cloudflare, WAF)
             // !!! preflight OPTIONS는 브라우저가 직접 요청하므로, 해당 응답은 인터셉터에서 감지 불가능.
             //     따라서 본 429 알림은, 추후 WAF 또는 유료 Cloudflare로 응답 커스텀 시 자동 적용될 예정. !!!
             else if (isExcessRequestOpenAI === false) {
-                throttleShowErrorToastWithDelay("요청이 너무 빠릅니다. 잠시 후 시도해주세요.");
+                throttleShowErrorToastWithDelay("요청이 많습니다. 잠시 후 시도해주세요.");
                 return Promise.reject({ message: "excessRequest" });
             }
         }
