@@ -79,8 +79,13 @@ Apis.interceptors.response.use(
 
                     const { status: tokenReissueStatus, code: tokenReissueCode, message: tokenReissueMessage } = reissueErr.response?.data || {};
                     const isExcessRequestUser = (tokenReissueStatus === 429 && tokenReissueCode === excessRequestUserCode && tokenReissueMessage === excessRequestUserMessage);
+                    const isNetworkError = (reissueErr.response === undefined && reissueErr.code === 'ERR_NETWORK');
                     if (isExcessRequestUser) {  // 계정 요청제한 시 로그아웃하지 않고 안내만 노출
                         throttleShowErrorToastWithDelay(`요청이 많습니다. ${getRetryAfterText(reissueErr)} 후 시도해주세요.`);
+                        return Promise.reject({ message: "excessRequest" });
+                    }
+                    else if (isNetworkError) {  // 네트워크 에러 시 로그아웃하지 않고 안내만 노출
+                        throttleShowErrorToastWithDelay(navigator.onLine ? "요청이 많습니다. 잠시 후 시도해주세요." : "인터넷 연결을 확인해주세요.");
                         return Promise.reject({ message: "excessRequest" });
                     }
 
@@ -146,6 +151,11 @@ Apis.interceptors.response.use(
             if (isMemoAITitle === false) {
                 throttleShowErrorToastWithDelay("서버 오류입니다. 잠시 후 시도해주세요.");
             }
+        }
+        // [ ERROR Network ]
+        else if (err.response === undefined && err.code === 'ERR_NETWORK') {
+            throttleShowErrorToastWithDelay(navigator.onLine ? "요청이 많습니다. 잠시 후 시도해주세요." : "인터넷 연결을 확인해주세요.");
+            return Promise.reject({ message: "excessRequest" });
         }
 
         return Promise.reject(err);  // 부모 호출부 catch문으로 전파

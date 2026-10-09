@@ -121,13 +121,15 @@ function ChangePwPage(props) {
                         setSuccessModalOn(true);
                     })
                     .catch((error) => {
-                        setIsWrongId(true);
-                        setIsWrongPw(true);
-                        setIsWrongNewPw(false);
-                        setIsWrongConfirm(false);
-                        setIsWrongResult(true);
+                        if (error.message !== "excessRequest") {  // 요청제한은 페이지 모달 대신 인터셉터에서 토스트 알림으로 대체함.
+                            setIsWrongId(true);
+                            setIsWrongPw(true);
+                            setIsWrongNewPw(false);
+                            setIsWrongConfirm(false);
+                            setIsWrongResult(true);
 
-                        setLoginErrorModalOn(true);  // 로그인 정보가 불일치함 에러.
+                            setLoginErrorModalOn(true);  // 로그인 정보가 불일치함 에러.
+                        }
                     })
             }
         }

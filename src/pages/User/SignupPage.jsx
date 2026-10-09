@@ -119,7 +119,9 @@ function SignupPage(props) {
                     setIsWrongResult(false);
                 })
                 .catch((error) => {
-                    setDuplicateErrorModalOn(true);
+                    if (error.message !== "excessRequest") {  // 요청제한은 페이지 모달 대신 인터셉터에서 토스트 알림으로 대체함.
+                        setDuplicateErrorModalOn(true);
+                    }
                 })
         }
         else if (pwValue !== confirmValue) {
