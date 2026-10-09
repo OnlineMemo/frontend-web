@@ -37,4 +37,11 @@ const showWarnToast = (toastText, autoClose = null) =>
 const showInfoToast = (toastText, autoClose = null) =>
     showToast('info', toastText, autoClose);  // (대기시간: 기본 100)
 
-export { showSuccessToast, showErrorToast, showWarnToast, showInfoToast };
+const dismissToast = async () => {
+    await loadToastCSS();
+    setTimeout(() => {
+        toast.dismiss();
+    }, 150);  // warn, info 토스트 생성 이후 dismiss 실행을 보장.
+};
+
+export { showSuccessToast, showErrorToast, showWarnToast, showInfoToast, dismissToast };
