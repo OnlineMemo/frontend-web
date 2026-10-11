@@ -283,7 +283,7 @@ function ReadAndEditMemoNav(props) {
         await Apis
             .delete(`/memos/${props.memoId}`)
             .then((response) => {
-                removePinnedMemoId(props.memoId);
+                removePinnedMemoId(Number(props.memoId));
                 navigate(`/memos`);
             })
             .catch((error) => {

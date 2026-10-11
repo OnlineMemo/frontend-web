@@ -31,7 +31,7 @@ const RecoveryModalWrapper = styled.div`
 
 function NewMemoPage(props) {
     const location = useLocation();
-    const { isGroup, friendList } = location.state;
+    const { isGroup, friendList } = location.state || { isGroup: 0, friendList: [] };
 
     const [prevTitleValue, setPrevTitleValue] = useState(null);
     const [titleValue, setTitleValue] = useState("");

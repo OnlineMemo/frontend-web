@@ -114,6 +114,11 @@ function FriendOptionDropdownRight(props) {
     };
 
     const handleSendClick = async (e) => {
+        if (emailValue.length === 0) {
+            setIsNone(false);
+            return;
+        }
+
         await Apis
             .post(`/friends`, {
                 email: emailValue
@@ -142,7 +147,7 @@ function FriendOptionDropdownRight(props) {
                             return (
                                 <li id="dropLi" key={index}>
                                     {index == 1  // 친구요청 부분의 인덱스번호
-                                        ? <Link style={{ textDecoration: "none" }} onClick={() => setModalOn(!modalOn)}>{drop.name}</Link>  // 친구요청 클릭하면
+                                        ? <Link style={{ textDecoration: "none" }} onClick={() => { setModalOn(!modalOn); setEmailValue(""); setIsNone(false); }}>{drop.name}</Link>  // 친구요청 클릭하면
                                         : <Link to={drop.link} style={{ textDecoration: "none" }}>{drop.name}</Link>  // 친구목록 또는 수신목록 클릭하면
                                     }
                                 </li>
