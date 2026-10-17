@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import NavWrapper from "../Styled/NavWrapper";
 import ConfirmModal from "../Modal/ConfirmModal";
+import PendingOverlay from "../UI/PendingOverlay";
+import usePendingRequest from "../../hooks/usePendingRequest";
 import Apis from "../../apis/Api";
 import { removePinnedMemoId, removeUnsavedMemo, saveUnsavedMemo } from "../../utils/MemoUtil";
 
@@ -98,6 +100,10 @@ const Wrapper = styled(NavWrapper)`
         &:hover {
             background-color: #a1c4dfa4;
         }
+
+        &:disabled {
+            background-color: #c8c8c8;
+        }
     }
 
     .flex-left {
@@ -183,6 +189,7 @@ function ReadAndEditMemoNav(props) {
     const [lockUserNickname, setLockUserNickname] = useState();
     const [conflictModalOn, setConflictModalOn] = useState(false);
     const [conflictModalText, setConflictModalText] = useState();
+    const [isPending, runPending] = usePendingRequest();
 
     const handleFirstModalClick = (textValue, event) => {
         setModalOn((modalOn) => !modalOn);
@@ -250,32 +257,34 @@ function ReadAndEditMemoNav(props) {
             element.style.borderRadius = "5px";
         }
         else {
-            await Apis
-                .put(`/memos/${props.memoId}`, {
-                    title: titleValue,
-                    content: contentValue,
-                    isStar: null,
-                    currentVersion: props.currentVersion
-                })
-                .then((response) => {
-                    if (props.purpose === "edit" && props.memoHasUsersCount > 1) {
-                        sessionStorage.removeItem('editGroupMemoId');
-                    }
-                    removeUnsavedMemo("edit", props.memoId);
-                    props.propPurposeFunction("read");  // 하위 컴포넌트 함수
-                })
-                .catch((error) => {
-                    const httpStatus = error.response?.status;
-                    if (httpStatus === 409) {
-                        handleConflictModalOn("이미 수정된 메모입니다.");
-                    }
-                    else if (httpStatus === 423) {
-                        handleConflictModalOn("다른 사용자가 수정 중입니다.");
-                    }
-                    else {
-                        saveUnsavedMemo("edit", Number(props.memoId), props.title, props.content);
-                    }
-                })
+            await runPending(async () => {
+                await Apis
+                    .put(`/memos/${props.memoId}`, {
+                        title: titleValue,
+                        content: contentValue,
+                        isStar: null,
+                        currentVersion: props.currentVersion
+                    })
+                    .then((response) => {
+                        if (props.purpose === "edit" && props.memoHasUsersCount > 1) {
+                            sessionStorage.removeItem('editGroupMemoId');
+                        }
+                        removeUnsavedMemo("edit", props.memoId);
+                        props.propPurposeFunction("read");  // 하위 컴포넌트 함수
+                    })
+                    .catch((error) => {
+                        const httpStatus = error.response?.status;
+                        if (httpStatus === 409) {
+                            handleConflictModalOn("이미 수정된 메모입니다.");
+                        }
+                        else if (httpStatus === 423) {
+                            handleConflictModalOn("다른 사용자가 수정 중입니다.");
+                        }
+                        else {
+                            saveUnsavedMemo("edit", Number(props.memoId), props.title, props.content);
+                        }
+                    })
+            });
         }
     }
 
@@ -364,7 +373,7 @@ function ReadAndEditMemoNav(props) {
     ];
     const editNavItems = [  // 메모 수정 용도
         <span className="flex-left">&nbsp;<i className="fa fa-arrow-left" aria-hidden="true" onClick={() => { deleteLock(); props.onLeaveEdit?.(); props.propPurposeFunction("read"); }}></i></span>,
-        <span><button className="saveButton" onClick={(event) => handleUpdateSaveClick(props.title, props.content, event)}>저장</button>&nbsp;</span>
+        <span><button className="saveButton" disabled={isPending} onClick={(event) => handleUpdateSaveClick(props.title, props.content, event)}>{isPending ? "…" : "저장"}</button>&nbsp;</span>
     ];
 
     let navItems;
@@ -431,6 +440,7 @@ function ReadAndEditMemoNav(props) {
                     </div>
                 </ConfirmModal>
             )}
+            {isPending && <PendingOverlay />}
         </Wrapper>
     );
 }

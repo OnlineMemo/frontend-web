@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import NavWrapper from "../Styled/NavWrapper";
+import PendingOverlay from "../UI/PendingOverlay";
+import usePendingRequest from "../../hooks/usePendingRequest";
 import { checkToken } from "../../utils/TokenUtil"
 import { removeUnsavedMemo, saveUnsavedMemo } from "../../utils/MemoUtil"
 import Apis from "../../apis/Api";
@@ -98,6 +100,10 @@ const Wrapper = styled(NavWrapper)`
         &:hover {
             background-color: #a1c4dfa4;
         }
+
+        &:disabled {
+            background-color: #c8c8c8;
+        }
     }
 
     .flex-left {
@@ -139,6 +145,7 @@ const Wrapper = styled(NavWrapper)`
 
 function NewMemoNav(props) {
     const navigate = useNavigate();
+    const [isPending, runPending] = usePendingRequest();
 
     const handleNewSaveClick = async (titleValue, contentValue, e) => {
         if (titleValue.length < 1) {
@@ -152,21 +159,23 @@ function NewMemoNav(props) {
                 friendIdList = props.friendList.map((user) => user.userId); // 친구의 userId만 추출한 리스트 생성.
             }
 
-            await Apis
-                .post(`/memos`, {
-                    title: titleValue,
-                    content: contentValue,
-                    userIdList: friendIdList
-                })
-                .then((response) => {
-                    var memoId = response.data.data.memoId
-                    removeUnsavedMemo("new", null);
-                    props.onSaveSuccess?.();
-                    navigate(`/memos/${memoId}`);
-                })
-                .catch((error) => {
-                    saveUnsavedMemo("new", null, titleValue, contentValue);
-                })
+            await runPending(async () => {
+                await Apis
+                    .post(`/memos`, {
+                        title: titleValue,
+                        content: contentValue,
+                        userIdList: friendIdList
+                    })
+                    .then((response) => {
+                        var memoId = response.data.data.memoId
+                        removeUnsavedMemo("new", null);
+                        props.onSaveSuccess?.();
+                        navigate(`/memos/${memoId}`);
+                    })
+                    .catch((error) => {
+                        saveUnsavedMemo("new", null, titleValue, contentValue);
+                    })
+            });
         }
     }
 
@@ -176,7 +185,7 @@ function NewMemoNav(props) {
 
     const newNavItems = [  // 메모 작성 용도
         <span className="flex-left">&nbsp;<i className="fa fa-arrow-left" aria-hidden="true" onClick={() => { navigate(-1) }}></i></span>,
-        <span><button className="saveButton" onClick={(event) => handleNewSaveClick(props.title, props.content, event)}>저장</button>&nbsp;</span>
+        <span><button className="saveButton" disabled={isPending} onClick={(event) => handleNewSaveClick(props.title, props.content, event)}>{isPending ? "…" : "저장"}</button>&nbsp;</span>
     ];
 
     let navItems = newNavItems;
@@ -192,6 +201,7 @@ function NewMemoNav(props) {
                 }
                 )}
             </ul>
+            {isPending && <PendingOverlay />}
         </Wrapper>
     );
 }

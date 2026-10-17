@@ -85,6 +85,8 @@ function ReadAndEditMemoPage(props) {
                 // 시간 내에 타이핑이 있었으니, API 호출
                 Apis.post(`/memos/${memoId}/lock`)
                     .then(() => {
+                        if (!extendLockTimerRef.current) return;  // 이미 수정이 끝나 타이머가 정리된 경우
+
                         // 락 연장에 성공했으므로, 타이머 초기화 후 재시작
                         clearTimeout(extendLockTimerRef.current);
                         extendLockTimerRef.current = null;
