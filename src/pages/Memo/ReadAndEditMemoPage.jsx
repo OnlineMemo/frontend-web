@@ -6,6 +6,8 @@ import OneMemoWrapper from "../../components/Styled/OneMemoWrapper";
 import ReadAndEditMemoNav from "../../components/Navigation/ReadAndEditMemoNav";
 import ReadMemoSkeleton from "../../components/UI/ReadMemoSkeleton";
 import ConfirmModal from "../../components/Modal/ConfirmModal";
+import PendingOverlay from "../../components/UI/PendingOverlay";
+import usePendingRequest from "../../hooks/usePendingRequest";
 import { checkToken } from "../../utils/TokenUtil"
 import { saveUnsavedMemo, getUnsavedMemo, removeUnsavedMemo } from "../../utils/MemoUtil";
 import { getDateStr, getRelativeTimeStr } from "../../utils/TimeUtil"
@@ -41,6 +43,8 @@ function ReadAndEditMemoPage(props) {
     const [contentValue, setContentValue] = useState("");
     const [purpose, setPurpose] = useState("read");
     const [recoveryModalOn, setRecoveryModalOn] = useState(false);
+    const [isPending, runPending] = usePendingRequest();
+    const requestSeqRef = useRef(0);
 
     const extendLockGap = (1000 * 60 * 10) - (1000 * 15);  // 10분 - 15초 (밀리초 단위)
     const extendLockTimerRef = useRef(null);
@@ -156,9 +160,11 @@ function ReadAndEditMemoPage(props) {
     };
 
     async function getMemo() {  // 해당 사용자의 메모 1개 조회
+        const requestSeq = ++requestSeqRef.current;
         await Apis
             .get(`/memos/${memoId}`)
             .then((response) => {
+                if (requestSeqRef.current !== requestSeq) return;
                 setMemo(response.data.data);
                 setTitleValue(response.data.data.title);
                 setContentValue(response.data.data.content);
@@ -254,8 +260,12 @@ function ReadAndEditMemoPage(props) {
 
     useEffect(() => {
         checkToken();
-        getMemo();
+        purpose === "edit" ? runPending(getMemo) : getMemo();
     }, [purpose]);
+
+    useEffect(() => {
+        if (!isPending) autoResizeTextarea();
+    }, [isPending]);
 
     useEffect(() => {
         if (purpose === "edit" && memo?.memoHasUsersCount > 1) {
@@ -298,8 +308,8 @@ function ReadAndEditMemoPage(props) {
         purposeComponent =
             <div>
                 <div className="memoTitle">
-                    <input className="memoTitleInput" type="text" value={memo && titleValue} onChange={handleChangeTitle} placeholder="제목 입력 (1~15자)" maxLength="15"
-                        style={{ width: "38vw", textAlign: "center", paddingTop: "4px", paddingBottom: "4px", border: "1px solid #463f3a", borderRadius: "5px", backgroundColor: "#f4f3ee" }} />
+                    <input className="memoTitleInput" type="text" value={isPending ? "로딩 중 ..." : memo && titleValue} onChange={handleChangeTitle} placeholder="제목 입력 (1~15자)" maxLength="15" readOnly={isPending}
+                        style={{ width: "38vw", textAlign: "center", paddingTop: "4px", paddingBottom: "4px", border: "1px solid #463f3a", borderRadius: "5px", backgroundColor: isPending ? "#fbfaf7" : "#f4f3ee", color: isPending ? "#a59e98" : undefined }} />
                     <button id="aiTitleButton" onClick={debounceAITitleClick}>
                     {/* <span style={{ WebkitTextStroke: "0.35px #463f3a" }}>AI</span> */}
                     <span style={{ WebkitTextStroke: "0.35px #463f3a", width: "13px" }}></span>
@@ -308,7 +318,8 @@ function ReadAndEditMemoPage(props) {
                 </div>
                 <hr></hr>
                 <div className="memoContent">
-                    <textarea className="autoTextarea" value={memo && contentValue} onChange={handleChangeContent} placeholder="내용을 입력해주세요."
+                    <textarea className="autoTextarea" value={isPending ? "로딩 중 ...\n잠시만 기다려주세요" : memo && contentValue} onChange={handleChangeContent} placeholder="내용을 입력해주세요." readOnly={isPending}
+                        style={isPending ? { backgroundColor: "#fbfaf7", color: "#a59e98" } : undefined}
                         onKeyDown={(event) => autoResizeAndTapkeyTextarea(event)} onKeyUp={autoResizeTextarea} />
                 </div>
             </div>
@@ -379,6 +390,8 @@ function ReadAndEditMemoPage(props) {
                     </ConfirmModal>
                 </RecoveryModalWrapper>
             )}
+
+            {isPending && <PendingOverlay />}
         </div>
     );
 }
