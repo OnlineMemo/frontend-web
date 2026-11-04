@@ -398,10 +398,13 @@ function ReadAndEditMemoNav(props) {
                 )}
             </ul>
             {modalOn && (
-                <ConfirmModal closeModal={() => setModalOn(!modalOn)}>
+                <ConfirmModal closeModal={() => setModalOn(!modalOn)} customStyle={modalText === "삭제" ? { height: "136px" } : undefined}>
                     <br></br>
                     <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
-                    <h2 className="modalTitle" style={{ fontSize: "1.8rem" }}>정말&nbsp;{modalText}하시겠습니까?</h2>
+                    <h2 className="modalTitle" style={{ fontSize: "1.8rem" }}>
+                        정말&nbsp;{modalText}하시겠습니까?
+                        {modalText === "삭제" && <span className="modalSubTitle">휴지통에 30일간 보관됩니다.</span>}
+                    </h2>
                     <br></br>
                     <div style={{ float: "right" }}>
                         <button className="confirmDeleteButton" onClick={handleDeleteClick}>확인</button>&nbsp;&nbsp;
