@@ -158,7 +158,7 @@ const Inform = () => {
             </ul>
             <div style={{ lineHeight: "147%" }}><br></br></div>
 
-            <h5>&lt;&nbsp;Contact&nbsp;&nbsp;<i className="fa fa-handshake-o" aria-hidden="true"></i>&nbsp;&gt;</h5>
+            <h5>&lt;&nbsp;문의&nbsp;&nbsp;<i className="fa fa-handshake-o" aria-hidden="true"></i>&nbsp;&gt;</h5>
             <div style={{ lineHeight: "11.3px" }}><br></br></div>
             <span className="contacts">
                 <a href="mailto:tkguswls1106@gmail.com?subject=OnlineMemo 문의제목: &body=%0D%0A%0D%0A%0D%0A%0D%0A  -----------------------------------------------------------%0D%0A문의 및 건의사항 및 보완할점 내용을 위에 적어주세요!"><i className="fa fa-envelope-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>

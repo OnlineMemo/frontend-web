@@ -44,7 +44,7 @@ function NoLoginNav(props) {
         <Wrapper>
             <ul>
                 <li><Link to={'/notice'}>공지사항</Link></li>
-                <li><Link to={'/information'}>개발 정보</Link></li>
+                <li><Link to={'/download'}>앱 설치</Link></li>
             </ul>
         </Wrapper>
     );

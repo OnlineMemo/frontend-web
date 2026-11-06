@@ -88,8 +88,8 @@ function YesLoginNav(props) {
             link: '/notice',
         },
         {
-            name: "개발 정보",
-            link: '/information',
+            name: "앱 설치",
+            link: '/download',
         },
         {
             name: "로그아웃",
