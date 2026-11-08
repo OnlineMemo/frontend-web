@@ -32,6 +32,7 @@ function TrashMemoPage(props) {
         checkToken();
         if (memoId && !/^\d+$/.test(memoId)) {  // '/memos/trash/숫자' 경로가 아닌 경우, 404 페이지로 이동
             navigate('/404');
+            return;
         }
         getTrashMemo();
     }, []);

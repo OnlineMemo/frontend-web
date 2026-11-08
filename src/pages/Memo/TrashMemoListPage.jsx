@@ -139,7 +139,7 @@ function TrashMemoListPage(props) {
                         removePinnedMemoId(trashMemo.memoId);
                         removeUnsavedMemo("edit", trashMemo.memoId);
                     });
-                    setModalOn((modalOn) => !modalOn);
+                    setModalOn(false);
                     await getTrashMemos();
                 })
                 .catch((error) => {

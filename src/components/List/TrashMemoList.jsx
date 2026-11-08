@@ -126,7 +126,7 @@ function TrashMemoList(props) {
                 .then(async (response) => {
                     removePinnedMemoId(memoId);
                     removeUnsavedMemo("edit", memoId);
-                    setModalOn((modalOn) => !modalOn);
+                    setModalOn(false);
                     await getTrashMemos();
                 })
                 .catch((error) => {
