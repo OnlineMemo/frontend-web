@@ -84,6 +84,10 @@ function YesLoginNav(props) {
             link: `/users`,
         },
         {
+            name: "휴지통",
+            link: `/memos/trash`,
+        },
+        {
             name: "공지사항",
             link: '/notice',
         },
