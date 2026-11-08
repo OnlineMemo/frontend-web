@@ -293,6 +293,7 @@ function ReadAndEditMemoNav(props) {
             .delete(`/memos/${props.memoId}`)
             .then((response) => {
                 removePinnedMemoId(Number(props.memoId));
+                removeUnsavedMemo("edit", Number(props.memoId));
                 navigate(`/memos`);
             })
             .catch((error) => {

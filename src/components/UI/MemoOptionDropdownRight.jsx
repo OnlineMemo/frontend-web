@@ -6,6 +6,7 @@ import FriendGroupModal from "../Modal/FriendGroupModal";
 import InviteFriendList from "../List/InviteFriendList";
 import ConfirmModal from "../Modal/ConfirmModal";
 import Apis from "../../apis/Api";
+import { removeUnsavedMemo } from "../../utils/MemoUtil";
 
 const DropdownContainer = styled.div`
     position: relative;
@@ -145,6 +146,7 @@ function MemoOptionDropdownRight(props) {
             .delete(`/memos/${memoId}`)
             .then((response) => {
                 if (isPinMemo) togglePinMemo(memoId);
+                removeUnsavedMemo("edit", memoId);
                 getMemos();
             })
             .catch((error) => {
