@@ -68,15 +68,15 @@ const DropMenu = styled.div`
     }
 
     ul li {
-        font-size:2rem;
+        font-size: 2rem;
         list-style: none;
-        line-height:44px;
+        line-height: 44px;
         color: #ffffff;
     }
 
     a {
-        text-decoration:none;
-        font-size:2rem;
+        text-decoration: none;
+        font-size: 2rem;
         color: #ffffff;
         border-left: #bcb8b1 solid 2px;
         border-right: #bcb8b1 solid 2px;

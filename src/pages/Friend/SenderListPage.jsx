@@ -14,7 +14,7 @@ const MoreWrapper = styled(BasicWrapper)`
         padding: 1px 6.7px;
 
         &:hover {
-            cursor:pointer;
+            cursor: pointer;
             background-color: #463f3a;
             color: #bcb8b1;
             border-color: #463f3a;

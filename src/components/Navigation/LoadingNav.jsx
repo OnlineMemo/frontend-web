@@ -13,13 +13,13 @@ const Wrapper = styled(NavWrapper)`
     }
 
     ul li {
-        list-style:none;
-        line-height:50px;
+        list-style: none;
+        line-height: 50px;
     }  
 
     a {
-        text-decoration:none;
-        font-size:2rem;
+        text-decoration: none;
+        font-size: 2rem;
         color: #ffffff;
         padding: 1px 7px;
     }

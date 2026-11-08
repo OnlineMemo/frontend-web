@@ -13,7 +13,7 @@ const GlobalWrapper = styled.div`
         font-family: "jua";
 
         &:hover {
-            cursor:pointer;
+            cursor: pointer;
             background-color: #2c2927;
         }
     }

@@ -26,7 +26,7 @@ const MoreWrapper = styled(BasicWrapper)`
         z-index: 10;
 
         &:hover {
-            cursor:pointer;
+            cursor: pointer;
             background-color: #463f3a;
             color: #bcb8b1;
             border-color: #463f3a;
@@ -75,7 +75,7 @@ const DivWrapper = styled.div`
         border-right: 2px solid #212121;
 
         &:hover {
-            cursor:pointer;
+            cursor: pointer;
             background-color: #2c2927;
         }
     }

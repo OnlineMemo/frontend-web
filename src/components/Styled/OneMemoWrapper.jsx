@@ -84,7 +84,7 @@ const OneMemoWrapper = styled.div.attrs({ role: "main" })`
         }
 
         &:hover {
-            cursor:pointer;
+            cursor: pointer;
             background-color: #463f3aa4;
         }
 
