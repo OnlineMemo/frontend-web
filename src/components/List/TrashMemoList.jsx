@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import ConfirmModal from "../Modal/ConfirmModal";
 import Apis from "../../apis/Api";
+import { removePinnedMemoId, removeUnsavedMemo } from "../../utils/MemoUtil";
 import usePendingRequest from "../../hooks/usePendingRequest";
 
 const TrashMemosWrapper = styled.div`
@@ -117,6 +118,8 @@ function TrashMemoList(props) {
             await Apis
                 .delete(`/memos/trash/${memoId}`)
                 .then(async (response) => {
+                    removePinnedMemoId(memoId);
+                    removeUnsavedMemo("edit", memoId);
                     setModalOn((modalOn) => !modalOn);
                     await getTrashMemos();
                 })
