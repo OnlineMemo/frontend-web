@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import NavWrapper from "../Styled/NavWrapper";
 import ConfirmModal from "../Modal/ConfirmModal";
+import PendingOverlay from "../UI/PendingOverlay";
 import usePendingRequest from "../../hooks/usePendingRequest";
 import Apis from "../../apis/Api";
 import { removePinnedMemoId, removeUnsavedMemo } from "../../utils/MemoUtil";
@@ -216,6 +217,7 @@ function TrashMemoNav(props) {
                     </div>
                 </ConfirmModal>
             )}
+            {isPending && <PendingOverlay />}
         </Wrapper>
     );
 }
