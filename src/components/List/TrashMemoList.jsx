@@ -3,7 +3,6 @@ import styled from "styled-components";
 import ConfirmModal from "../Modal/ConfirmModal";
 import Apis from "../../apis/Api";
 import { removePinnedMemoId, removeUnsavedMemo } from "../../utils/MemoUtil";
-import usePendingRequest from "../../hooks/usePendingRequest";
 
 const TrashMemosWrapper = styled.div`
     display: flex;
@@ -69,7 +68,7 @@ const TitleRemainWrapper = styled.div`
 const NoneResult = styled.div`
     display: block;
 
-    margin-top: 11.5px;
+    margin-top: 6.5px;
     word-break: keep-all;
     text-align: center;
     font-size: 1.43rem;
@@ -85,9 +84,8 @@ const NoneResult = styled.div`
 `;
 
 function TrashMemoList(props) {
-    const { trashMemos, getTrashMemos, isFirstGetTrashMemos } = props;
+    const { trashMemos, getTrashMemos, isFirstGetTrashMemos, isPending, runPending } = props;
 
-    const [isPending, runPending] = usePendingRequest();
     const [modalOn, setModalOn] = useState(false);
     const [modalMemoId, setModalMemoId] = useState();
 
