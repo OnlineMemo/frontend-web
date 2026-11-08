@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import ConfirmModal from "../Modal/ConfirmModal";
+import Apis from "../../apis/Api";
+import usePendingRequest from "../../hooks/usePendingRequest";
 
 const TrashMemosWrapper = styled.div`
     display: flex;
@@ -81,10 +84,46 @@ const NoneResult = styled.div`
 `;
 
 function TrashMemoList(props) {
-    const { trashMemos, isFirstGetTrashMemos } = props;
+    const { trashMemos, getTrashMemos, isFirstGetTrashMemos } = props;
+
+    const [isPending, runPending] = usePendingRequest();
+    const [modalOn, setModalOn] = useState(false);
+    const [modalMemoId, setModalMemoId] = useState();
 
     const getRemainText = (remainDays) => {
         return remainDays === 0 ? "오늘 삭제" : `${remainDays}일 후 삭제`;
+    }
+
+    const handleFirstModalClick = (memoId, event) => {
+        setModalOn((modalOn) => !modalOn);
+        setModalMemoId(memoId);
+    }
+
+    const handleRestoreClick = async (memoId, event) => {
+        await runPending(async () => {
+            await Apis
+                .put(`/memos/trash/${memoId}`)
+                .then(async (response) => {
+                    await getTrashMemos();
+                })
+                .catch((error) => {
+                    //console.log(error);
+                })
+        });
+    }
+
+    const handleDeleteClick = async (memoId) => {
+        await runPending(async () => {
+            await Apis
+                .delete(`/memos/trash/${memoId}`)
+                .then(async (response) => {
+                    setModalOn((modalOn) => !modalOn);
+                    await getTrashMemos();
+                })
+                .catch((error) => {
+                    //console.log(error);
+                })
+        });
     }
 
 
@@ -107,9 +146,28 @@ function TrashMemoList(props) {
                             <div className="titleDiv">{trashMemo.title && trashMemo.title}</div>
                             <div className="remainDiv">{getRemainText(trashMemo.remainDays)}</div>
                         </TitleRemainWrapper>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button className="restoreButton" disabled={isPending} onClick={(event) => trashMemo && handleRestoreClick(trashMemo.memoId, event)}>복원</button>&nbsp;&nbsp;
+                        <button className="deleteButton" disabled={isPending} onClick={(event) => trashMemo && handleFirstModalClick(trashMemo.memoId, event)}>삭제</button>
                     </TrashMemoItemsWrapper>
                 );
             })}
+
+            {modalOn && (
+                <ConfirmModal closeModal={() => setModalOn(!modalOn)} customStyle={{ height: "136px" }}>
+                    <br></br>
+                    <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
+                    <h2 className="modalTitle" style={{ fontSize: "1.8rem" }}>
+                        정말&nbsp;삭제하시겠습니까?
+                        <span className="modalSubTitle">메모가 영구적으로 삭제됩니다.</span>
+                    </h2>
+                    <br></br>
+                    <div style={{ float: "right" }}>
+                        <button className="confirmDeleteButton" disabled={isPending} onClick={() => {handleDeleteClick(modalMemoId)}}>확인</button>&nbsp;&nbsp;
+                        <button className="cancelButton" onClick={() => setModalOn(!modalOn)}>취소</button>
+                    </div>
+                </ConfirmModal>
+            )}
         </TrashMemosWrapper>
     );
 }

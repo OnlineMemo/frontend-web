@@ -28,6 +28,53 @@ const MoreWrapper = styled(BasicWrapper)`
         margin-top: 8px;
         margin-bottom: 18.5px;
     }
+
+    button {
+        background-color: #463f3a;
+        color: white;
+        border-radius: 5px;
+        font-family: "jua";
+        font-size: 1.8rem;
+
+        padding: 1px 6px 1px 6px;
+        border-top: 2px solid #767676;
+        border-left: 2px solid #767676;
+        border-bottom: 2px solid #212121;
+        border-right: 2px solid #212121;
+
+        &:hover {
+            cursor: pointer;
+            background-color: #463f3aa4;
+        }
+    }
+
+    .restoreButton {
+        background-color: #a1c4df;
+        color: #463f3a;
+        font-size: 1.7rem;
+
+        &:hover {
+            background-color: #a1c4dfa4;
+        }
+
+        @media(max-width: 381px) {
+            font-size: 1.35rem;
+        }
+    }
+
+    .deleteButton {
+        background-color: #dfafa1;
+        color: #463f3a;
+        font-size: 1.7rem;
+
+        &:hover {
+            background-color: #dfb1a1a4;
+        }
+
+        @media(max-width: 381px) {
+            font-size: 1.35rem;
+        }
+    }
 `;
 
 function TrashMemoListPage(props) {
@@ -61,7 +108,7 @@ function TrashMemoListPage(props) {
                 &nbsp;&nbsp;
                 휴지통
             </h2>
-            <TrashMemoList trashMemos={trashMemos} isFirstGetTrashMemos={isFirstGetTrashMemos} />
+            <TrashMemoList trashMemos={trashMemos} getTrashMemos={getTrashMemos} isFirstGetTrashMemos={isFirstGetTrashMemos} />
         </MoreWrapper>
     );
 }
