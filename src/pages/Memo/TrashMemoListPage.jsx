@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import BasicWrapper from "../../components/Styled/BasicWrapper";
 import TrashMemoList from "../../components/List/TrashMemoList";
+import MemoListSkeleton from "../../components/UI/MemoListSkeleton";
 import ConfirmModal from "../../components/Modal/ConfirmModal";
 import { checkToken } from "../../utils/TokenUtil"
 import Apis from "../../apis/Api";
@@ -166,7 +167,10 @@ function TrashMemoListPage(props) {
                     <button className="deleteButton" disabled={isPending} onClick={(event) => handleFirstModalClick(event)}>전체 삭제</button>
                 </DivWrapper>
             }
-            <TrashMemoList trashMemos={trashMemos} getTrashMemos={getTrashMemos} isFirstGetTrashMemos={isFirstGetTrashMemos} isPending={isPending} runPending={runPending} />
+            {isFirstGetTrashMemos === false
+                ? <MemoListSkeleton isTrashMemo={true} />
+                : <TrashMemoList trashMemos={trashMemos} getTrashMemos={getTrashMemos} isFirstGetTrashMemos={isFirstGetTrashMemos} isPending={isPending} runPending={runPending} />
+            }
 
             {modalOn && (
                 <ConfirmModal closeModal={() => setModalOn(!modalOn)} customStyle={{ height: "136px" }}>

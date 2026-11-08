@@ -82,9 +82,18 @@ const DotsBar = styled(Shimmer)`
     border-radius: 3px;
 `;
 
+const ButtonBar = styled(Shimmer)`
+    width: 46px;
+    height: 24px;
+    flex-shrink: 0;
+    border-radius: 5px;
+`;
+
 const skeletonCount = 5;
 
-function MemoListSkeleton() {
+function MemoListSkeleton(props) {
+    const { isTrashMemo } = props;
+
     return (
         <Wrapper>
             {Array.from({ length: skeletonCount }).map((_, i) => (
@@ -95,9 +104,15 @@ function MemoListSkeleton() {
                             <TitleBar style={{ animationDelay: `${i * 0.07}s` }} />
                             <DateBar style={{ animationDelay: `${i * 0.07}s` }} />
                         </TitleDateCol>
-                        <UserBlock style={{ animationDelay: `${i * 0.07}s` }} />
+                        {!isTrashMemo && <UserBlock style={{ animationDelay: `${i * 0.07}s` }} />}
                     </Middle>
-                    <DotsBar style={{ animationDelay: `${i * 0.07}s` }} />
+                    {isTrashMemo
+                        ? <>
+                            <ButtonBar style={{ animationDelay: `${i * 0.07}s` }} />
+                            <ButtonBar style={{ animationDelay: `${i * 0.07}s`, marginLeft: "8px" }} />
+                        </>
+                        : <DotsBar style={{ animationDelay: `${i * 0.07}s` }} />
+                    }
                 </Card>
             ))}
         </Wrapper>
