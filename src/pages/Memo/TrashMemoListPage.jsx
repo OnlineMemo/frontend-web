@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from 'react-helmet-async';
 import BasicWrapper from "../../components/Styled/BasicWrapper";
 import TrashMemoList from "../../components/List/TrashMemoList";
 import MemoListSkeleton from "../../components/UI/MemoListSkeleton";
@@ -9,6 +10,7 @@ import { checkToken } from "../../utils/TokenUtil"
 import Apis from "../../apis/Api";
 import { removePinnedMemoId, removeUnsavedMemo } from "../../utils/MemoUtil";
 import usePendingRequest from "../../hooks/usePendingRequest";
+import OneMemoFont from '../../assets/fonts/LINESeedKR-Bd.woff2';  // Prefetch Font (!= Preload)
 
 const MoreWrapper = styled(BasicWrapper)`
     .fa-arrow-left {
@@ -128,7 +130,7 @@ function TrashMemoListPage(props) {
         });
     }
 
-    const handleDeleteAllClick = async () => {
+    const handleDeleteAllClick = async (event) => {
         await runPending(async () => {
             await Apis
                 .delete(`/memos/trash`)
@@ -151,43 +153,62 @@ function TrashMemoListPage(props) {
         getTrashMemos();
     }, []);
 
+    useEffect(() => {
+        if (isFirstGetTrashMemos === false) return;
+
+        const storedTrashScroll = sessionStorage.getItem("trashScroll");
+        if (storedTrashScroll !== null) {
+            const trashMemoListElement = document.getElementById("trashMemoListContainer");
+            if (trashMemoListElement) {
+                trashMemoListElement.scrollTop = parseInt(storedTrashScroll, 10);  // 스크롤 위치 복원
+            }
+            sessionStorage.removeItem("trashScroll");
+        }
+    }, [isFirstGetTrashMemos])
+
 
     return (
-        <MoreWrapper>
-            <h2>
-                <i className="fa fa-arrow-left" aria-hidden="true" onClick={() => { navigate(-1) }}></i>
-                &nbsp;&nbsp;
-                휴지통
-                &nbsp;&nbsp;
-                <i className="fa fa-trash" aria-hidden="true"></i>
-            </h2>
-            {trashMemos.length > 0 &&
-                <DivWrapper>
-                    <button className="restoreButton" disabled={isPending} onClick={(event) => handleRestoreAllClick(event)}>전체 복원</button>&nbsp;&nbsp;
-                    <button className="deleteButton" disabled={isPending} onClick={(event) => handleFirstModalClick(event)}>전체 삭제</button>
-                </DivWrapper>
-            }
-            {isFirstGetTrashMemos === false
-                ? <MemoListSkeleton isTrashMemo={true} />
-                : <TrashMemoList trashMemos={trashMemos} getTrashMemos={getTrashMemos} isFirstGetTrashMemos={isFirstGetTrashMemos} isPending={isPending} runPending={runPending} />
-            }
+        <>
+            <Helmet>
+                <link rel="prefetch" href={OneMemoFont} as="font" type="font/woff2" crossOrigin="anonymous" />
+            </Helmet>
 
-            {modalOn && (
-                <ConfirmModal closeModal={() => setModalOn(!modalOn)} customStyle={{ height: "136px" }}>
-                    <br></br>
-                    <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
-                    <h2 className="modalTitle" style={{ fontSize: "1.8rem" }}>
-                        휴지통을&nbsp;비우시겠습니까?
-                        <span className="modalSubTitle">모든 메모가 영구적으로 삭제됩니다.</span>
-                    </h2>
-                    <br></br>
-                    <div style={{ float: "right" }}>
-                        <button className="confirmDeleteButton" disabled={isPending} onClick={() => {handleDeleteAllClick()}}>확인</button>&nbsp;&nbsp;
-                        <button className="cancelButton" onClick={() => setModalOn(!modalOn)}>취소</button>
-                    </div>
-                </ConfirmModal>
-            )}
-        </MoreWrapper>
+            <MoreWrapper id="trashMemoListContainer">
+                <h2>
+                    <i className="fa fa-arrow-left" aria-hidden="true" onClick={() => { navigate(-1) }}></i>
+                    &nbsp;&nbsp;
+                    휴지통
+                    &nbsp;&nbsp;
+                    <i className="fa fa-trash" aria-hidden="true"></i>
+                </h2>
+                {trashMemos.length > 0 &&
+                    <DivWrapper>
+                        <button className="restoreButton" disabled={isPending} onClick={(event) => handleRestoreAllClick(event)}>전체 복원</button>&nbsp;&nbsp;
+                        <button className="deleteButton" disabled={isPending} onClick={(event) => handleFirstModalClick(event)}>전체 삭제</button>
+                    </DivWrapper>
+                }
+                {isFirstGetTrashMemos === false
+                    ? <MemoListSkeleton isTrashMemo={true} />
+                    : <TrashMemoList trashMemos={trashMemos} getTrashMemos={getTrashMemos} isFirstGetTrashMemos={isFirstGetTrashMemos} isPending={isPending} runPending={runPending} />
+                }
+
+                {modalOn && (
+                    <ConfirmModal closeModal={() => setModalOn(!modalOn)} customStyle={{ height: "136px" }}>
+                        <br></br>
+                        <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
+                        <h2 className="modalTitle" style={{ fontSize: "1.8rem" }}>
+                            휴지통을&nbsp;비우시겠습니까?
+                            <span className="modalSubTitle">모든 메모가 영구적으로 삭제됩니다.</span>
+                        </h2>
+                        <br></br>
+                        <div style={{ float: "right" }}>
+                            <button className="confirmDeleteButton" disabled={isPending} onClick={handleDeleteAllClick}>확인</button>&nbsp;&nbsp;
+                            <button className="cancelButton" onClick={() => setModalOn(!modalOn)}>취소</button>
+                        </div>
+                    </ConfirmModal>
+                )}
+            </MoreWrapper>
+        </>
     );
 }
 

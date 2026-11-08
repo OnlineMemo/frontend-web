@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import ConfirmModal from "../Modal/ConfirmModal";
 import Apis from "../../apis/Api";
@@ -93,6 +94,13 @@ function TrashMemoList(props) {
         return remainDays === 0 ? "오늘 삭제" : `${remainDays}일 후 삭제`;
     }
 
+    const storeTrashScroll = () => {
+        const trashMemoListElement = document.getElementById("trashMemoListContainer");
+        if (trashMemoListElement) {
+            sessionStorage.setItem("trashScroll", trashMemoListElement.scrollTop);
+        }
+    }
+
     const handleFirstModalClick = (memoId, event) => {
         setModalOn((modalOn) => !modalOn);
         setModalMemoId(memoId);
@@ -143,10 +151,12 @@ function TrashMemoList(props) {
                     <TrashMemoItemsWrapper key={trashMemo.memoId}>
                         <i className="fa fa-trash" aria-hidden="true"></i>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <TitleRemainWrapper style={{ flexGrow: "8" }}>
-                            <div className="titleDiv">{trashMemo.title && trashMemo.title}</div>
-                            <div className="remainDiv">{getRemainText(trashMemo.remainDays)}</div>
-                        </TitleRemainWrapper>
+                        <Link style={{ textDecoration: "none", flexGrow: "8" }} to={`/memos/trash/${trashMemo.memoId}`} onClick={storeTrashScroll}>
+                            <TitleRemainWrapper>
+                                <div className="titleDiv">{trashMemo.title && trashMemo.title}</div>
+                                <div className="remainDiv">{getRemainText(trashMemo.remainDays)}</div>
+                            </TitleRemainWrapper>
+                        </Link>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <button className="restoreButton" disabled={isPending} onClick={(event) => trashMemo && handleRestoreClick(trashMemo.memoId, event)}>복원</button>&nbsp;&nbsp;
                         <button className="deleteButton" disabled={isPending} onClick={(event) => trashMemo && handleFirstModalClick(trashMemo.memoId, event)}>삭제</button>
