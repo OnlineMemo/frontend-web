@@ -10,6 +10,7 @@
 - <strong>25.09.01</strong>&nbsp;:&nbsp;&nbsp;<a href="https://github.com/OnlineMemo/frontend-web/pull/7">[PR] GA4 · Admin 백오피스 지표 (Traffic)</a>
 - <strong>25.09.26</strong>&nbsp;:&nbsp;&nbsp;<a href="https://github.com/OnlineMemo/frontend-web/pull/9">[PR] 메모 제목 AI 자동화 (OpenAI)</a>
 - <strong>26.10.09</strong>&nbsp;:&nbsp;&nbsp;<a href="https://github.com/OnlineMemo/frontend-web/pull/11">[PR] 계정별 DDoS 트래픽 제어 (RateLimit)</a>
+- <strong>26.11.10</strong>&nbsp;:&nbsp;&nbsp;<a href="https://github.com/OnlineMemo/frontend-web/pull/12">[PR] 메모 휴지통 · 복원/영구삭제 (Soft Delete)</a>
 
 <!--
 ### Refactor
