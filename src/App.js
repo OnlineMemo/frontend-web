@@ -34,6 +34,8 @@ const MemoListPage = LazyLoad("./pages/Memo/MemoListPage");
 const InformationPage = LazyLoad("./pages/Etc/InformationPage");
 const ReadAndEditMemoPage = LazyLoad("./pages/Memo/ReadAndEditMemoPage");
 const NewMemoPage = LazyLoad("./pages/Memo/NewMemoPage");
+const TrashMemoListPage = LazyLoad("./pages/Memo/TrashMemoListPage");
+const TrashMemoPage = LazyLoad("./pages/Memo/TrashMemoPage");
 const ProfilePage = LazyLoad("./pages/User/ProfilePage");
 const FriendListPage = LazyLoad("./pages/Friend/FriendListPage");
 const SenderListPage = LazyLoad("./pages/Friend/SenderListPage");
@@ -119,11 +121,13 @@ function RouteComponent() {
         <Route path="/users" element={wrapComponent(<><YesLoginNav /><ProfilePage /></>)} />
         <Route path="/friends" element={wrapComponent(<><YesLoginNav /><FriendListPage /></>)} />
         <Route path="/senders" element={wrapComponent(<><YesLoginNav /><SenderListPage /></>)} />
+        <Route path="/memos/trash" element={wrapComponent(<><YesLoginNav /><TrashMemoListPage /></>)} />
 
         {/* 로그인 사용자용 - Nav가 병합된 페이지 */}
         <Route path="/memos" element={wrapComponent(<MemoListPage />)} />
         <Route path="/memos/:memoId" element={wrapComponent(<ReadAndEditMemoPage />)} /> {/* 또는 path="/memos/:memoId(\d+) 정규표현식 적용할것. */}
         <Route path="/memos/new-memo" element={wrapComponent(<NewMemoPage />)} />
+        <Route path="/memos/trash/:memoId" element={wrapComponent(<TrashMemoPage />)} />
 
         {/* 404 Not Found 페이지 - GA4 이벤트 단일 */}
         <Route path="*" element={wrapComponent(<><NoLoginNav /><NotFoundPage /></>)} />

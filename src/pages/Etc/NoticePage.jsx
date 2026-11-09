@@ -36,7 +36,7 @@ const MoreWrapper = styled(BasicWrapper)`
         z-index: 10;
 
         &:hover {
-            cursor:pointer;
+            cursor: pointer;
             background-color: #463f3a;
             color: #bcb8b1;
             border-color: #463f3a;
@@ -88,7 +88,7 @@ const Description = styled.div`
         color: #0059ff;
 
         &:hover {
-            cursor:pointer;
+            cursor: pointer;
             color: blue;
         }
     }
@@ -107,7 +107,7 @@ const Description = styled.div`
         border-right: 2px solid #212121;
 
         &:hover {
-            cursor:pointer;
+            cursor: pointer;
             background-color: #2c2927;
         }
     }
@@ -120,10 +120,6 @@ const Notice = () => {
             <h5>&lt;&nbsp;공지사항&nbsp;&nbsp;<i className="fa fa-bullhorn" aria-hidden="true"></i>&nbsp;&gt;</h5>
             <div style={{ lineHeight: "29%" }}><br></br></div>
             <ol>
-                {/* <li><strong>&nbsp;공동메모 동시 수정 주의할 것</strong></li>
-                공동메모는 팀원중 한 명만 접속해서 수정하시길 권장드립니다. 동시접속하여 수정 시, 마지막으로 저장을 누른 팀원의 메모로 수정됩니다.
-                <div style={{ lineHeight: "58%" }}><br></br></div> */}
-
                 <li><strong>&nbsp;사이트 및 앱 다운로드</strong></li>
                 <Description>
                     <div style={{ marginBottom: '0.5px' }}>- 웹사이트:&nbsp;<a href="https://www.OnlineMemo.kr">www.OnlineMemo.kr</a></div>
@@ -132,19 +128,19 @@ const Notice = () => {
                 </Description>
                 <div style={{ lineHeight: "59%" }}><br></br></div>
 
+                <li><strong>&nbsp;문의 및 피드백</strong></li>
+                <Description>
+                    문의, 오류 등등의 전달사항은,&nbsp;<Link to={'/information'}><button>개발 정보</button></Link>&nbsp;하단의 메일을 통해 부탁드립니다.
+                    <div style={{ lineHeight: "58%" }}><br></br></div>
+                </Description>
+
                 <li><strong>&nbsp;로그인 유지 기간 안내</strong></li>
                 <Description>
                     보안을 위해 로그인 후 2주 경과 시, 자동으로 로그아웃되어 재로그인해야 합니다.
-                    <br></br>
-                    (서버 내부의 토큰은 3시간마다 자동 갱신되므로, 보안은 걱정하지 않으셔도 됩니다.)
+                    {/* <br></br>
+                    (서버 내부의 토큰은 3시간마다 자동 갱신되므로, 보안은 걱정하지 않으셔도 됩니다.) */}
                 </Description>
                 <div style={{ lineHeight: "58%" }}><br></br></div>
-
-                <li><strong>&nbsp;문의 및 피드백</strong></li>
-                <Description>
-                    문의, 오류 등등의 전달사항은, '개발 정보' 탭 하단의 메일을 통해 부탁드립니다.
-                    <div style={{ lineHeight: "58%" }}><br></br></div>
-                </Description>
 
                 <li style={{ color: "#dd2b2b", paddingLeft: '1.23px' }}><strong>'온라인 메모장'의 계정 삭제</strong></li>
                 <Description>

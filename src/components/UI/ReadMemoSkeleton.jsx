@@ -24,6 +24,12 @@ const TitleBar = styled(Shimmer)`
     margin: 0 auto;
 `;
 
+const RemainBar = styled(Shimmer)`
+    width: 20%;
+    height: 13px;
+    margin: 4px auto 0;
+`;
+
 const ContentLine = styled(Shimmer)`
     height: 21px;
     margin-bottom: 12px;
@@ -31,10 +37,13 @@ const ContentLine = styled(Shimmer)`
 
 const contentWidths = ['90%', '75%', '95%', '60%', '80%', '70%', '85%'];
 
-function ReadMemoSkeleton() {
+function ReadMemoSkeleton(props) {
+    const { isTrashMemo } = props;
+
     return (
         <Wrapper>
             <TitleBar />
+            {isTrashMemo && <RemainBar />}
             <hr />
             {contentWidths.map((w, i) => (
                 <ContentLine

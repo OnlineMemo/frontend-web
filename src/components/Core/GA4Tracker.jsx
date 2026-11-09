@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { parseToken } from "../../utils/TokenUtil";
 
 const publicPages = new Set(['/', '/signup', '/password', '/information', '/notice', '/download', '/404']);  // '/login'은 이미 '/'로 치환되었으므로 제외
-const authPages = new Set(['/users', '/friends', '/senders', '/memos', '/memos/:memoId', '/memos/new-memo']);
+const authPages = new Set(['/users', '/friends', '/senders', '/memos', '/memos/:memoId', '/memos/new-memo', '/memos/trash', '/memos/trash/:memoId']);
 const redirectPages = new Set(['/', '/signup', '/password']);  // '/login'은 이미 '/'로 치환되었으므로 제외
 const securedPages = new Set(['/statistics']);
 
@@ -21,6 +21,9 @@ const convertPathName = (originPathName) => {
 
     // '/memos/${memoId}' 패턴이면 '/memos/:memoId'로 통합 집계
     normalizedPathName = normalizedPathName.replace(/^\/memos\/\d+$/, '/memos/:memoId');
+
+    // '/memos/trash/${memoId}' 패턴이면 '/memos/trash/:memoId'로 통합 집계
+    normalizedPathName = normalizedPathName.replace(/^\/memos\/trash\/\d+$/, '/memos/trash/:memoId');
 
     // 잘못된 주소라면 '/404'로 통합 집계
     const isInPublicPages = publicPages.has(normalizedPathName);

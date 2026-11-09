@@ -12,7 +12,7 @@ const metaData = {
     description: "이용방법 안내 - 웹 주소는 OnlineMemo.kr 이며, 로그인 상태가 2주간 안전하게 유지됩니다.",  // or '이용방법 안내 – 웹사이트 주소는 OnlineMemo.kr 이며, 문의는 기재된 메일로 부탁드립니다.'
   },
   "/download": {
-    title: "온라인 메모장 - 다운로드 안내",
+    title: "온라인 메모장 - 앱 설치 안내",
     description: "모바일 앱 지원 - 웹은 물론, Android · iOS 앱에서도 쾌적한 풀스크린 환경을 제공합니다.",
   },
   "/password": {

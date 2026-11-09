@@ -48,7 +48,7 @@ function Header(props) {
                         : "/"
                 }
                 onClick={() => {
-                    ["filter", "search", "scroll"].forEach(key => sessionStorage.removeItem(key));
+                    ["filter", "search", "scroll", "trashScroll"].forEach(key => sessionStorage.removeItem(key));
                 }}
                 style={{ textDecoration: "none", color: "#463f3a" }}
             >

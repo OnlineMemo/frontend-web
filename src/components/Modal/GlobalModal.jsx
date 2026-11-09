@@ -13,7 +13,7 @@ const GlobalWrapper = styled.div`
         font-family: "jua";
 
         &:hover {
-            cursor:pointer;
+            cursor: pointer;
             background-color: #2c2927;
         }
     }
@@ -23,8 +23,8 @@ function GlobalModal(props) {  // Global Modals Component (with Route)
     const location = useLocation();
 
     const progressStartDateTime = "2025-10-15 20:00";
-    const middleDateTime = "2026-06-29 02:00";
-    const completeEndDateTime = "2026-07-07 00:00";  // or "2026-07-06 23:59"
+    const middleDateTime = "2026-11-09 04:00";
+    const completeEndDateTime = "2026-11-20 00:00";  // or "2026-11-19 23:59"
 
 
     return (
@@ -55,16 +55,16 @@ function GlobalModal(props) {  // Global Modals Component (with Route)
                 modalStyle={{ height: "203.5px", paddingTop: "36.5px", paddingBottom: "47px" }}
                 iconStyle={{ fontSize: "4rem" }} contentStyle={{ lineHeight: "115%" }}
             >
-                [ v 2.4.0 업데이트 완료 ]
+                [ v 2.5.0 업데이트 완료 ]
                 <div style={{ lineHeight: "90%" }}><br></br></div>
 
-                * 임시저장 복구 기능 추가<br></br>
+                * 메모 휴지통 기능 추가<br></br>
                 <div style={{ lineHeight: "5%" }}><br></br></div>
-                * 이탈/실패 시 자동 보존<br></br>
+                * 삭제 시 30일간 보관<br></br>
                 <div style={{ lineHeight: "5%" }}><br></br></div>
-                * 복구 시 저장 시각 표시<br></br>
+                * 남은 보관 기간 표시<br></br>
                 <div style={{ lineHeight: "5%" }}><br></br></div>
-                * 기기별 독립 복구 지원
+                * 복원 및 영구삭제 지원
             </NoticeModal>
         </GlobalWrapper>
     );

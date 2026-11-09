@@ -14,13 +14,13 @@ const Wrapper = styled(NavWrapper)`
     }
 
     ul li {
-        list-style:none;
-        line-height:50px;
+        list-style: none;
+        line-height: 50px;
     }  
 
     a {  // Link 태그도 영향 받음.
-        text-decoration:none;
-        font-size:2rem;
+        text-decoration: none;
+        font-size: 2rem;
         color: #ffffff;
         border-left: #bcb8b1 solid 2px;
         border-right: #bcb8b1 solid 2px;
@@ -44,7 +44,7 @@ function NoLoginNav(props) {
         <Wrapper>
             <ul>
                 <li><Link to={'/notice'}>공지사항</Link></li>
-                <li><Link to={'/information'}>개발 정보</Link></li>
+                <li><Link to={'/download'}>앱 설치</Link></li>
             </ul>
         </Wrapper>
     );

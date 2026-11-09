@@ -17,9 +17,9 @@ const Wrapper = styled(NavWrapper)`
     }
 
     ul li {
-        font-size:2rem;
+        font-size: 2rem;
         list-style: none;
-        line-height:50px;
+        line-height: 50px;
         color: #ffffff;
     }
 
@@ -37,8 +37,8 @@ const Wrapper = styled(NavWrapper)`
     }
 
     a {  // Link 태그도 영향 받음.
-        text-decoration:none;
-        font-size:2rem;
+        text-decoration: none;
+        font-size: 2rem;
         color: #ffffff;
         border-left: #bcb8b1 solid 2px;
         border-right: #bcb8b1 solid 2px;
@@ -84,12 +84,16 @@ function YesLoginNav(props) {
             link: `/users`,
         },
         {
+            name: "휴지통",
+            link: `/memos/trash`,
+        },
+        {
             name: "공지사항",
             link: '/notice',
         },
         {
-            name: "개발 정보",
-            link: '/information',
+            name: "앱 설치",
+            link: '/download',
         },
         {
             name: "로그아웃",

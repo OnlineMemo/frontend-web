@@ -71,14 +71,14 @@ const HelloWrapper = styled.div.attrs({ role: "main" })`
     }
 
     a {
-        margin-top:4px;
+        margin-top: 4px;
         text-decoration: none;
         color: #463f3a;
         font-size: 14px;
         text-shadow: -1px 0px white, 0px 1px white, 1px 0px white, 0px -1px white;
 
         &:hover {
-            cursor:pointer;
+            cursor: pointer;
             color: black;
         }
     }
@@ -90,7 +90,7 @@ const HelloWrapper = styled.div.attrs({ role: "main" })`
         font-family: "jua";
 
         &:hover {
-            cursor:pointer;
+            cursor: pointer;
             background-color: #2c2927;
         }
     }

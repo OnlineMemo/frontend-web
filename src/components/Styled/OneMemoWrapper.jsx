@@ -28,6 +28,12 @@ const OneMemoWrapper = styled.div.attrs({ role: "main" })`
         z-index: 0;
     }
 
+    .memoSubTitle {
+        font-size: 1.13rem;
+        text-align: center;
+        color: #5e5c58;
+    }
+
     .memoContent {
         text-decoration: none;
         white-space: pre-wrap;
@@ -84,7 +90,7 @@ const OneMemoWrapper = styled.div.attrs({ role: "main" })`
         }
 
         &:hover {
-            cursor:pointer;
+            cursor: pointer;
             background-color: #463f3aa4;
         }
 

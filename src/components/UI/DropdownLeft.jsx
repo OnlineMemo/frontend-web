@@ -108,7 +108,7 @@ function DropdownLeft(props) {
                         {dropItems.map((drop, index) => {
                             return (
                                 <li id="dropLi" key={index}>
-                                    {index==3 && drop.name=="로그아웃"
+                                    {index==4 && drop.name=="로그아웃"
                                         ? <Link onClick={handleLogoutClick}>{drop.name}</Link>
                                         : <Link to={drop.link} style={{ textDecoration: "none" }}>{drop.name}</Link>
                                     }

@@ -61,6 +61,12 @@ const ModalWrapper = styled.div`
         margin-bottom: 19px;
     }
 
+    .modalSubTitle {
+        display: block;
+        margin-top: 4px;
+        font-size: 1.5rem;
+    }
+
     .successSignupModalTitle {
         font-size: 1.93rem;
         color: #463f3a;
